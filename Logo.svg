@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Brake X Logo Animado</title>
+<style>
+  body {
+    background: #f5f6fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  svg {
+    width: 420px;
+    cursor: pointer;
+  }
+</style>
+<!-- Incluye GSAP desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+<!-- Inserta aquí el contenido del BrakeX_Final_Fluent2.svg -->
+<object id="brakexLogo" type="image/svg+xml" data="BrakeX_Final_Fluent2.svg"></object>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const logoObj = document.getElementById("brakexLogo");
+  logoObj.addEventListener("load", () => {
+    const svgDoc = logoObj.contentDocument;
+    const disc = svgDoc.getElementById("discRot");
+    const icon = svgDoc.getElementById("icon");
+    const text = svgDoc.getElementById("brandMain");
+
+    // Rotación continua del disco
+    gsap.to(disc, {
+      rotation: -360,
+      transformOrigin: "center center",
+      repeat: -1,
+      ease: "linear",
+      duration: 3
+    });
+
+    // Efecto flotante del icono
+    gsap.to(icon, {
+      y: -6,
+      scale: 1.02,
+      duration: 2.4,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1
+    });
+
+    // Aparición del texto con brillo
+    gsap.fromTo(text, {opacity: 0, x: -20}, {opacity: 1, x: 0, duration: 1.4, ease: "power2.out"});
+
+    // Hover: acelera el giro
+    logoObj.addEventListener("mouseenter", () => {
+      gsap.to(disc, {duration: 0.3, rotation: "+=60", ease: "power2.out"});
+    });
+  });
+});
+</script>
+
+</body>
+</html>
