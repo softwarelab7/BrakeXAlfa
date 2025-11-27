@@ -12,9 +12,11 @@ const CONFIG = {
     MAX_HISTORY: 5,
 
     // Performance
-    DEBOUNCE_DELAY: 300,
+    DEBOUNCE_DELAY: 400, // Increased from 300ms for better performance
     TOLERANCE: 1.0,
     LAZY_LOAD_ROOT_MARGIN: '50px',
+    ENABLE_SEARCH_CACHE: true,
+    CACHE_MAX_SIZE: 50,
 
     // Firebase Configuration
     // ⚠️ SECURITY NOTE: API keys in client-side code are normal for Firebase
@@ -56,8 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this._favorites = new Set();
             this.isFavoritesMode = false;
             this.activeManufacturer = null;
+            this._comparisonSelection = new Set();
+            this.MAX_COMPARISON = 3;
 
             this._loadFavorites();
+            this._loadComparisonSelection();
         }
 
         /**
@@ -117,10 +122,153 @@ document.addEventListener('DOMContentLoaded', () => {
         get favorites() {
             return this._favorites;
         }
+
+        /**
+         * Load comparison selection from sessionStorage
+         * @private
+         */
+        _loadComparisonSelection() {
+            try {
+                const selection = sessionStorage.getItem('brakeXComparison');
+                if (selection) {
+                    this._comparisonSelection = new Set(JSON.parse(selection).map(Number));
+                }
+            } catch (e) {
+                console.error("Error al cargar selección de comparación:", e);
+                this._comparisonSelection = new Set();
+            }
+        }
+
+        /**
+         * Save comparison selection to sessionStorage
+         * @private
+         */
+        _saveComparisonSelection() {
+            try {
+                sessionStorage.setItem('brakeXComparison', JSON.stringify([...this._comparisonSelection]));
+            } catch (e) {
+                console.error("Error al guardar selección de comparación:", e);
+            }
+        }
+
+        /**
+         * Toggle comparison selection for an item
+         * @param {number} itemId - Item ID to toggle
+         * @returns {boolean} - true if added, false if removed or at limit
+         */
+        toggleComparison(itemId) {
+            if (this._comparisonSelection.has(itemId)) {
+                this._comparisonSelection.delete(itemId);
+                this._saveComparisonSelection();
+                return false;
+            } else if (this._comparisonSelection.size < this.MAX_COMPARISON) {
+                this._comparisonSelection.add(itemId);
+                this._saveComparisonSelection();
+                return true;
+            }
+            return false; // At limit
+        }
+
+        /**
+         * Check if item is in comparison
+         * @param {number} itemId
+         * @returns {boolean}
+         */
+        isInComparison(itemId) {
+            return this._comparisonSelection.has(itemId);
+        }
+
+        /**
+         * Get all comparison selections
+         * @returns {Set<number>}
+         */
+        get comparisonSelection() {
+            return this._comparisonSelection;
+        }
+
+        /**
+         * Clear all comparison selections
+         */
+        clearComparison() {
+            this._comparisonSelection.clear();
+            this._saveComparisonSelection();
+        }
+
+        /**
+         * Get comparison items data
+         * @returns {Array}
+         */
+        getComparisonItems() {
+            return this.data.filter(item => this._comparisonSelection.has(item._appId));
+        }
+    }
+
+    /**
+     * Search Cache for Memoization
+     * Caches filter results to improve performance on repeated searches
+     * @class SearchCache
+     */
+    class SearchCache {
+        constructor(maxSize = 50) {
+            this.cache = new Map();
+            this.maxSize = maxSize;
+            this.hits = 0;
+            this.misses = 0;
+        }
+
+        generateKey(filters) {
+            return JSON.stringify(filters);
+        }
+
+        get(filters) {
+            const key = this.generateKey(filters);
+            if (this.cache.has(key)) {
+                this.hits++;
+                // Move to end for LRU
+                const value = this.cache.get(key);
+                this.cache.delete(key);
+                this.cache.set(key, value);
+                return value;
+            }
+            this.misses++;
+            return null;
+        }
+
+        set(filters, results) {
+            const key = this.generateKey(filters);
+
+            // LRU eviction - remove oldest (first) entry
+            if (this.cache.size >= this.maxSize) {
+                const firstKey = this.cache.keys().next().value;
+                this.cache.delete(firstKey);
+            }
+
+            this.cache.set(key, results);
+        }
+
+        clear() {
+            this.cache.clear();
+            this.hits = 0;
+            this.misses = 0;
+        }
+
+        getStats() {
+            const total = this.hits + this.misses;
+            return {
+                size: this.cache.size,
+                hits: this.hits,
+                misses: this.misses,
+                hitRate: total > 0 ? (this.hits / total * 100).toFixed(2) + '%' : '0%'
+            };
+        }
     }
 
     // Instanciar el estado global de la app
     const appState = new AppState();
+    const searchCache = new SearchCache(CONFIG.CACHE_MAX_SIZE);
+
+    // Make searchCache available globally for debugging
+    window.searchCache = searchCache;
 
     // --- CORRECCIÓN: Movido al ámbito global ---
     let lastFocusedElement = null;
@@ -179,7 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
         historialBtn: document.getElementById('historialBtn'),
         searchHistoryContainer: document.getElementById('searchHistoryContainer'),
         searchHistoryCard: document.getElementById('searchHistoryCard'),
-        manufacturerTagsContainer: document.getElementById('manufacturer-tags-container')
+        manufacturerTagsContainer: document.getElementById('manufacturer-tags-container'),
+        compareBtn: document.getElementById('compareBtn'),
+        compareCount: document.getElementById('compareCount'),
+        comparisonModal: document.getElementById('comparison-modal'),
+        comparisonModalContent: document.querySelector('#comparison-modal .comparison-modal-content'),
+        comparisonCloseBtn: document.getElementById('comparisonCloseBtn'),
+        comparisonTableWrapper: document.getElementById('comparisonTableWrapper'),
+        clearComparisonBtn: document.getElementById('clearComparisonBtn')
     };
 
     // === Gestión del historial de búsqueda ===
@@ -202,17 +357,20 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSearchHistory();
     }
 
-    function renderSearchHistory() {
-        const history = JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
-        const container = els.searchHistoryContainer;
-        if (!container) return;
-        container.innerHTML = history.map(q =>
-            `<button class="search-history-item" data-query="${q}">
-                ${q}
-                <span class="delete-history-item" data-query-delete="${q}" role="button" aria-label="Eliminar ${q}">&times;</span>
-            </button>`
-        ).join('');
+    function getSearchHistory() {
+        return JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
     }
+
+    function removeFromSearchHistory(index) {
+        let history = getSearchHistory();
+        if (index >= 0 && index < history.length) {
+            history.splice(index, 1);
+            localStorage.setItem('brakeXSearchHistory', JSON.stringify(history));
+            renderSearchHistory();
+        }
+    }
+
+    // renderSearchHistory moved to line ~1011 with counter management
 
     // === Gestión de favoritos ===
     // REFACTORIZADO (MEJORA #4)
@@ -245,13 +403,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateFavoritesCounter = () => {
         const favCount = appState.favorites.size;
         const counterEl = document.getElementById('favoritesCount');
+        const favBtn = els.filtroFavoritosBtn;
 
-        if (counterEl) {
+        if (counterEl && favBtn) {
             counterEl.textContent = favCount;
+
             if (favCount > 0) {
+                // Show button and badge
+                favBtn.style.display = 'flex';
                 counterEl.style.display = 'inline-flex';
+
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    favBtn.style.opacity = '1';
+                    favBtn.style.transform = 'scale(1)';
+                });
             } else {
-                counterEl.style.display = 'none';
+                // Hide button
+                favBtn.style.opacity = '0';
+                favBtn.style.transform = 'scale(0.95)';
+
+                // After animation, hide completely
+                setTimeout(() => {
+                    if (appState.favorites.size === 0) {
+                        favBtn.style.display = 'none';
+                        counterEl.style.display = 'none';
+                    }
+                }, 250);
             }
         }
     };
@@ -265,9 +443,31 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    // --- FUNCIÓN DE AYUDA (MEJORA #8) ---
-    const normalizeText = (text = '') =>
-        String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // --- FUNCIÓN DE AYUDA (MEJORA #8) CON CACHÉ ---
+    const normalizeTextCache = new Map();
+    const MAX_NORMALIZE_CACHE = 1000;
+
+    const normalizeText = (text = '') => {
+        const textStr = String(text);
+
+        // Check cache first
+        if (normalizeTextCache.has(textStr)) {
+            return normalizeTextCache.get(textStr);
+        }
+
+        // Normalize text
+        const normalized = textStr.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        // LRU eviction for cache
+        if (normalizeTextCache.size >= MAX_NORMALIZE_CACHE) {
+            const firstKey = normalizeTextCache.keys().next().value;
+            normalizeTextCache.delete(firstKey);
+        }
+
+        // Store in cache
+        normalizeTextCache.set(textStr, normalized);
+        return normalized;
+    };
     // --- FIN FUNCIÓN ---
 
     // --- INICIO: MEJORA #5 (MANEJO DE ERRORES) ---
@@ -531,7 +731,248 @@ document.addEventListener('DOMContentLoaded', () => {
         return specsHTML;
     };
 
+    // ================================================
+    // COMPARISON FEATURE FUNCTIONS
+    // ================================================
+
+    /**
+     * Update comparison counter badge
+     */
+    const updateComparisonCounter = () => {
+        const count = appState.comparisonSelection.size;
+        const counterEl = els.compareCount;
+        const compareBtn = els.compareBtn;
+
+        if (counterEl && compareBtn) {
+            counterEl.textContent = count;
+
+            if (count > 0) {
+                // Show button and badge
+                compareBtn.style.display = 'flex';
+                counterEl.style.display = 'inline-flex';
+                compareBtn.classList.add('has-selection');
+
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    compareBtn.style.opacity = '1';
+                    compareBtn.style.transform = 'scale(1)';
+                });
+            } else {
+                // Hide button
+                compareBtn.classList.remove('has-selection');
+                compareBtn.style.opacity = '0';
+                compareBtn.style.transform = 'scale(0.95)';
+
+                // After animation, hide completely
+                setTimeout(() => {
+                    if (appState.comparisonSelection.size === 0) {
+                        compareBtn.style.display = 'none';
+                        counterEl.style.display = 'none';
+                    }
+                }, 250);
+            }
+        }
+    };
+
+    /**
+     * Toggle comparison selection for a card
+     */
+    const toggleComparisonSelection = (e) => {
+        e.stopPropagation();
+        const button = e.currentTarget;
+        const card = button.closest('.result-card');
+        if (!card) return;
+        const itemId = parseInt(card.dataset.id);
+        if (isNaN(itemId)) return;
+
+        const wasAdded = appState.toggleComparison(itemId);
+
+        // Update button state
+        const isNowSelected = appState.isInComparison(itemId);
+        button.classList.toggle('selected', isNowSelected);
+        button.setAttribute('aria-pressed', isNowSelected);
+
+        // Show feedback if at limit
+        if (!wasAdded && !isNowSelected && appState.comparisonSelection.size >= appState.MAX_COMPARISON) {
+            // Visual feedback: shake animation or notification
+            button.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                button.style.transform = '';
+            }, 200);
+        }
+
+        // Update counter
+        updateComparisonCounter();
+    };
+
+    /**
+     * Render comparison table
+     */
+    const renderComparisonTable = (items) => {
+        if (!items || items.length === 0) {
+            els.comparisonTableWrapper.innerHTML = `
+                <div class="comparison-empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <p>No hay referencias seleccionadas</p>
+                    <span>Selecciona hasta 3 referencias desde los resultados para compararlas</span>
+                </div>
+            `;
+            return;
+        }
+
+        // Build table headers
+        let tableHTML = '<table class="comparison-table"><thead><tr>';
+        tableHTML += '<th>Campo</th>';
+        items.forEach((item, index) => {
+            const primaryRef = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : `Ref ${index + 1}`;
+            tableHTML += `<th>${primaryRef} <button class="comparison-remove-btn" data-remove-id="${item._appId}" aria-label="Quitar de la comparación">×</button></th>`;
+        });
+        tableHTML += '</tr></thead><tbody>';
+
+        // Row: Referencias
+        tableHTML += '<tr><td data-label="Campo">Referencias</td>';
+        items.forEach(item => {
+            const refsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
+                ? item.ref.flatMap(ref => String(ref).split(' '))
+                    .map(part => `<span class="ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
+                    .join('')
+                : '<span class="ref-badge ref-badge-na">N/A</span>';
+            tableHTML += `<td data-label="Referencias"><div class="comparison-cell-refs">${refsHTML}</div></td>`;
+        });
+        tableHTML += '</tr>';
+
+        // Row: Posición
+        tableHTML += '<tr><td data-label="Campo">Posición</td>';
+        items.forEach(item => {
+            const posBadgeClass = item.posición === 'Delantera' ? 'delantera' : 'trasera';
+            tableHTML += `<td data-label="Posición"><div class="comparison-cell-position"><span class="position-badge ${posBadgeClass}">${item.posición}</span></div></td>`;
+        });
+        tableHTML += '</tr>';
+
+        // Row: Medidas
+        tableHTML += '<tr><td data-label="Campo">Medidas (mm)</td>';
+        items.forEach(item => {
+            let medidasText = 'N/A';
+            if (Array.isArray(item.medidas) && item.medidas.length > 0) {
+                medidasText = item.medidas.map(m => {
+                    const parts = String(m).split(/x/i).map(s => s.trim());
+                    return `${parts[0] || 'N/A'} x ${parts[1] || 'N/A'}`;
+                }).join('<br>');
+            } else if (item.anchoNum || item.altoNum) {
+                medidasText = `${item.anchoNum || 'N/A'} x ${item.altoNum || 'N/A'}`;
+            }
+            tableHTML += `<td data-label="Medidas">${medidasText}</td>`;
+        });
+        tableHTML += '</tr>';
+
+        // Row: OEM
+        tableHTML += '<tr><td data-label="Campo">OEM</td>';
+        items.forEach(item => {
+            const oemText = (Array.isArray(item.oem) && item.oem.length > 0) ? item.oem.join(', ') : 'N/A';
+            tableHTML += `<td data-label="OEM">${oemText}</td>`;
+        });
+        tableHTML += '</tr>';
+
+        // Row: FMSI
+        tableHTML += '<tr><td data-label="Campo">Platina FMSI</td>';
+        items.forEach(item => {
+            const fmsiText = (Array.isArray(item.fmsi) && item.fmsi.length > 0) ? item.fmsi.join(', ') : 'N/A';
+            tableHTML += `<td data-label="FMSI">${fmsiText}</td>`;
+        });
+        tableHTML += '</tr>';
+
+        // Row: Imagen
+        tableHTML += '<tr><td data-label="Campo">Imagen</td>';
+        items.forEach(item => {
+            let imageSrc = 'https://via.placeholder.com/150x100.png?text=No+Img';
+            if (item.imagenes && item.imagenes.length > 0) {
+                imageSrc = item.imagenes[0];
+            } else if (item.imagen) {
+                imageSrc = item.imagen.replace("text=", `text=Vista+1+`);
+            }
+            tableHTML += `<td data-label="Imagen"><div class="comparison-cell-image"><img src="${imageSrc}" alt="Imagen de referencia" loading="lazy"></div></td>`;
+        });
+        tableHTML += '</tr>';
+
+        // Row: Aplicaciones (primeras 5)
+        tableHTML += '<tr><td data-label="Campo">Aplicaciones</td>';
+        items.forEach(item => {
+            const apps = Array.isArray(item.aplicaciones) ? item.aplicaciones.slice(0, 5) : [];
+            const appsHTML = apps.length > 0
+                ? apps.map(app => `<div class="comparison-app-item">${app.marca} ${app.serie} ${app.año || ''}</div>`).join('')
+                : '<div class="comparison-app-item">N/A</div>';
+            const moreText = (item.aplicaciones && item.aplicaciones.length > 5) ? `<div style="margin-top:4px;font-size:0.75rem;opacity:0.7;">+${item.aplicaciones.length - 5} más</div>` : '';
+            tableHTML += `<td data-label="Aplicaciones"><div class="comparison-cell-apps">${appsHTML}${moreText}</div></td>`;
+        });
+        tableHTML += '</tr>';
+
+        tableHTML += '</tbody></table>';
+        els.comparisonTableWrapper.innerHTML = tableHTML;
+
+        // Add remove button listeners
+        els.comparisonTableWrapper.querySelectorAll('.comparison-remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const itemId = parseInt(btn.dataset.removeId);
+                appState.toggleComparison(itemId);
+                updateComparisonCounter();
+                openComparisonModal(); // Re-render
+                renderCurrentPage(); // Update cards
+            });
+        });
+    };
+
+    /**
+     * Open comparison modal
+     */
+    const openComparisonModal = () => {
+        const items = appState.getComparisonItems();
+        renderComparisonTable(items);
+
+        els.comparisonModalContent.classList.remove('closing');
+        els.comparisonModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        // Focus trap
+        lastFocusedElement = document.activeElement;
+        els.comparisonModal.addEventListener('keydown', handleFocusTrap);
+        els.comparisonCloseBtn.focus();
+    };
+
+    /**
+     * Close comparison modal
+     */
+    const closeComparisonModal = () => {
+        els.comparisonModalContent.classList.add('closing');
+        setTimeout(() => {
+            els.comparisonModal.style.display = 'none';
+            document.body.style.overflow = '';
+            if (lastFocusedElement) lastFocusedElement.focus();
+            els.comparisonModal.removeEventListener('keydown', handleFocusTrap);
+        }, 300);
+    };
+
+    /**
+     * Clear all comparison selections
+     */
+    const clearComparisonSelection = () => {
+        appState.clearComparison();
+        updateComparisonCounter();
+        renderCurrentPage(); // Update card states
+        renderComparisonTable([]); // Clear table
+    };
+
+    // ================================================
+    // END COMPARISON FEATURE
+    // ================================================
+
     const showSkeletonLoader = (count = 6) => {
+
         let skeletonHTML = '';
         for (let i = 0; i < count; i++) {
             skeletonHTML += `<div class="skeleton-card"><div class="skeleton-line long"></div><div class="skeleton-line short"></div><div class="skeleton-box"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>`;
@@ -585,7 +1026,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const startNum = totalResults === 0 ? 0 : startIndex + 1;
         const endNum = Math.min(endIndex, totalResults);
         els.countContainer.innerHTML = `Mostrando <strong>${startNum}–${endNum}</strong> de <strong>${totalResults}</strong> resultados`;
-
         if (totalResults === 0) {
             const message = appState.isFavoritesMode ? 'No tienes favoritos guardados' : 'No se encontraron pastillas';
             const subMessage = appState.isFavoritesMode ? 'Haz clic en el corazón de una pastilla para guardarla.' : 'Intenta ajustar tus filtros de búsqueda.';
@@ -593,73 +1033,157 @@ document.addEventListener('DOMContentLoaded', () => {
             els.paginationContainer.innerHTML = '';
             return;
         }
+        els.results.innerHTML = paginatedData.map((item, index) => {
+            const posBadgeClass = item.posición === 'Delantera' ? 'delantera' : 'trasera';
+            const posBadge = `<span class="position-badge ${posBadgeClass}">${item.posición}</span>`;
+            const refsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
+                ? item.ref.flatMap(ref => String(ref).split(' '))
+                    .map(part => `<span class="ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
+                    .join('')
+                : '<span class="ref-badge ref-badge-na">N/A</span>';
+            let firstImageSrc = 'https://via.placeholder.com/300x200.png?text=No+Img';
+            if (item.imagenes && item.imagenes.length > 0) {
+                firstImageSrc = item.imagenes[0];
+            } else if (item.imagen) {
+                firstImageSrc = item.imagen.replace("text=", `text=Vista+1+`);
+            }
+            const safeAplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
+            const appSummaryItems = safeAplicaciones.slice(0, 3).map(app => `${app.marca} ${app.serie}`).filter((value, index, self) => self.indexOf(value) === index);
+            let appSummaryHTML = appSummaryItems.length > 0
+                ? `<div class="card-app-summary">${appSummaryItems.join(', ')}${safeAplicaciones.length > 3 ? ', ...' : ''}</div>`
+                : '';
+            const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
 
-        const cardsHTML = paginatedData.map(item => {
+            // REFACTORIZADO (MEJORA #4)
             const isFavorite = appState.isFavorite(item._appId);
-            const imageSrc = (item.imagen_url && item.imagen_url.length > 0) ? item.imagen_url[0] : 'https://via.placeholder.com/300x200.png?text=No+Img';
 
-            // Formatear referencias principales (K-...)
-            const mainRef = (item.ref || []).find(r => String(r).startsWith('K')) || (item.ref ? item.ref[0] : 'N/A');
+            const favoriteBtnHTML = `
+                <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito" aria-pressed="${isFavorite}">
+                    <svg class="heart-icon" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            `;
 
-            // Badge de posición
-            const posClass = item.posición === 'Delantera' ? 'pos-badge-front' : 'pos-badge-rear';
-            const posLabel = item.posición || 'N/A';
+            // COMPARISON FEATURE: Add comparison checkbox
+            const isInComparison = appState.isInComparison(item._appId);
+            const compareCheckboxHTML = `
+                <button class="compare-checkbox-btn ${isInComparison ? 'selected' : ''}" data-id="${item._appId}" aria-label="Agregar a comparación" aria-pressed="${isInComparison}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </button>
+            `;
 
             return `
-            <div class="result-card clean-card" data-id="${item._appId}">
-                <div class="clean-card-image">
-                    <img src="${imageSrc}" alt="Pastilla ${mainRef}" loading="lazy">
-                    <span class="clean-pos-badge ${posClass}">${posLabel}</span>
-                </div>
-
-                <div class="clean-card-content">
-                    <div class="clean-card-header">
-                        <h3 class="clean-ref">${mainRef}</h3>
-                        <span class="clean-brand">${item.marca_vehiculo || 'Genérico'}</span>
-                    </div>
-
-                    <div class="clean-specs">
-                        <div class="clean-spec">
-                            <span class="label">FMSI</span>
-                            <span class="value">${(item.fmsi && item.fmsi[0]) || 'N/A'}</span>
+                <div class="result-card" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" tabindex="0" role="button" aria-haspopup="dialog">
+                    ${favoriteBtnHTML}
+                    ${compareCheckboxHTML}
+                    <div class="card-thumbnail"><img src="${firstImageSrc}" alt="Referencia ${primaryRefForData}" class="result-image" loading="lazy"></div>
+                    <div class="card-content-wrapper">
+                        <div class="card-details">
+                            <div class="card-ref-container">${refsHTML}</div>
+                            ${posBadge}
                         </div>
-                        <div class="clean-spec">
-                            <span class="label">Ancho</span>
-                            <span class="value">${item.ancho || '-'} mm</span>
-                        </div>
+                        ${appSummaryHTML}
                     </div>
-
-                    <div class="clean-actions">
-                        <button class="clean-fav-btn ${isFavorite ? 'active' : ''}"
-                                aria-label="${isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}"
-                                aria-pressed="${isFavorite}">
-                            <svg viewBox="0 0 24 24" class="heart-icon">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                            </svg>
-                        </button>
-                        <button class="clean-details-btn">
-                            Ver Detalles
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
+                </div>`;
         }).join('');
-
-        els.results.innerHTML = cardsHTML;
-
-        // Re-attach event listeners
-        els.results.querySelectorAll('.clean-fav-btn').forEach(btn => {
+        els.results.querySelectorAll('.favorite-btn').forEach(btn => {
             btn.addEventListener('click', toggleFavorite);
         });
+        els.results.querySelectorAll('.compare-checkbox-btn').forEach(btn => {
+            btn.addEventListener('click', toggleComparisonSelection);
+        });
+        setupPagination(totalResults);
+        updateComparisonCounter(); // Update counter on page render
+    };
 
-        // Add listener for card click
-        els.results.querySelectorAll('.clean-card').forEach(card => {
-            card.addEventListener('click', handleCardClick);
+    function renderSearchHistory() {
+        if (!els.searchHistoryContainer) return;
+
+        const history = getSearchHistory();
+        const historyCount = history.length;
+
+        // Update counter badge and button visibility
+        const counterEl = document.getElementById('historyCount');
+        const historyBtn = els.historialBtn;
+
+        if (counterEl && historyBtn) {
+            counterEl.textContent = historyCount;
+
+            if (historyCount > 0) {
+                // Show button and badge
+                historyBtn.style.display = 'flex';
+                counterEl.style.display = 'inline-flex';
+
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    historyBtn.style.opacity = '1';
+                    historyBtn.style.transform = 'scale(1)';
+                });
+            } else {
+                // Hide button
+                historyBtn.style.opacity = '0';
+                historyBtn.style.transform = 'scale(0.95)';
+
+                // After animation, hide completely
+                setTimeout(() => {
+                    const currentHistory = getSearchHistory();
+                    if (currentHistory.length === 0) {
+                        historyBtn.style.display = 'none';
+                        counterEl.style.display = 'none';
+                    }
+                }, 250);
+            }
+        }
+
+        if (history.length === 0) {
+            els.searchHistoryContainer.innerHTML = '<p style="text-align:center; padding: 20px; opacity: 0.6; font-size: 0.9rem;">No hay búsquedas recientes</p>';
+            return;
+        }
+
+        let html = '';
+        history.forEach((query, index) => {
+            html += `
+                <div class="history-item" data-query="${query}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 11 12 14 22 4"></polyline>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span class="history-query">${query}</span>
+                    <button class="history-remove-btn" data-index="${index}" aria-label="Eliminar de historial">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        });
+        els.searchHistoryContainer.innerHTML = html;
+
+        // Click en ítem del historial
+        els.searchHistoryContainer.querySelectorAll('.history-item .history-query').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const query = e.target.closest('.history-item').dataset.query;
+                els.busqueda.value = query;
+                els.historialBtn.click(); // Cerrar historial
+                filterData();
+            });
         });
 
-        setupPagination(totalResults);
-    };
+        // Botones de eliminar
+        els.searchHistoryContainer.querySelectorAll('.history-remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(btn.dataset.index);
+                removeFromSearchHistory(index);
+                renderSearchHistory();
+            });
+        });
+    }
+
 
     function renderDynamicBrandTags(data, isFiltered) {
         if (!els.brandTagsContainer) return;
@@ -769,6 +1293,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 updateScrollIndicator();
                 els.modalDetailsContent.addEventListener('scroll', updateScrollIndicator);
+
+                // Setup gesture support for carousel
+                setupCarouselGestures(els.modalCarousel);
             }, 100);
         });
     }
@@ -786,6 +1313,81 @@ document.addEventListener('DOMContentLoaded', () => {
         track.style.transform = `translateX(-${newIndex * 100}%)`;
         track.dataset.currentIndex = newIndex;
         if (counter) counter.textContent = `${newIndex + 1}/${totalImages}`;
+    }
+
+    // === Touch Gesture Support for Carousel ===
+    function setupCarouselGestures(carouselContainer) {
+        const track = carouselContainer.querySelector('.image-track');
+        if (!track) return;
+
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        let startTransform = 0;
+
+        const handleTouchStart = (e) => {
+            if (e.touches.length !== 1) return;
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            currentX = startX;
+
+            // Get current transform value
+            const currentIndex = parseInt(track.dataset.currentIndex) || 0;
+            startTransform = -currentIndex * 100;
+
+            track.style.transition = 'none';
+            carouselContainer.style.cursor = 'grabbing';
+        };
+
+        const handleTouchMove = (e) => {
+            if (!isDragging) return;
+            e.preventDefault(); // Prevent scroll while swiping
+
+            currentX = e.touches[0].clientX;
+            const deltaX = currentX - startX;
+            const percentMove = (deltaX / carouselContainer.offsetWidth) * 100;
+
+            track.style.transform = `translateX(${startTransform + percentMove}%)`;
+        };
+
+        const handleTouchEnd = (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            track.style.transition = '';
+            carouselContainer.style.cursor = '';
+
+            const deltaX = currentX - startX;
+            const threshold = carouselContainer.offsetWidth * 0.25; // 25% threshold
+
+            if (Math.abs(deltaX) > threshold) {
+                // Swipe detected
+                const direction = deltaX > 0 ? -1 : 1;
+                navigateCarousel(carouselContainer, direction);
+            } else {
+                // Return to current position
+                const currentIndex = parseInt(track.dataset.currentIndex) || 0;
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+        };
+
+        // Touch events
+        carouselContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+        carouselContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+        carouselContainer.addEventListener('touchend', handleTouchEnd);
+        carouselContainer.addEventListener('touchcancel', handleTouchEnd);
+
+        // Mouse events for desktop drag (optional)
+        carouselContainer.addEventListener('mousedown', (e) => {
+            handleTouchStart({ touches: [{ clientX: e.clientX }] });
+        });
+        carouselContainer.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                handleTouchMove({ touches: [{ clientX: e.clientX }], preventDefault: () => { } });
+            }
+        });
+        carouselContainer.addEventListener('mouseup', handleTouchEnd);
+        carouselContainer.addEventListener('mouseleave', handleTouchEnd);
     }
 
     function closeModal() {
@@ -874,6 +1476,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const clearAllFilters = () => {
+        // Trigger animation
+        if (els.clearBtn) {
+            els.clearBtn.classList.add('animating');
+            setTimeout(() => {
+                els.clearBtn.classList.remove('animating');
+            }, 800); // Duration of animation
+        }
+
         [els.busqueda, els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input => input.value = '');
         els.posDel.classList.remove('active');
         els.posTras.classList.remove('active');
@@ -1038,17 +1648,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Prioritiza cerrar la capa superior primero.
                 // Usamos "else if" para que solo cierre una cosa a la vez.
 
-                if (els.sideMenu.classList.contains('open')) {
+                if (els.comparisonModal && els.comparisonModal.style.display === 'flex') {
+                    closeComparisonModal();
+                } else if (els.sideMenu.classList.contains('open')) {
                     closeSideMenu();
                 } else if (els.guideModal.style.display === 'flex') {
                     closeGuideModal();
                 } else if (els.modal.style.display === 'flex') {
-                    // Esta es la línea que faltaba
                     closeModal();
                 }
             }
         });
         // --- FIN: CORRECCIÓN BUG ESCAPE ---
+
+        // --- COMPARISON FEATURE: Event Listeners ---
+        if (els.compareBtn) {
+            els.compareBtn.addEventListener('click', () => {
+                if (appState.comparisonSelection.size > 0) {
+                    openComparisonModal();
+                } else {
+                    // Optional: Show a message if no items selected
+                    console.log('No hay referencias seleccionadas para comparar');
+                }
+            });
+        }
+
+        if (els.comparisonCloseBtn) {
+            els.comparisonCloseBtn.addEventListener('click', closeComparisonModal);
+        }
+
+        if (els.comparisonModal) {
+            els.comparisonModal.addEventListener('click', (e) => {
+                if (e.target === els.comparisonModal) {
+                    closeComparisonModal();
+                }
+            });
+        }
+
+        if (els.clearComparisonBtn) {
+            els.clearComparisonBtn.addEventListener('click', () => {
+                clearComparisonSelection();
+            });
+        }
+        // --- END COMPARISON FEATURE EVENT LISTENERS ---
+
 
         // Clic en Tarjetas
         els.results.addEventListener('click', handleCardClick);
@@ -1087,16 +1730,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         els.clearBtn.addEventListener('click', () => {
             if (els.clearBtn.disabled) return;
+
+            // Agregar clase animating que dispara todas las animaciones CSS
+            els.clearBtn.classList.add('animating');
             els.clearBtn.disabled = true;
-            const trashLid = els.clearBtn.querySelector('.trash-lid');
-            const trashBody = els.clearBtn.querySelector('.trash-body');
-            if (trashLid) trashLid.classList.add('animate-lid');
-            if (trashBody) trashBody.classList.add('animate-body');
+
+            // Crear sparkles effect
             createSparks(els.clearBtn);
+
+            // Limpiar filtros
             clearAllFilters();
+
+            // Remover clase y habilitar botón después de la animación
             setTimeout(() => {
-                if (trashLid) trashLid.classList.remove('animate-lid');
-                if (trashBody) trashBody.classList.remove('animate-body');
+                els.clearBtn.classList.remove('animating');
                 els.clearBtn.disabled = false;
             }, 900);
         });
