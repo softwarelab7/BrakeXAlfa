@@ -1,74 +1,31 @@
-// ================================================
-// BRAKE X - Main Application Script
-// ================================================
-
-/**
- * Application Configuration
- * @const {Object} CONFIG
- */
-const CONFIG = {
-    // Pagination
-    ITEMS_PER_PAGE: 24,
-    MAX_HISTORY: 5,
-
-    // Performance
-    DEBOUNCE_DELAY: 400, // Increased from 300ms for better performance
-    TOLERANCE: 1.0,
-    LAZY_LOAD_ROOT_MARGIN: '50px',
-    ENABLE_SEARCH_CACHE: true,
-    CACHE_MAX_SIZE: 50,
-
-    // Firebase Configuration
-    // ⚠️ SECURITY NOTE: API keys in client-side code are normal for Firebase
-    // but you should implement:
-    // 1. Firebase App Check to prevent API abuse
-    // 2. Firestore Security Rules to protect data
-    // 3. Consider Cloud Functions for sensitive operations
-    FIREBASE: {
+document.addEventListener('DOMContentLoaded', () => {
+    // === Configuración de Firebase ===
+    const firebaseConfig = {
         apiKey: "AIzaSyCha4S_wLxI_CZY1Tc9FOJNA3cUTggISpU",
         authDomain: "brakexadmin.firebaseapp.com",
         projectId: "brakexadmin",
         storageBucket: "brakexadmin.firebasestorage.app",
         messagingSenderId: "799264562947",
         appId: "1:799264562947:web:52d860ae41a5c4b8f75336"
-    }
-};
-
-// ================================================
-// Application Initialization
-// ================================================
-document.addEventListener('DOMContentLoaded', () => {
-    // === Firebase Initialization ===
-    firebase.initializeApp(CONFIG.FIREBASE);
+    };
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ================================================
-    // Application State Management
-
-    /**
-     * Application State Manager
-     * Manages global app state including data, filters, pagination, and favorites
-     * @class AppState
-     */
+    // === INICIO: MEJORA #4 (AppState Class) ===
+    // === Estado de la aplicación ===
     class AppState {
         constructor() {
             this.data = [];
             this.filtered = [];
             this.currentPage = 1;
-            this._favorites = new Set();
+            this._favorites = new Set(); // Renombrado a "privado"
             this.isFavoritesMode = false;
             this.activeManufacturer = null;
-            this._comparisonSelection = new Set();
-            this.MAX_COMPARISON = 3;
 
-            this._loadFavorites();
-            this._loadComparisonSelection();
+            this._loadFavorites(); // Carga los favoritos automáticamente al iniciar
         }
 
-        /**
-         * Load favorites from localStorage
-         * @private
-         */
+        // Carga los favoritos desde localStorage
         _loadFavorites() {
             try {
                 const favs = localStorage.getItem('brakeXFavorites');
@@ -76,200 +33,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     this._favorites = new Set(JSON.parse(favs).map(Number));
                 }
             } catch (e) {
-                console.error("Error al cargar favoritos:", e);
+                console.error("Error al cargar favoritos:", e); // Error no crítico, solo log
                 this._favorites = new Set();
             }
         }
 
-        /**
-         * Save favorites to localStorage
-         * @private
-         */
+        // Guarda los favoritos en localStorage
         _saveFavorites() {
             try {
                 localStorage.setItem('brakeXFavorites', JSON.stringify([...this._favorites]));
             } catch (e) {
-                console.error("Error al guardar favoritos:", e);
+                console.error("Error al guardar favoritos:", e); // Error no crítico, solo log
             }
         }
 
-        /**
-         * Toggle favorite status for an item
-         * @param {number} itemId - Item ID to toggle
-         */
+        // Método público para alternar un favorito
         toggleFavorite(itemId) {
             if (this._favorites.has(itemId)) {
                 this._favorites.delete(itemId);
             } else {
                 this._favorites.add(itemId);
             }
-            this._saveFavorites();
+            this._saveFavorites(); // Guarda automáticamente al cambiar
         }
-
-        /**
-         * Check if item is favorited
-         * @param {number} itemId - Item ID to check
-         * @returns {boolean}
-         */
+        
+        // Método público para verificar si es favorito
         isFavorite(itemId) {
             return this._favorites.has(itemId);
         }
-
-        /**
-         * Get all favorites
-         * @returns {Set<number>}
-         */
+        
+        // Getter para acceder a los favoritos
         get favorites() {
             return this._favorites;
-        }
-
-        /**
-         * Load comparison selection from sessionStorage
-         * @private
-         */
-        _loadComparisonSelection() {
-            try {
-                const selection = sessionStorage.getItem('brakeXComparison');
-                if (selection) {
-                    this._comparisonSelection = new Set(JSON.parse(selection).map(Number));
-                }
-            } catch (e) {
-                console.error("Error al cargar selección de comparación:", e);
-                this._comparisonSelection = new Set();
-            }
-        }
-
-        /**
-         * Save comparison selection to sessionStorage
-         * @private
-         */
-        _saveComparisonSelection() {
-            try {
-                sessionStorage.setItem('brakeXComparison', JSON.stringify([...this._comparisonSelection]));
-            } catch (e) {
-                console.error("Error al guardar selección de comparación:", e);
-            }
-        }
-
-        /**
-         * Toggle comparison selection for an item
-         * @param {number} itemId - Item ID to toggle
-         * @returns {boolean} - true if added, false if removed or at limit
-         */
-        toggleComparison(itemId) {
-            if (this._comparisonSelection.has(itemId)) {
-                this._comparisonSelection.delete(itemId);
-                this._saveComparisonSelection();
-                return false;
-            } else if (this._comparisonSelection.size < this.MAX_COMPARISON) {
-                this._comparisonSelection.add(itemId);
-                this._saveComparisonSelection();
-                return true;
-            }
-            return false; // At limit
-        }
-
-        /**
-         * Check if item is in comparison
-         * @param {number} itemId
-         * @returns {boolean}
-         */
-        isInComparison(itemId) {
-            return this._comparisonSelection.has(itemId);
-        }
-
-        /**
-         * Get all comparison selections
-         * @returns {Set<number>}
-         */
-        get comparisonSelection() {
-            return this._comparisonSelection;
-        }
-
-        /**
-         * Clear all comparison selections
-         */
-        clearComparison() {
-            this._comparisonSelection.clear();
-            this._saveComparisonSelection();
-        }
-
-        /**
-         * Get comparison items data
-         * @returns {Array}
-         */
-        getComparisonItems() {
-            return this.data.filter(item => this._comparisonSelection.has(item._appId));
-        }
-    }
-
-    /**
-     * Search Cache for Memoization
-     * Caches filter results to improve performance on repeated searches
-     * @class SearchCache
-     */
-    class SearchCache {
-        constructor(maxSize = 50) {
-            this.cache = new Map();
-            this.maxSize = maxSize;
-            this.hits = 0;
-            this.misses = 0;
-        }
-
-        generateKey(filters) {
-            return JSON.stringify(filters);
-        }
-
-        get(filters) {
-            const key = this.generateKey(filters);
-            if (this.cache.has(key)) {
-                this.hits++;
-                // Move to end for LRU
-                const value = this.cache.get(key);
-                this.cache.delete(key);
-                this.cache.set(key, value);
-                return value;
-            }
-            this.misses++;
-            return null;
-        }
-
-        set(filters, results) {
-            const key = this.generateKey(filters);
-
-            // LRU eviction - remove oldest (first) entry
-            if (this.cache.size >= this.maxSize) {
-                const firstKey = this.cache.keys().next().value;
-                this.cache.delete(firstKey);
-            }
-
-            this.cache.set(key, results);
-        }
-
-        clear() {
-            this.cache.clear();
-            this.hits = 0;
-            this.misses = 0;
-        }
-
-        getStats() {
-            const total = this.hits + this.misses;
-            return {
-                size: this.cache.size,
-                hits: this.hits,
-                misses: this.misses,
-                hitRate: total > 0 ? (this.hits / total * 100).toFixed(2) + '%' : '0%'
-            };
         }
     }
 
     // Instanciar el estado global de la app
     const appState = new AppState();
-    const searchCache = new SearchCache(CONFIG.CACHE_MAX_SIZE);
+    // === FIN: MEJORA #4 ===
 
-    // Make searchCache available globally for debugging
-    window.searchCache = searchCache;
-
+    const itemsPerPage = 24;
+    const MAX_HISTORY = 5;
+    
     // --- CORRECCIÓN: Movido al ámbito global ---
     let lastFocusedElement = null;
 
@@ -327,14 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         historialBtn: document.getElementById('historialBtn'),
         searchHistoryContainer: document.getElementById('searchHistoryContainer'),
         searchHistoryCard: document.getElementById('searchHistoryCard'),
-        manufacturerTagsContainer: document.getElementById('manufacturer-tags-container'),
-        compareBtn: document.getElementById('compareBtn'),
-        compareCount: document.getElementById('compareCount'),
-        comparisonModal: document.getElementById('comparison-modal'),
-        comparisonModalContent: document.querySelector('#comparison-modal .comparison-modal-content'),
-        comparisonCloseBtn: document.getElementById('comparisonCloseBtn'),
-        comparisonTableWrapper: document.getElementById('comparisonTableWrapper'),
-        clearComparisonBtn: document.getElementById('clearComparisonBtn')
+        manufacturerTagsContainer: document.getElementById('manufacturer-tags-container')
     };
 
     // === Gestión del historial de búsqueda ===
@@ -344,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Prevenir duplicados (ignorando mayúsculas/minúsculas)
         history = history.filter(q => q.toLowerCase() !== query.toLowerCase());
         history.unshift(query);
-        history = history.slice(0, CONFIG.MAX_HISTORY);
+        history = history.slice(0, MAX_HISTORY);
         localStorage.setItem('brakeXSearchHistory', JSON.stringify(history));
         renderSearchHistory();
     }
@@ -357,20 +155,17 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSearchHistory();
     }
 
-    function getSearchHistory() {
-        return JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
+    function renderSearchHistory() {
+        const history = JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
+        const container = els.searchHistoryContainer;
+        if (!container) return;
+        container.innerHTML = history.map(q =>
+            `<button class="search-history-item" data-query="${q}">
+                ${q}
+                <span class="delete-history-item" data-query-delete="${q}" role="button" aria-label="Eliminar ${q}">&times;</span>
+            </button>`
+        ).join('');
     }
-
-    function removeFromSearchHistory(index) {
-        let history = getSearchHistory();
-        if (index >= 0 && index < history.length) {
-            history.splice(index, 1);
-            localStorage.setItem('brakeXSearchHistory', JSON.stringify(history));
-            renderSearchHistory();
-        }
-    }
-
-    // renderSearchHistory moved to line ~1011 with counter management
 
     // === Gestión de favoritos ===
     // REFACTORIZADO (MEJORA #4)
@@ -390,48 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
         button.classList.toggle('active', isNowFavorite);
         button.setAttribute('aria-pressed', isNowFavorite);
 
-        // 3. Actualiza el contador de favoritos
-        updateFavoritesCounter();
-
-        // 4. Refiltra si estamos en modo favoritos
+        // 3. Refiltra si estamos en modo favoritos
         if (appState.isFavoritesMode) filterData();
-    };
-
-    /**
-     * Update favorites counter badge
-     */
-    const updateFavoritesCounter = () => {
-        const favCount = appState.favorites.size;
-        const counterEl = document.getElementById('favoritesCount');
-        const favBtn = els.filtroFavoritosBtn;
-
-        if (counterEl && favBtn) {
-            counterEl.textContent = favCount;
-
-            if (favCount > 0) {
-                // Show button and badge
-                favBtn.style.display = 'flex';
-                counterEl.style.display = 'inline-flex';
-
-                // Trigger animation
-                requestAnimationFrame(() => {
-                    favBtn.style.opacity = '1';
-                    favBtn.style.transform = 'scale(1)';
-                });
-            } else {
-                // Hide button
-                favBtn.style.opacity = '0';
-                favBtn.style.transform = 'scale(0.95)';
-
-                // After animation, hide completely
-                setTimeout(() => {
-                    if (appState.favorites.size === 0) {
-                        favBtn.style.display = 'none';
-                        counterEl.style.display = 'none';
-                    }
-                }, 250);
-            }
-        }
     };
 
     // === Utilidades ===
@@ -443,31 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    // --- FUNCIÓN DE AYUDA (MEJORA #8) CON CACHÉ ---
-    const normalizeTextCache = new Map();
-    const MAX_NORMALIZE_CACHE = 1000;
-
-    const normalizeText = (text = '') => {
-        const textStr = String(text);
-
-        // Check cache first
-        if (normalizeTextCache.has(textStr)) {
-            return normalizeTextCache.get(textStr);
-        }
-
-        // Normalize text
-        const normalized = textStr.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-        // LRU eviction for cache
-        if (normalizeTextCache.size >= MAX_NORMALIZE_CACHE) {
-            const firstKey = normalizeTextCache.keys().next().value;
-            normalizeTextCache.delete(firstKey);
-        }
-
-        // Store in cache
-        normalizeTextCache.set(textStr, normalized);
-        return normalized;
-    };
+    // --- FUNCIÓN DE AYUDA (MEJORA #8) ---
+    const normalizeText = (text = '') => 
+        String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     // --- FIN FUNCIÓN ---
 
     // --- INICIO: MEJORA #5 (MANEJO DE ERRORES) ---
@@ -496,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'a[href], button:not([disabled]), textarea, input, select'
         );
         if (focusableElements.length === 0) return; // No hay nada enfocable
-
+        
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -527,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INICIO: MEJORA #3 (BADGES) ---
     const BADGE_CONFIG = {
-        'K': { class: 'ref-k', test: (ref) => ref.startsWith('K') },
+        'K':   { class: 'ref-k',   test: (ref) => ref.startsWith('K') },
         'INC': { class: 'ref-inc', test: (ref) => ref.endsWith('INC') },
-        'BP': { class: 'ref-bp', test: (ref) => ref.endsWith('BP') },
+        'BP':  { class: 'ref-bp',  test: (ref) => ref.endsWith('BP') },
         'BEX': { class: 'ref-bex', test: (ref) => ref.endsWith('BEX') },
     };
     const getRefBadgeClass = (ref) => {
@@ -574,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ancho: parseFloat(els.medidasAncho.value) || null,
             alto: parseFloat(els.medidasAlto.value) || null,
             pos: activePos,
-            manufacturer: appState.activeManufacturer,
+            manufacturer: appState.activeManufacturer, 
             favorites: appState.isFavoritesMode
         };
     };
@@ -601,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         marca: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.marca).includes(value)),
         modelo: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.serie).includes(value)),
         anio: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.año).includes(value)),
-
+        
         // Filtros de Referencia (Mejora #8 aplicada)
         oem: (item, value) => (item.oem || []).some(o => normalizeText(o).includes(value)),
         fmsi: (item, value) => (item.fmsi || []).some(f => normalizeText(f).includes(value)),
@@ -640,15 +373,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!appState.data.length) return;
 
         const filters = getActiveFilters();
-
+        
         // Guardar en historial SÓLO SI hay un término de búsqueda (Mejora de Historial)
         if (filters.busqueda) {
             addToSearchHistory(els.busqueda.value.trim()); // Usamos el valor original sin normalizar
         }
 
-        const isFiltered = Object.values(filters).some(v =>
-            v !== null && v !== false &&
-            (!Array.isArray(v) || v.length > 0) &&
+        const isFiltered = Object.values(filters).some(v => 
+            v !== null && v !== false && 
+            (!Array.isArray(v) || v.length > 0) && 
             (typeof v !== 'string' || v.trim() !== '')
         );
 
@@ -731,248 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return specsHTML;
     };
 
-    // ================================================
-    // COMPARISON FEATURE FUNCTIONS
-    // ================================================
-
-    /**
-     * Update comparison counter badge
-     */
-    const updateComparisonCounter = () => {
-        const count = appState.comparisonSelection.size;
-        const counterEl = els.compareCount;
-        const compareBtn = els.compareBtn;
-
-        if (counterEl && compareBtn) {
-            counterEl.textContent = count;
-
-            if (count > 0) {
-                // Show button and badge
-                compareBtn.style.display = 'flex';
-                counterEl.style.display = 'inline-flex';
-                compareBtn.classList.add('has-selection');
-
-                // Trigger animation
-                requestAnimationFrame(() => {
-                    compareBtn.style.opacity = '1';
-                    compareBtn.style.transform = 'scale(1)';
-                });
-            } else {
-                // Hide button
-                compareBtn.classList.remove('has-selection');
-                compareBtn.style.opacity = '0';
-                compareBtn.style.transform = 'scale(0.95)';
-
-                // After animation, hide completely
-                setTimeout(() => {
-                    if (appState.comparisonSelection.size === 0) {
-                        compareBtn.style.display = 'none';
-                        counterEl.style.display = 'none';
-                    }
-                }, 250);
-            }
-        }
-    };
-
-    /**
-     * Toggle comparison selection for a card
-     */
-    const toggleComparisonSelection = (e) => {
-        e.stopPropagation();
-        const button = e.currentTarget;
-        const card = button.closest('.result-card');
-        if (!card) return;
-        const itemId = parseInt(card.dataset.id);
-        if (isNaN(itemId)) return;
-
-        const wasAdded = appState.toggleComparison(itemId);
-
-        // Update button state
-        const isNowSelected = appState.isInComparison(itemId);
-        button.classList.toggle('selected', isNowSelected);
-        button.setAttribute('aria-pressed', isNowSelected);
-
-        // Show feedback if at limit
-        if (!wasAdded && !isNowSelected && appState.comparisonSelection.size >= appState.MAX_COMPARISON) {
-            // Visual feedback: shake animation or notification
-            button.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                button.style.transform = '';
-            }, 200);
-        }
-
-        // Update counter
-        updateComparisonCounter();
-    };
-
-    /**
-     * Render comparison table
-     */
-    const renderComparisonTable = (items) => {
-        if (!items || items.length === 0) {
-            els.comparisonTableWrapper.innerHTML = `
-                <div class="comparison-empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <p>No hay referencias seleccionadas</p>
-                    <span>Selecciona hasta 3 referencias desde los resultados para compararlas</span>
-                </div>
-            `;
-            return;
-        }
-
-        // Build table headers
-        let tableHTML = '<table class="comparison-table"><thead><tr>';
-        tableHTML += '<th>Campo</th>';
-        items.forEach((item, index) => {
-            const primaryRef = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : `Ref ${index + 1}`;
-            tableHTML += `<th>${primaryRef} <button class="comparison-remove-btn" data-remove-id="${item._appId}" aria-label="Quitar de la comparación">×</button></th>`;
-        });
-        tableHTML += '</tr></thead><tbody>';
-
-        // Row: Referencias
-        tableHTML += '<tr><td data-label="Campo">Referencias</td>';
-        items.forEach(item => {
-            const refsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
-                ? item.ref.flatMap(ref => String(ref).split(' '))
-                    .map(part => `<span class="ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
-                    .join('')
-                : '<span class="ref-badge ref-badge-na">N/A</span>';
-            tableHTML += `<td data-label="Referencias"><div class="comparison-cell-refs">${refsHTML}</div></td>`;
-        });
-        tableHTML += '</tr>';
-
-        // Row: Posición
-        tableHTML += '<tr><td data-label="Campo">Posición</td>';
-        items.forEach(item => {
-            const posBadgeClass = item.posición === 'Delantera' ? 'delantera' : 'trasera';
-            tableHTML += `<td data-label="Posición"><div class="comparison-cell-position"><span class="position-badge ${posBadgeClass}">${item.posición}</span></div></td>`;
-        });
-        tableHTML += '</tr>';
-
-        // Row: Medidas
-        tableHTML += '<tr><td data-label="Campo">Medidas (mm)</td>';
-        items.forEach(item => {
-            let medidasText = 'N/A';
-            if (Array.isArray(item.medidas) && item.medidas.length > 0) {
-                medidasText = item.medidas.map(m => {
-                    const parts = String(m).split(/x/i).map(s => s.trim());
-                    return `${parts[0] || 'N/A'} x ${parts[1] || 'N/A'}`;
-                }).join('<br>');
-            } else if (item.anchoNum || item.altoNum) {
-                medidasText = `${item.anchoNum || 'N/A'} x ${item.altoNum || 'N/A'}`;
-            }
-            tableHTML += `<td data-label="Medidas">${medidasText}</td>`;
-        });
-        tableHTML += '</tr>';
-
-        // Row: OEM
-        tableHTML += '<tr><td data-label="Campo">OEM</td>';
-        items.forEach(item => {
-            const oemText = (Array.isArray(item.oem) && item.oem.length > 0) ? item.oem.join(', ') : 'N/A';
-            tableHTML += `<td data-label="OEM">${oemText}</td>`;
-        });
-        tableHTML += '</tr>';
-
-        // Row: FMSI
-        tableHTML += '<tr><td data-label="Campo">Platina FMSI</td>';
-        items.forEach(item => {
-            const fmsiText = (Array.isArray(item.fmsi) && item.fmsi.length > 0) ? item.fmsi.join(', ') : 'N/A';
-            tableHTML += `<td data-label="FMSI">${fmsiText}</td>`;
-        });
-        tableHTML += '</tr>';
-
-        // Row: Imagen
-        tableHTML += '<tr><td data-label="Campo">Imagen</td>';
-        items.forEach(item => {
-            let imageSrc = 'https://via.placeholder.com/150x100.png?text=No+Img';
-            if (item.imagenes && item.imagenes.length > 0) {
-                imageSrc = item.imagenes[0];
-            } else if (item.imagen) {
-                imageSrc = item.imagen.replace("text=", `text=Vista+1+`);
-            }
-            tableHTML += `<td data-label="Imagen"><div class="comparison-cell-image"><img src="${imageSrc}" alt="Imagen de referencia" loading="lazy"></div></td>`;
-        });
-        tableHTML += '</tr>';
-
-        // Row: Aplicaciones (primeras 5)
-        tableHTML += '<tr><td data-label="Campo">Aplicaciones</td>';
-        items.forEach(item => {
-            const apps = Array.isArray(item.aplicaciones) ? item.aplicaciones.slice(0, 5) : [];
-            const appsHTML = apps.length > 0
-                ? apps.map(app => `<div class="comparison-app-item">${app.marca} ${app.serie} ${app.año || ''}</div>`).join('')
-                : '<div class="comparison-app-item">N/A</div>';
-            const moreText = (item.aplicaciones && item.aplicaciones.length > 5) ? `<div style="margin-top:4px;font-size:0.75rem;opacity:0.7;">+${item.aplicaciones.length - 5} más</div>` : '';
-            tableHTML += `<td data-label="Aplicaciones"><div class="comparison-cell-apps">${appsHTML}${moreText}</div></td>`;
-        });
-        tableHTML += '</tr>';
-
-        tableHTML += '</tbody></table>';
-        els.comparisonTableWrapper.innerHTML = tableHTML;
-
-        // Add remove button listeners
-        els.comparisonTableWrapper.querySelectorAll('.comparison-remove-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const itemId = parseInt(btn.dataset.removeId);
-                appState.toggleComparison(itemId);
-                updateComparisonCounter();
-                openComparisonModal(); // Re-render
-                renderCurrentPage(); // Update cards
-            });
-        });
-    };
-
-    /**
-     * Open comparison modal
-     */
-    const openComparisonModal = () => {
-        const items = appState.getComparisonItems();
-        renderComparisonTable(items);
-
-        els.comparisonModalContent.classList.remove('closing');
-        els.comparisonModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-
-        // Focus trap
-        lastFocusedElement = document.activeElement;
-        els.comparisonModal.addEventListener('keydown', handleFocusTrap);
-        els.comparisonCloseBtn.focus();
-    };
-
-    /**
-     * Close comparison modal
-     */
-    const closeComparisonModal = () => {
-        els.comparisonModalContent.classList.add('closing');
-        setTimeout(() => {
-            els.comparisonModal.style.display = 'none';
-            document.body.style.overflow = '';
-            if (lastFocusedElement) lastFocusedElement.focus();
-            els.comparisonModal.removeEventListener('keydown', handleFocusTrap);
-        }, 300);
-    };
-
-    /**
-     * Clear all comparison selections
-     */
-    const clearComparisonSelection = () => {
-        appState.clearComparison();
-        updateComparisonCounter();
-        renderCurrentPage(); // Update card states
-        renderComparisonTable([]); // Clear table
-    };
-
-    // ================================================
-    // END COMPARISON FEATURE
-    // ================================================
-
     const showSkeletonLoader = (count = 6) => {
-
         let skeletonHTML = '';
         for (let i = 0; i < count; i++) {
             skeletonHTML += `<div class="skeleton-card"><div class="skeleton-line long"></div><div class="skeleton-line short"></div><div class="skeleton-box"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>`;
@@ -983,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupPagination(totalItems) {
         els.paginationContainer.innerHTML = '';
-        const totalPages = Math.ceil(totalItems / CONFIG.ITEMS_PER_PAGE);
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) return;
         let paginationHTML = '';
         paginationHTML += `<button class="page-btn" data-page="${appState.currentPage - 1}" ${appState.currentPage === 1 ? 'disabled' : ''}>Anterior</button>`;
@@ -1020,8 +512,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderCurrentPage = () => {
         const totalResults = appState.filtered.length;
-        const startIndex = (appState.currentPage - 1) * CONFIG.ITEMS_PER_PAGE;
-        const endIndex = startIndex + CONFIG.ITEMS_PER_PAGE;
+        const startIndex = (appState.currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
         const paginatedData = appState.filtered.slice(startIndex, endIndex);
         const startNum = totalResults === 0 ? 0 : startIndex + 1;
         const endNum = Math.min(endIndex, totalResults);
@@ -1053,10 +545,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `<div class="card-app-summary">${appSummaryItems.join(', ')}${safeAplicaciones.length > 3 ? ', ...' : ''}</div>`
                 : '';
             const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
-
+            
             // REFACTORIZADO (MEJORA #4)
             const isFavorite = appState.isFavorite(item._appId);
-
+            
             const favoriteBtnHTML = `
                 <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito" aria-pressed="${isFavorite}">
                     <svg class="heart-icon" viewBox="0 0 24 24">
@@ -1064,21 +556,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </svg>
                 </button>
             `;
-
-            // COMPARISON FEATURE: Add comparison checkbox
-            const isInComparison = appState.isInComparison(item._appId);
-            const compareCheckboxHTML = `
-                <button class="compare-checkbox-btn ${isInComparison ? 'selected' : ''}" data-id="${item._appId}" aria-label="Agregar a comparación" aria-pressed="${isInComparison}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                </button>
-            `;
-
             return `
                 <div class="result-card" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" tabindex="0" role="button" aria-haspopup="dialog">
                     ${favoriteBtnHTML}
-                    ${compareCheckboxHTML}
                     <div class="card-thumbnail"><img src="${firstImageSrc}" alt="Referencia ${primaryRefForData}" class="result-image" loading="lazy"></div>
                     <div class="card-content-wrapper">
                         <div class="card-details">
@@ -1092,98 +572,8 @@ document.addEventListener('DOMContentLoaded', () => {
         els.results.querySelectorAll('.favorite-btn').forEach(btn => {
             btn.addEventListener('click', toggleFavorite);
         });
-        els.results.querySelectorAll('.compare-checkbox-btn').forEach(btn => {
-            btn.addEventListener('click', toggleComparisonSelection);
-        });
         setupPagination(totalResults);
-        updateComparisonCounter(); // Update counter on page render
     };
-
-    function renderSearchHistory() {
-        if (!els.searchHistoryContainer) return;
-
-        const history = getSearchHistory();
-        const historyCount = history.length;
-
-        // Update counter badge and button visibility
-        const counterEl = document.getElementById('historyCount');
-        const historyBtn = els.historialBtn;
-
-        if (counterEl && historyBtn) {
-            counterEl.textContent = historyCount;
-
-            if (historyCount > 0) {
-                // Show button and badge
-                historyBtn.style.display = 'flex';
-                counterEl.style.display = 'inline-flex';
-
-                // Trigger animation
-                requestAnimationFrame(() => {
-                    historyBtn.style.opacity = '1';
-                    historyBtn.style.transform = 'scale(1)';
-                });
-            } else {
-                // Hide button
-                historyBtn.style.opacity = '0';
-                historyBtn.style.transform = 'scale(0.95)';
-
-                // After animation, hide completely
-                setTimeout(() => {
-                    const currentHistory = getSearchHistory();
-                    if (currentHistory.length === 0) {
-                        historyBtn.style.display = 'none';
-                        counterEl.style.display = 'none';
-                    }
-                }, 250);
-            }
-        }
-
-        if (history.length === 0) {
-            els.searchHistoryContainer.innerHTML = '<p style="text-align:center; padding: 20px; opacity: 0.6; font-size: 0.9rem;">No hay búsquedas recientes</p>';
-            return;
-        }
-
-        let html = '';
-        history.forEach((query, index) => {
-            html += `
-                <div class="history-item" data-query="${query}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg>
-                    <span class="history-query">${query}</span>
-                    <button class="history-remove-btn" data-index="${index}" aria-label="Eliminar de historial">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-            `;
-        });
-        els.searchHistoryContainer.innerHTML = html;
-
-        // Click en ítem del historial
-        els.searchHistoryContainer.querySelectorAll('.history-item .history-query').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const query = e.target.closest('.history-item').dataset.query;
-                els.busqueda.value = query;
-                els.historialBtn.click(); // Cerrar historial
-                filterData();
-            });
-        });
-
-        // Botones de eliminar
-        els.searchHistoryContainer.querySelectorAll('.history-remove-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const index = parseInt(btn.dataset.index);
-                removeFromSearchHistory(index);
-                renderSearchHistory();
-            });
-        });
-    }
-
 
     function renderDynamicBrandTags(data, isFiltered) {
         if (!els.brandTagsContainer) return;
@@ -1204,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
             brandsToShow = shuffled.slice(0, 10);
         }
         const activeBrandFilter = els.marca.value.trim().toLowerCase();
-
+        
         // MODIFICADO: Eliminado el style="" y la lógica de colorVar
         els.brandTagsContainer.innerHTML = brandsToShow.map(brand => {
             const isActive = brand.toLowerCase() === activeBrandFilter;
@@ -1293,9 +683,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 updateScrollIndicator();
                 els.modalDetailsContent.addEventListener('scroll', updateScrollIndicator);
-
-                // Setup gesture support for carousel
-                setupCarouselGestures(els.modalCarousel);
             }, 100);
         });
     }
@@ -1313,81 +700,6 @@ document.addEventListener('DOMContentLoaded', () => {
         track.style.transform = `translateX(-${newIndex * 100}%)`;
         track.dataset.currentIndex = newIndex;
         if (counter) counter.textContent = `${newIndex + 1}/${totalImages}`;
-    }
-
-    // === Touch Gesture Support for Carousel ===
-    function setupCarouselGestures(carouselContainer) {
-        const track = carouselContainer.querySelector('.image-track');
-        if (!track) return;
-
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
-        let startTransform = 0;
-
-        const handleTouchStart = (e) => {
-            if (e.touches.length !== 1) return;
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            currentX = startX;
-
-            // Get current transform value
-            const currentIndex = parseInt(track.dataset.currentIndex) || 0;
-            startTransform = -currentIndex * 100;
-
-            track.style.transition = 'none';
-            carouselContainer.style.cursor = 'grabbing';
-        };
-
-        const handleTouchMove = (e) => {
-            if (!isDragging) return;
-            e.preventDefault(); // Prevent scroll while swiping
-
-            currentX = e.touches[0].clientX;
-            const deltaX = currentX - startX;
-            const percentMove = (deltaX / carouselContainer.offsetWidth) * 100;
-
-            track.style.transform = `translateX(${startTransform + percentMove}%)`;
-        };
-
-        const handleTouchEnd = (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-
-            track.style.transition = '';
-            carouselContainer.style.cursor = '';
-
-            const deltaX = currentX - startX;
-            const threshold = carouselContainer.offsetWidth * 0.25; // 25% threshold
-
-            if (Math.abs(deltaX) > threshold) {
-                // Swipe detected
-                const direction = deltaX > 0 ? -1 : 1;
-                navigateCarousel(carouselContainer, direction);
-            } else {
-                // Return to current position
-                const currentIndex = parseInt(track.dataset.currentIndex) || 0;
-                track.style.transform = `translateX(-${currentIndex * 100}%)`;
-            }
-        };
-
-        // Touch events
-        carouselContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
-        carouselContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-        carouselContainer.addEventListener('touchend', handleTouchEnd);
-        carouselContainer.addEventListener('touchcancel', handleTouchEnd);
-
-        // Mouse events for desktop drag (optional)
-        carouselContainer.addEventListener('mousedown', (e) => {
-            handleTouchStart({ touches: [{ clientX: e.clientX }] });
-        });
-        carouselContainer.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                handleTouchMove({ touches: [{ clientX: e.clientX }], preventDefault: () => { } });
-            }
-        });
-        carouselContainer.addEventListener('mouseup', handleTouchEnd);
-        carouselContainer.addEventListener('mouseleave', handleTouchEnd);
     }
 
     function closeModal() {
@@ -1442,7 +754,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === UI Interactions ===
     function openSideMenu() {
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        lastFocusedElement = document.activeElement;
+        lastFocusedElement = document.activeElement; 
         // --- FIN: MEJORA #7 ---
         els.sideMenu.classList.add('open');
         els.sideMenu.setAttribute('aria-hidden', 'false');
@@ -1462,12 +774,12 @@ document.addEventListener('DOMContentLoaded', () => {
         els.sideMenu.setAttribute('aria-hidden', 'true');
         els.sideMenuOverlay.classList.remove('visible');
         els.menuBtn.setAttribute('aria-expanded', 'false');
-
+        
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        if (lastFocusedElement) lastFocusedElement.focus();
+        if (lastFocusedElement) lastFocusedElement.focus(); 
         els.sideMenu.removeEventListener('keydown', handleFocusTrap);
         // --- FIN: MEJORA #7 ---
-
+        
         els.sideMenuOverlay.addEventListener('transitionend', () => {
             if (!els.sideMenuOverlay.classList.contains('visible')) {
                 els.sideMenuOverlay.style.display = 'none';
@@ -1476,14 +788,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const clearAllFilters = () => {
-        // Trigger animation
-        if (els.clearBtn) {
-            els.clearBtn.classList.add('animating');
-            setTimeout(() => {
-                els.clearBtn.classList.remove('animating');
-            }, 800); // Duration of animation
-        }
-
         [els.busqueda, els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input => input.value = '');
         els.posDel.classList.remove('active');
         els.posTras.classList.remove('active');
@@ -1559,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === Event Listeners ===
     function setupEventListeners() {
-
+        
         [els.darkBtn, els.upBtn, els.menuBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', createRippleEffect));
         // Temas
         const applyLightTheme = () => {
@@ -1619,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Botón Subir
         els.upBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
+        
         // --- INICIO: MEJORA #10 (SCROLL DEBOUNCE) ---
         // 1. Creamos la función que actualiza el botón
         const handleScroll = () => {
@@ -1641,71 +945,38 @@ document.addEventListener('DOMContentLoaded', () => {
             closeSideMenu();
             setTimeout(openGuideModal, 50);
         });
-
+        
         // --- INICIO: CORRECCIÓN BUG ESCAPE (keydown) ---
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 // Prioritiza cerrar la capa superior primero.
                 // Usamos "else if" para que solo cierre una cosa a la vez.
-
-                if (els.comparisonModal && els.comparisonModal.style.display === 'flex') {
-                    closeComparisonModal();
-                } else if (els.sideMenu.classList.contains('open')) {
+                
+                if (els.sideMenu.classList.contains('open')) {
                     closeSideMenu();
                 } else if (els.guideModal.style.display === 'flex') {
                     closeGuideModal();
                 } else if (els.modal.style.display === 'flex') {
+                    // Esta es la línea que faltaba
                     closeModal();
                 }
             }
         });
         // --- FIN: CORRECCIÓN BUG ESCAPE ---
 
-        // --- COMPARISON FEATURE: Event Listeners ---
-        if (els.compareBtn) {
-            els.compareBtn.addEventListener('click', () => {
-                if (appState.comparisonSelection.size > 0) {
-                    openComparisonModal();
-                } else {
-                    // Optional: Show a message if no items selected
-                    console.log('No hay referencias seleccionadas para comparar');
-                }
-            });
-        }
-
-        if (els.comparisonCloseBtn) {
-            els.comparisonCloseBtn.addEventListener('click', closeComparisonModal);
-        }
-
-        if (els.comparisonModal) {
-            els.comparisonModal.addEventListener('click', (e) => {
-                if (e.target === els.comparisonModal) {
-                    closeComparisonModal();
-                }
-            });
-        }
-
-        if (els.clearComparisonBtn) {
-            els.clearComparisonBtn.addEventListener('click', () => {
-                clearComparisonSelection();
-            });
-        }
-        // --- END COMPARISON FEATURE EVENT LISTENERS ---
-
-
         // Clic en Tarjetas
         els.results.addEventListener('click', handleCardClick);
-
+        
         // Filtros
         const debouncedFilter = debounce(filterData, 300);
-
+        
         els.filtroFavoritosBtn.addEventListener('click', () => {
             appState.isFavoritesMode = !appState.isFavoritesMode;
             els.filtroFavoritosBtn.classList.toggle('active', appState.isFavoritesMode);
             els.filtroFavoritosBtn.setAttribute('aria-pressed', appState.isFavoritesMode ? 'true' : 'false');
             filterData();
         });
-
+        
         els.historialBtn?.addEventListener('click', () => {
             const isActive = els.historialBtn.getAttribute('aria-pressed') === 'true';
             els.historialBtn.classList.toggle('active', !isActive);
@@ -1713,7 +984,7 @@ document.addEventListener('DOMContentLoaded', () => {
             els.searchHistoryCard.style.display = !isActive ? 'block' : 'none';
             if (!isActive) els.searchHistoryCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
-
+        
         els.busqueda.addEventListener('input', (e) => {
             els.searchContainer.classList.toggle('active', e.target.value.trim() !== '');
             debouncedFilter();
@@ -1722,32 +993,28 @@ document.addEventListener('DOMContentLoaded', () => {
         [els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input =>
             input.addEventListener('input', debouncedFilter)
         );
-
+        
         [els.posDel, els.posTras].forEach(btn => btn.addEventListener('click', () => {
             btn.classList.toggle('active');
             filterData();
         }));
-
+        
         els.clearBtn.addEventListener('click', () => {
             if (els.clearBtn.disabled) return;
-
-            // Agregar clase animating que dispara todas las animaciones CSS
-            els.clearBtn.classList.add('animating');
             els.clearBtn.disabled = true;
-
-            // Crear sparkles effect
+            const trashLid = els.clearBtn.querySelector('.trash-lid');
+            const trashBody = els.clearBtn.querySelector('.trash-body');
+            if (trashLid) trashLid.classList.add('animate-lid');
+            if (trashBody) trashBody.classList.add('animate-body');
             createSparks(els.clearBtn);
-
-            // Limpiar filtros
             clearAllFilters();
-
-            // Remover clase y habilitar botón después de la animación
             setTimeout(() => {
-                els.clearBtn.classList.remove('animating');
+                if (trashLid) trashLid.classList.remove('animate-lid');
+                if (trashBody) trashBody.classList.remove('animate-body');
                 els.clearBtn.disabled = false;
             }, 900);
         });
-
+        
         function createSparks(button) {
             const NUM_SPARKS = 10;
             const SPARK_COLORS = ['#00ffff', '#ff00ff', '#00ff7f', '#ffc700', '#ff5722'];
@@ -1768,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 spark.addEventListener('animationend', () => spark.remove(), { once: true });
             }
         }
-
+        
         if (els.brandTagsContainer) {
             els.brandTagsContainer.addEventListener('click', (e) => {
                 const tag = e.target.closest('.brand-tag');
@@ -1777,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterData();
             });
         }
-
+        
         if (els.manufacturerTagsContainer) {
             els.manufacturerTagsContainer.addEventListener('click', (e) => {
                 const tag = e.target.closest('.brand-tag');
@@ -1797,7 +1064,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterData();
             });
         }
-
+        
         els.paginationContainer.addEventListener('click', (e) => {
             const btn = e.target.closest('.page-btn');
             if (!btn || btn.disabled || btn.classList.contains('active')) return;
@@ -1808,7 +1075,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.resultsHeaderCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
-
+        
         document.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.delete-history-item');
             if (deleteBtn) {
@@ -1893,24 +1160,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
             fillDatalist(els.datalistOem, allOems);
             fillDatalist(els.datalistFmsi, allFmsis);
-
+            
             // ELIMINADO: Lógica de brandColorMap
-
-            renderDynamicBrandTags(appState.data, false);
-
-            // CRÍTICO: Configurar event listeners antes de filtrar
-            setupEventListeners();
+            
             applyFiltersFromURL();
             filterData();
-
-            els.results.classList.remove('loading');
-
-            // Actualizar contador de favoritos inicial
-            updateFavoritesCounter();
+            setupEventListeners();
         } catch (error) {
-            console.error('Error al inicializar la app:', error);
-            showGlobalError('Error al cargar datos', 'No se pudieron cargar las pastillas. Por favor, recarga la página.');
-            els.results.classList.remove('loading');
+            console.error("Error al inicializar la app:", error);
+            // --- INICIO: MEJORA #5 (MANEJO DE ERRORES) ---
+            // Mostrar un error claro al usuario en lugar de solo en la consola
+            showGlobalError(
+                'Error al cargar datos',
+                'No se pudo conectar con la base de datos. Por favor, revisa tu conexión a internet e inténtalo de nuevo.'
+            );
+            // --- FIN: MEJORA #5 ---
         }
     }
 
