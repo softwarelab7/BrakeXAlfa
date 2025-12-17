@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleFavorite = (e) => {
         e.stopPropagation();
         const button = e.currentTarget;
-        const card = button.closest('.result-card');
+        const card = button.closest('.product-card');
         if (!card) return;
         const itemId = parseInt(card.dataset.id);
         if (isNaN(itemId)) return;
@@ -261,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INICIO: MEJORA #3 (BADGES) ---
     const BADGE_CONFIG = {
         'K': { class: 'ref-k', test: (ref) => ref.startsWith('K') },
+        'SP': { class: 'ref-sp', test: (ref) => ref.startsWith('SP') },
         'INC': { class: 'ref-inc', test: (ref) => ref.endsWith('INC') },
         'BP': { class: 'ref-bp', test: (ref) => ref.endsWith('BP') },
         'BEX': { class: 'ref-bex', test: (ref) => ref.endsWith('BEX') },
@@ -270,10 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'ref-default';
         }
         const upperRef = ref.toUpperCase();
+        // Check prefixes/suffixes FIRST (before numeric check)
         for (const key in BADGE_CONFIG) {
             if (BADGE_CONFIG[key].test(upperRef)) {
                 return BADGE_CONFIG[key].class;
             }
+        }
+        // Only check numeric if no suffix/prefix matched
+        if (/^\d/.test(upperRef)) {
+            return 'ref-num';
         }
         return 'ref-default';
     };
@@ -613,37 +619,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             `;
 
-            // NUEVA ESTRUCTURA PREMIUM
+            // --- SENIOR LEVEL CARD RENDER ---
+
+            // Helper for Badge Classes
+            const getNewBadgeClass = (ref) => {
+                if (!ref) return 'badge--primary';
+                const upperRef = String(ref).toUpperCase();
+                // Check prefixes/suffixes FIRST (before numeric)
+                if (upperRef.startsWith('K')) return 'badge--k';
+                if (upperRef.startsWith('SP')) return 'badge--sp';
+                if (upperRef.endsWith('INC')) return 'badge--inc';
+                if (upperRef.endsWith('BP')) return 'badge--bp';
+                if (upperRef.endsWith('BEX')) return 'badge--bex';
+                // Only check numeric if no suffix/prefix matched
+                if (/^\d/.test(upperRef)) return 'badge--num';
+                return 'badge--primary';
+            };
+
+            // Generate ALL reference badges (como en el modal)
+            const allRefsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
+                ? item.ref.flatMap(ref => String(ref).split(' '))
+                    .slice(0, 5) // Máximo 5 refs en tarjeta
+                    .map(ref => `<span class="ref-badge card-ref-badge ${getRefBadgeClass(ref)}">${ref}</span>`)
+                    .join('')
+                : '<span class="ref-badge ref-badge-na card-ref-badge">N/A</span>';
+
+            // Generate position badges (premium style como en modal)
+            const cardPosText = (item.posición || '').toLowerCase();
+            const cardHasFrontApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
+            const cardHasRearApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
+            const cardIsExplicitlyBoth = cardPosText.includes('delantera') && cardPosText.includes('trasera');
+
+            let positionBadgesHTML = '';
+            if (cardIsExplicitlyBoth || (cardHasFrontApp && cardHasRearApp)) {
+                positionBadgesHTML = `
+                    <span class="position-badge-premium delantera">Delantera</span>
+                    <span class="position-badge-premium trasera">Trasera</span>
+                `;
+            } else if (cardPosText.includes('delantera') || cardHasFrontApp) {
+                positionBadgesHTML = `<span class="position-badge-premium delantera">Delantera</span>`;
+            } else if (cardPosText.includes('trasera') || cardHasRearApp) {
+                positionBadgesHTML = `<span class="position-badge-premium trasera">Trasera</span>`;
+            } else {
+                positionBadgesHTML = `<span class="position-badge-premium">${item.posición || 'N/A'}</span>`;
+            }
+
             return `
-                <div class="result-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" tabindex="0" role="button" aria-haspopup="dialog">
+                <article class="product-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" role="button" tabindex="0">
                     
-                    <div class="card-thumbnail">
-                        <img src="${firstImageSrc}" alt="Referencia ${primaryRefForData}" class="result-image" loading="lazy">
+                    <div class="product-card__position-top">
+                        ${positionBadgesHTML}
+                        ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
                     </div>
                     
-                    <div class="search-result-content">
-                        <!-- 1. Header Row: Primary Ref (Title) + Favorite Icon -->
-                        <div class="card-header-row">
-                            <span class="card-title">${primaryRefForData}</span>
-                            ${favoriteBtnHTML}
-                        </div>
-
-                        <!-- 2. Body: Badges (Secondary Refs & Position) -->
-                        <div class="card-badges-row">
-                            ${refsHTML}
-                            ${posBadge}
-                        </div>
-
-                        <!-- 3. Footer: Apps Summary (Distinct Background) -->
-                        <div class="card-apps-footer">
-                            ${appSummaryItems.length > 0
-                    ? appSummaryItems.join(', ') + (safeAplicaciones.length > 3 ? ', ...' : '')
-                    : 'Sin aplicaciones registradas'}
-                        </div>
+                    <div class="product-card__image-container">
+                        <img src="${firstImageSrc}" alt="${primaryRefForData}" class="product-card__image" loading="lazy"> 
                     </div>
-                </div>`;
+
+                    <div class="product-card__body">
+                        <div class="product-card__refs">
+                            ${allRefsHTML}
+                        </div>
+
+                        <footer class="product-card__footer">
+                            <p class="product-card__apps">
+                                ${appSummaryItems.length > 0 ? appSummaryItems.join(', ') : 'Aplicaciones no disponibles'}
+                            </p>
+                        </footer>
+                    </div>
+                </article>
+            `;
         }).join('');
-        els.results.querySelectorAll('.favorite-btn').forEach(btn => {
+        els.results.querySelectorAll('.product-card__favorite-btn').forEach(btn => {
             btn.addEventListener('click', toggleFavorite);
         });
         setupPagination(totalResults);
@@ -680,8 +727,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === Modal ===
     function handleCardClick(event) {
-        if (event.target.closest('.favorite-btn')) return;
-        const card = event.target.closest('.result-card');
+        if (event.target.closest('.product-card__favorite-btn')) return;
+        const card = event.target.closest('.product-card');
         if (card) {
             const itemId = card.dataset.id;
             const itemData = appState.data.find(item => item._appId == itemId);
@@ -745,12 +792,13 @@ document.addEventListener('DOMContentLoaded', () => {
             `<img src="${imgSrc}" alt="Referencia ${item.ref?.[0] || 'N/A'} Vista ${i + 1}" class="result-image">`
         ).join('');
         els.modalCarousel.innerHTML = `
-            <div class="image-track" style="display:flex;" data-current-index="0">${imageTrackHTML}</div>
+        <div class="image-track" style="display:flex;" data-current-index="0">${imageTrackHTML}</div>
             ${images.length > 1 ? `
                 <button class="carousel-nav-btn" data-direction="-1" aria-label="Imagen anterior">‹</button>
                 <button class="carousel-nav-btn" data-direction="1" aria-label="Siguiente imagen">›</button>
-            ` : ''}
-        `;
+            ` : ''
+            }
+    `;
         els.modalCarousel.querySelectorAll('.carousel-nav-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -759,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
         if (images.length > 1) {
-            els.modalCounterWrapper.innerHTML = `<span class="carousel-counter">1/${images.length}</span>`;
+            els.modalCounterWrapper.innerHTML = `<span class="carousel-counter">1 / ${images.length}</span>`;
         } else {
             els.modalCounterWrapper.innerHTML = '';
         }
@@ -792,7 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newIndex = currentIndex + direction;
         if (newIndex >= totalImages) newIndex = 0;
         else if (newIndex < 0) newIndex = totalImages - 1;
-        track.style.transform = `translateX(-${newIndex * 100}%)`;
+        track.style.transform = `translateX(-${newIndex * 100} %)`;
         track.dataset.currentIndex = newIndex;
         if (counter) counter.textContent = `${newIndex + 1}/${totalImages}`;
     }
