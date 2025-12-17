@@ -566,28 +566,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const hasRearApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
             const isExplicitlyBoth = posText.includes('delantera') && posText.includes('trasera');
 
-            let posBadgeClass = '';
-            let posBadgeText = item.posición || 'N/A';
+            let positionBadgesHTML = '';
 
+            // Standardized Logic: Single Badge for 'Ambas' (Mixed)
             if (isExplicitlyBoth || (hasFrontApp && hasRearApp)) {
-                posBadgeClass = 'ambas';
-                posBadgeText = 'Delantera y Trasera';
+                // Use the 'ambas' class for the specific gradient
+                positionBadgesHTML = `<span class="position-badge-premium ambas">Delantera y Trasera</span>`;
             } else if (posText.includes('delantera') || hasFrontApp) {
-                posBadgeClass = 'delantera';
-                if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Delantera';
+                positionBadgesHTML = `<span class="position-badge-premium delantera">Delantera</span>`;
             } else if (posText.includes('trasera') || hasRearApp) {
-                posBadgeClass = 'trasera';
-                if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Trasera';
+                positionBadgesHTML = `<span class="position-badge-premium trasera">Trasera</span>`;
+            } else {
+                // Fallback for unknown but present position
+                if (item.posición && item.posición !== 'N/A') {
+                    positionBadgesHTML = `<span class="position-badge-premium">${item.posición}</span>`;
+                }
             }
 
-            // Badge más prominente usando clases nuevas o reutilizando las de variables
-            const posBadge = `<span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>`;
-
-            const refsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
-                ? item.ref.flatMap(ref => String(ref).split(' '))
-                    .map(part => `<span class="ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
-                    .join('')
-                : '<span class="ref-badge ref-badge-na">N/A</span>';
+            // --- RESTORED LOGIC ---
 
             let firstImageSrc = 'https://via.placeholder.com/300x200.png?text=No+Img';
             if (item.imagenes && item.imagenes.length > 0) {
@@ -602,13 +598,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter((value, index, self) => self.indexOf(value) === index)
                 .slice(0, 3);
 
-            let appSummaryHTML = appSummaryItems.length > 0
-                ? `<div class="search-result-sub-text">${appSummaryItems.join(', ')}${safeAplicaciones.length > 3 ? ', ...' : ''}</div>`
-                : '<div class="search-result-sub-text">Sin aplicaciones registradas</div>';
-
             const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
 
-            // REFACTORIZADO (MEJORA #4)
             const isFavorite = appState.isFavorite(item._appId);
 
             const favoriteBtnHTML = `
@@ -619,50 +610,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             `;
 
-            // --- SENIOR LEVEL CARD RENDER ---
-
-            // Helper for Badge Classes
-            const getNewBadgeClass = (ref) => {
-                if (!ref) return 'badge--primary';
-                const upperRef = String(ref).toUpperCase();
-                // Check prefixes/suffixes FIRST (before numeric)
-                if (upperRef.startsWith('K')) return 'badge--k';
-                if (upperRef.startsWith('SP')) return 'badge--sp';
-                if (upperRef.endsWith('INC')) return 'badge--inc';
-                if (upperRef.endsWith('BP')) return 'badge--bp';
-                if (upperRef.endsWith('BEX')) return 'badge--bex';
-                // Only check numeric if no suffix/prefix matched
-                if (/^\d/.test(upperRef)) return 'badge--num';
-                return 'badge--primary';
-            };
-
-            // Generate ALL reference badges (como en el modal)
+            // Generate ALL reference badges
             const allRefsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
                 ? item.ref.flatMap(ref => String(ref).split(' '))
-                    .slice(0, 5) // Máximo 5 refs en tarjeta
+                    .slice(0, 5)
                     .map(ref => `<span class="ref-badge card-ref-badge ${getRefBadgeClass(ref)}">${ref}</span>`)
                     .join('')
                 : '<span class="ref-badge ref-badge-na card-ref-badge">N/A</span>';
-
-            // Generate position badges (premium style como en modal)
-            const cardPosText = (item.posición || '').toLowerCase();
-            const cardHasFrontApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
-            const cardHasRearApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
-            const cardIsExplicitlyBoth = cardPosText.includes('delantera') && cardPosText.includes('trasera');
-
-            let positionBadgesHTML = '';
-            if (cardIsExplicitlyBoth || (cardHasFrontApp && cardHasRearApp)) {
-                positionBadgesHTML = `
-                    <span class="position-badge-premium delantera">Delantera</span>
-                    <span class="position-badge-premium trasera">Trasera</span>
-                `;
-            } else if (cardPosText.includes('delantera') || cardHasFrontApp) {
-                positionBadgesHTML = `<span class="position-badge-premium delantera">Delantera</span>`;
-            } else if (cardPosText.includes('trasera') || cardHasRearApp) {
-                positionBadgesHTML = `<span class="position-badge-premium trasera">Trasera</span>`;
-            } else {
-                positionBadgesHTML = `<span class="position-badge-premium">${item.posición || 'N/A'}</span>`;
-            }
+            // --- END RESTORED LOGIC ---
 
             return `
                 <article class="product-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" role="button" tabindex="0">
