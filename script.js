@@ -56,12 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             this._saveFavorites(); // Guarda automáticamente al cambiar
         }
-        
+
         // Método público para verificar si es favorito
         isFavorite(itemId) {
             return this._favorites.has(itemId);
         }
-        
+
         // Getter para acceder a los favoritos
         get favorites() {
             return this._favorites;
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const itemsPerPage = 24;
     const MAX_HISTORY = 5;
-    
+
     // --- CORRECCIÓN: Movido al ámbito global ---
     let lastFocusedElement = null;
 
@@ -87,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
         moonIcon: document.querySelector('.lp-icon-moon'),
         orbitalBtn: document.getElementById('orbitalBtn'),
         upBtn: document.getElementById('upBtn'),
-        menuBtn: document.getElementById('menuBtn'),
-        sideMenu: document.getElementById('side-menu'),
-        sideMenuOverlay: document.getElementById('side-menu-overlay'),
-        menuCloseBtn: document.getElementById('menuCloseBtn'),
-        openGuideLink: document.getElementById('open-guide-link'),
+        // menuBtn removed
+        // sideMenu removed
+        // sideMenuOverlay removed
+        // menuCloseBtn removed
+        // openGuideLink removed
         busqueda: document.getElementById('busquedaRapida'),
         marca: document.getElementById('filtroMarca'),
         modelo: document.getElementById('filtroModelo'),
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- FUNCIÓN DE AYUDA (MEJORA #8) ---
-    const normalizeText = (text = '') => 
+    const normalizeText = (text = '') =>
         String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     // --- FIN FUNCIÓN ---
 
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'a[href], button:not([disabled]), textarea, input, select'
         );
         if (focusableElements.length === 0) return; // No hay nada enfocable
-        
+
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -260,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INICIO: MEJORA #3 (BADGES) ---
     const BADGE_CONFIG = {
-        'K':   { class: 'ref-k',   test: (ref) => ref.startsWith('K') },
+        'K': { class: 'ref-k', test: (ref) => ref.startsWith('K') },
         'INC': { class: 'ref-inc', test: (ref) => ref.endsWith('INC') },
-        'BP':  { class: 'ref-bp',  test: (ref) => ref.endsWith('BP') },
+        'BP': { class: 'ref-bp', test: (ref) => ref.endsWith('BP') },
         'BEX': { class: 'ref-bex', test: (ref) => ref.endsWith('BEX') },
     };
     const getRefBadgeClass = (ref) => {
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ancho: parseFloat(els.medidasAncho.value) || null,
             alto: parseFloat(els.medidasAlto.value) || null,
             pos: activePos,
-            manufacturer: appState.activeManufacturer, 
+            manufacturer: appState.activeManufacturer,
             favorites: appState.isFavoritesMode
         };
     };
@@ -326,7 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     ...(item.oem || []),
                     ...(item.fmsi || [])
                 ].join(' ');
-                item._searchableText = normalizeText(`${allRefs} ${itemVehicles}`);
+                // Incluimos la posición en el texto buscable
+                const posicion = item.posición || '';
+                item._searchableText = normalizeText(`${allRefs} ${itemVehicles} ${posicion}`);
             }
             return item._searchableText.includes(value);
         },
@@ -334,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
         marca: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.marca).includes(value)),
         modelo: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.serie).includes(value)),
         anio: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.año).includes(value)),
-        
+
         // Filtros de Referencia (Mejora #8 aplicada)
         oem: (item, value) => (item.oem || []).some(o => normalizeText(o).includes(value)),
         fmsi: (item, value) => (item.fmsi || []).some(f => normalizeText(f).includes(value)),
@@ -349,8 +351,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return (item.altoNum >= value - TOLERANCIA && item.altoNum <= value + TOLERANCIA);
         },
 
-        // Filtro de Posición
-        pos: (item, activePositions) => activePositions.length === 0 || activePositions.includes(item.posición),
+        // Filtro de Posición (Actualizado para coincidencia parcial)
+        pos: (item, activePositions) => {
+            if (activePositions.length === 0) return true;
+            // Si el item tiene "Delantera y Trasera", debe aparecer si seleccionamos Delantera O Trasera
+            const itemPos = (item.posición || '').toLowerCase();
+            return activePositions.some(pos => itemPos.includes(pos.toLowerCase()));
+        },
 
         // Filtro de Fabricante (Tag)
         manufacturer: (item, manuf) => {
@@ -373,15 +380,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!appState.data.length) return;
 
         const filters = getActiveFilters();
-        
+
         // Guardar en historial SÓLO SI hay un término de búsqueda (Mejora de Historial)
         if (filters.busqueda) {
             addToSearchHistory(els.busqueda.value.trim()); // Usamos el valor original sin normalizar
         }
 
-        const isFiltered = Object.values(filters).some(v => 
-            v !== null && v !== false && 
-            (!Array.isArray(v) || v.length > 0) && 
+        const isFiltered = Object.values(filters).some(v =>
+            v !== null && v !== false &&
+            (!Array.isArray(v) || v.length > 0) &&
             (typeof v !== 'string' || v.trim() !== '')
         );
 
@@ -408,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FIN: BLOQUE DE FILTRADO REFACTORIZADO ---
 
 
-    const renderApplicationsList = (aplicaciones) => {
+    const renderApplicationsList = (aplicaciones, defaultPos) => {
         const safeAplicaciones = Array.isArray(aplicaciones) ? aplicaciones : [];
         const groupedApps = safeAplicaciones.reduce((acc, app) => {
             const marca = app.marca || 'N/A';
@@ -430,7 +437,25 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const marca in groupedApps) {
             appListHTML += `<div class="app-brand-header">${marca.toUpperCase()}</div>`;
             groupedApps[marca].forEach(app => {
-                appListHTML += `<div class="app-detail-row"><div>${app.serie || ''}</div><div>${app.litros || ''}</div><div>${app.año || ''}</div></div>`;
+                // Usamos la posición específica de la aplicación si existe, sino la global
+                const posToDisplay = app.posicion || defaultPos || '';
+
+                let posClass = '';
+                const posLower = posToDisplay.toLowerCase();
+                if (posLower.includes('delantera') && posLower.includes('trasera')) {
+                    posClass = 'ambas';
+                } else if (posLower.includes('delantera')) {
+                    posClass = 'delantera';
+                } else if (posLower.includes('trasera')) {
+                    posClass = 'trasera';
+                }
+
+                appListHTML += `<div class="app-detail-row">
+                <div>${app.serie || ''}</div>
+                <div>${app.litros || ''}</div>
+                <div>${app.año || ''}</div>
+                <div class="app-pos-cell ${posClass}" title="${posToDisplay}">${posToDisplay}</div>
+            </div>`;
             });
         }
         return appListHTML;
@@ -526,29 +551,60 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         els.results.innerHTML = paginatedData.map((item, index) => {
-            const posBadgeClass = item.posición === 'Delantera' ? 'delantera' : 'trasera';
-            const posBadge = `<span class="position-badge ${posBadgeClass}">${item.posición}</span>`;
+            const safeAplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
+
+            // Detección inteligente de posición (Revisar si aplica a ambas)
+            const posText = (item.posición || '').toLowerCase();
+            // Check if applications have explicit positions varying
+            const hasFrontApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
+            const hasRearApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
+            const isExplicitlyBoth = posText.includes('delantera') && posText.includes('trasera');
+
+            let posBadgeClass = '';
+            let posBadgeText = item.posición || 'N/A';
+
+            if (isExplicitlyBoth || (hasFrontApp && hasRearApp)) {
+                posBadgeClass = 'ambas';
+                posBadgeText = 'Delantera y Trasera';
+            } else if (posText.includes('delantera') || hasFrontApp) {
+                posBadgeClass = 'delantera';
+                if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Delantera';
+            } else if (posText.includes('trasera') || hasRearApp) {
+                posBadgeClass = 'trasera';
+                if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Trasera';
+            }
+
+            // Badge más prominente usando clases nuevas o reutilizando las de variables
+            const posBadge = `<span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>`;
+
             const refsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
                 ? item.ref.flatMap(ref => String(ref).split(' '))
                     .map(part => `<span class="ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
                     .join('')
                 : '<span class="ref-badge ref-badge-na">N/A</span>';
+
             let firstImageSrc = 'https://via.placeholder.com/300x200.png?text=No+Img';
             if (item.imagenes && item.imagenes.length > 0) {
                 firstImageSrc = item.imagenes[0];
             } else if (item.imagen) {
                 firstImageSrc = item.imagen.replace("text=", `text=Vista+1+`);
             }
-            const safeAplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-            const appSummaryItems = safeAplicaciones.slice(0, 3).map(app => `${app.marca} ${app.serie}`).filter((value, index, self) => self.indexOf(value) === index);
+
+            // Mostramos un resumen más limpio de aplicaciones
+            const appSummaryItems = safeAplicaciones
+                .map(app => `${app.marca} ${app.serie}`)
+                .filter((value, index, self) => self.indexOf(value) === index)
+                .slice(0, 3);
+
             let appSummaryHTML = appSummaryItems.length > 0
-                ? `<div class="card-app-summary">${appSummaryItems.join(', ')}${safeAplicaciones.length > 3 ? ', ...' : ''}</div>`
-                : '';
+                ? `<div class="search-result-sub-text">${appSummaryItems.join(', ')}${safeAplicaciones.length > 3 ? ', ...' : ''}</div>`
+                : '<div class="search-result-sub-text">Sin aplicaciones registradas</div>';
+
             const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
-            
+
             // REFACTORIZADO (MEJORA #4)
             const isFavorite = appState.isFavorite(item._appId);
-            
+
             const favoriteBtnHTML = `
                 <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito" aria-pressed="${isFavorite}">
                     <svg class="heart-icon" viewBox="0 0 24 24">
@@ -556,16 +612,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     </svg>
                 </button>
             `;
+
+            // NUEVA ESTRUCTURA PREMIUM
             return `
-                <div class="result-card" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" tabindex="0" role="button" aria-haspopup="dialog">
-                    ${favoriteBtnHTML}
-                    <div class="card-thumbnail"><img src="${firstImageSrc}" alt="Referencia ${primaryRefForData}" class="result-image" loading="lazy"></div>
-                    <div class="card-content-wrapper">
-                        <div class="card-details">
-                            <div class="card-ref-container">${refsHTML}</div>
+                <div class="result-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" tabindex="0" role="button" aria-haspopup="dialog">
+                    
+                    <div class="card-thumbnail">
+                        <img src="${firstImageSrc}" alt="Referencia ${primaryRefForData}" class="result-image" loading="lazy">
+                    </div>
+                    
+                    <div class="search-result-content">
+                        <!-- 1. Header Row: Primary Ref (Title) + Favorite Icon -->
+                        <div class="card-header-row">
+                            <span class="card-title">${primaryRefForData}</span>
+                            ${favoriteBtnHTML}
+                        </div>
+
+                        <!-- 2. Body: Badges (Secondary Refs & Position) -->
+                        <div class="card-badges-row">
+                            ${refsHTML}
                             ${posBadge}
                         </div>
-                        ${appSummaryHTML}
+
+                        <!-- 3. Footer: Apps Summary (Distinct Background) -->
+                        <div class="card-apps-footer">
+                            ${appSummaryItems.length > 0
+                    ? appSummaryItems.join(', ') + (safeAplicaciones.length > 3 ? ', ...' : '')
+                    : 'Sin aplicaciones registradas'}
+                        </div>
                     </div>
                 </div>`;
         }).join('');
@@ -594,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
             brandsToShow = shuffled.slice(0, 10);
         }
         const activeBrandFilter = els.marca.value.trim().toLowerCase();
-        
+
         // MODIFICADO: Eliminado el style="" y la lógica de colorVar
         els.brandTagsContainer.innerHTML = brandsToShow.map(brand => {
             const isActive = brand.toLowerCase() === activeBrandFilter;
@@ -632,8 +706,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 .join('')
             : '<span class="ref-badge ref-badge-na header-ref-badge">N/A</span>';
         els.modalRef.innerHTML = `<div class="modal-header-ref-container">${refsHeaderHTML}</div>`;
-        const posBadgeClass = item.posición === 'Delantera' ? 'delantera' : 'trasera';
-        els.modalPosition.innerHTML = `<span class="position-badge ${posBadgeClass}">${item.posición}</span>`;
+
+        // Detección inteligente de posición para el Modal
+        const safeAppsModal = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
+        const posTextModal = (item.posición || '').toLowerCase();
+        const hasFrontAppModal = safeAppsModal.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
+        const hasRearAppModal = safeAppsModal.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
+        const isExplicitlyBothModal = posTextModal.includes('delantera') && posTextModal.includes('trasera');
+
+        let posBadgeClass = '';
+        let posBadgeText = item.posición || 'N/A';
+
+        if (isExplicitlyBothModal || (hasFrontAppModal && hasRearAppModal)) {
+            posBadgeClass = 'ambas';
+            posBadgeText = 'Delantera y Trasera';
+        } else if (posTextModal.includes('delantera') || hasFrontAppModal) {
+            posBadgeClass = 'delantera';
+            if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Delantera';
+        } else if (posTextModal.includes('trasera') || hasRearAppModal) {
+            posBadgeClass = 'trasera';
+            if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Trasera';
+        }
+
+        els.modalPosition.innerHTML = `<span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>`;
         let images = [];
         if (item.imagenes && item.imagenes.length > 0) {
             images = item.imagenes;
@@ -668,7 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             els.modalCounterWrapper.innerHTML = '';
         }
-        els.modalAppsSpecs.innerHTML = `<div class="applications-list-container">${renderApplicationsList(item.aplicaciones)}${renderSpecs(item)}</div>`;
+        els.modalAppsSpecs.innerHTML = `<div class="applications-list-container">${renderApplicationsList(item.aplicaciones, item.posición)}${renderSpecs(item)}</div>`;
         els.modalContent.classList.remove('closing');
         els.modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -754,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === UI Interactions ===
     function openSideMenu() {
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        lastFocusedElement = document.activeElement; 
+        lastFocusedElement = document.activeElement;
         // --- FIN: MEJORA #7 ---
         els.sideMenu.classList.add('open');
         els.sideMenu.setAttribute('aria-hidden', 'false');
@@ -774,12 +869,12 @@ document.addEventListener('DOMContentLoaded', () => {
         els.sideMenu.setAttribute('aria-hidden', 'true');
         els.sideMenuOverlay.classList.remove('visible');
         els.menuBtn.setAttribute('aria-expanded', 'false');
-        
+
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        if (lastFocusedElement) lastFocusedElement.focus(); 
+        if (lastFocusedElement) lastFocusedElement.focus();
         els.sideMenu.removeEventListener('keydown', handleFocusTrap);
         // --- FIN: MEJORA #7 ---
-        
+
         els.sideMenuOverlay.addEventListener('transitionend', () => {
             if (!els.sideMenuOverlay.classList.contains('visible')) {
                 els.sideMenuOverlay.style.display = 'none';
@@ -863,8 +958,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === Event Listeners ===
     function setupEventListeners() {
-        
-        [els.darkBtn, els.upBtn, els.menuBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', createRippleEffect));
+
+        [els.darkBtn, els.upBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', createRippleEffect));
         // Temas
         const applyLightTheme = () => {
             els.body.classList.remove('lp-dark', 'modo-orbital');
@@ -923,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Botón Subir
         els.upBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-        
+
         // --- INICIO: MEJORA #10 (SCROLL DEBOUNCE) ---
         // 1. Creamos la función que actualiza el botón
         const handleScroll = () => {
@@ -938,23 +1033,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- FIN: MEJORA #10 ---
 
         // Menú lateral
-        els.menuBtn.addEventListener('click', openSideMenu);
-        els.menuCloseBtn.addEventListener('click', closeSideMenu);
-        els.sideMenuOverlay.addEventListener('click', closeSideMenu);
-        els.openGuideLink.addEventListener('click', () => {
-            closeSideMenu();
-            setTimeout(openGuideModal, 50);
-        });
-        
+        // Menu listeners removed
+
         // --- INICIO: CORRECCIÓN BUG ESCAPE (keydown) ---
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 // Prioritiza cerrar la capa superior primero.
                 // Usamos "else if" para que solo cierre una cosa a la vez.
-                
-                if (els.sideMenu.classList.contains('open')) {
-                    closeSideMenu();
-                } else if (els.guideModal.style.display === 'flex') {
+
+                if (els.guideModal.style.display === 'flex') {
                     closeGuideModal();
                 } else if (els.modal.style.display === 'flex') {
                     // Esta es la línea que faltaba
@@ -966,17 +1053,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clic en Tarjetas
         els.results.addEventListener('click', handleCardClick);
-        
+
         // Filtros
         const debouncedFilter = debounce(filterData, 300);
-        
+
         els.filtroFavoritosBtn.addEventListener('click', () => {
             appState.isFavoritesMode = !appState.isFavoritesMode;
             els.filtroFavoritosBtn.classList.toggle('active', appState.isFavoritesMode);
             els.filtroFavoritosBtn.setAttribute('aria-pressed', appState.isFavoritesMode ? 'true' : 'false');
             filterData();
         });
-        
+
         els.historialBtn?.addEventListener('click', () => {
             const isActive = els.historialBtn.getAttribute('aria-pressed') === 'true';
             els.historialBtn.classList.toggle('active', !isActive);
@@ -984,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
             els.searchHistoryCard.style.display = !isActive ? 'block' : 'none';
             if (!isActive) els.searchHistoryCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
-        
+
         els.busqueda.addEventListener('input', (e) => {
             els.searchContainer.classList.toggle('active', e.target.value.trim() !== '');
             debouncedFilter();
@@ -993,12 +1080,12 @@ document.addEventListener('DOMContentLoaded', () => {
         [els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input =>
             input.addEventListener('input', debouncedFilter)
         );
-        
+
         [els.posDel, els.posTras].forEach(btn => btn.addEventListener('click', () => {
             btn.classList.toggle('active');
             filterData();
         }));
-        
+
         els.clearBtn.addEventListener('click', () => {
             if (els.clearBtn.disabled) return;
             els.clearBtn.disabled = true;
@@ -1014,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.clearBtn.disabled = false;
             }, 900);
         });
-        
+
         function createSparks(button) {
             const NUM_SPARKS = 10;
             const SPARK_COLORS = ['#00ffff', '#ff00ff', '#00ff7f', '#ffc700', '#ff5722'];
@@ -1035,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 spark.addEventListener('animationend', () => spark.remove(), { once: true });
             }
         }
-        
+
         if (els.brandTagsContainer) {
             els.brandTagsContainer.addEventListener('click', (e) => {
                 const tag = e.target.closest('.brand-tag');
@@ -1044,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterData();
             });
         }
-        
+
         if (els.manufacturerTagsContainer) {
             els.manufacturerTagsContainer.addEventListener('click', (e) => {
                 const tag = e.target.closest('.brand-tag');
@@ -1064,7 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterData();
             });
         }
-        
+
         els.paginationContainer.addEventListener('click', (e) => {
             const btn = e.target.closest('.page-btn');
             if (!btn || btn.disabled || btn.classList.contains('active')) return;
@@ -1075,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.resultsHeaderCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
-        
+
         document.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.delete-history-item');
             if (deleteBtn) {
@@ -1160,9 +1247,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
             fillDatalist(els.datalistOem, allOems);
             fillDatalist(els.datalistFmsi, allFmsis);
-            
+
             // ELIMINADO: Lógica de brandColorMap
-            
+
             applyFiltersFromURL();
             filterData();
             setupEventListeners();

@@ -150,43 +150,70 @@ body {
 header {
     width: 100%;
     margin: 0 auto 1rem auto;
-    background-color: transparent;
-    border-bottom: none;
-    box-shadow: none;
-    padding: 0.5rem 1rem;
+    background-color: rgba(248, 249, 250, 0.85);
+    /* Slightly more opaque for better legibility */
+    border-bottom: 1px solid var(--header-border-color);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    /* Subtle shadow for depth */
+    padding: 0.75rem 1.5rem;
+    /* Increased padding */
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
+}
+
+body.lp-dark header {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+body.modo-orbital header {
+    background-color: rgba(15, 23, 42, 0.85);
 }
 
 /* --- CAMBIO 1 --- */
 header h1 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.35rem;
+    /* Slightly larger */
     font-weight: 700;
     letter-spacing: 1px;
     color: inherit;
     display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    align-items: center;
+    /* Centered vertically */
+    justify-content: flex-start;
+    gap: 12px;
+    /* More space between logo parts */
+    flex-wrap: nowrap;
+    /* Prevent wrapping in professional mode */
     opacity: 1;
     animation: fadeDown 1s ease 0.3s forwards;
-    text-align: center;
+    text-align: left;
     flex-grow: 1;
     margin: 0;
-    padding: 0 10px;
+    padding: 0;
 }
 
 .header-subtitle {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.85rem;
+    font-weight: 400;
     color: var(--text-color);
-    opacity: 0.6;
-    border-left: none;
-    padding-left: 12px;
+    opacity: 0.7;
+    border-left: 1px solid var(--material-surface-border);
+    /* Vertical separator */
+    padding-left: 1rem;
+    margin-left: 0.5rem;
     transition: color 0.5s ease, opacity 0.3s ease;
+    white-space: nowrap;
+    /* Keep on one line */
+    display: inline-block;
+    line-height: 1.2;
 }
 
 body.lp-dark .header-subtitle,
@@ -917,22 +944,28 @@ body.lp-dark #positionTrasera.active {
     flex-direction: column;
     background-color: var(--material-surface-light);
     border: 1px solid var(--material-surface-border);
-    border-radius: 0.5rem;
-    padding: 0.6rem;
-    box-shadow: var(--elevation-1);
+    border-radius: 0.75rem;
+    /* Smoother corners */
+    padding: 0.85rem;
+    /* Increased padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    /* Subtler initial shadow */
     opacity: 0;
     animation: fadeInUpCard 0.5s cubic-bezier(0.2, 0.5, 0.1, 1) forwards;
     overflow: hidden;
     position: relative;
     cursor: pointer;
-    transition: box-shadow 0.2s ease, border-color 0.5s ease, background-color 0.5s ease, flex-direction 0.3s ease, transform 0.2s ease-out;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
     width: 100%;
 }
 
 .result-card:hover,
 .result-card:focus {
-    box-shadow: var(--elevation-4);
-    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    /* Sophisticated hover shadow */
+    transform: translateY(-4px);
+    /* Subtle lift */
+    border-color: var(--primary-color-alpha-30, rgba(59, 130, 246, 0.3));
 }
 
 .card-thumbnail {
@@ -1149,7 +1182,8 @@ body.modo-orbital .card-app-summary {
 
 .applications-list-container .app-detail-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    /* Adjusted for 4 columns: Serie, Litros, Año, Posición */
+    grid-template-columns: 2fr 1fr 0.8fr 1.2fr;
     align-items: center;
     gap: 0.2rem 0.5rem;
     padding: 4px 0;
@@ -1158,6 +1192,30 @@ body.modo-orbital .card-app-summary {
     opacity: 0.85;
     transition: color 0.5s ease, opacity 0.5s ease, border-color 0.5s ease;
     font-size: 0.78125rem;
+}
+
+.app-pos-cell {
+    font-weight: 700;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--text-color);
+    /* Fallback */
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.app-pos-cell.delantera {
+    color: var(--badge-delantera-bg);
+}
+
+.app-pos-cell.trasera {
+    color: var(--badge-trasera-bg);
+}
+
+.app-pos-cell.ambas {
+    color: #8b5cf6;
 }
 
 .applications-list-container .app-detail-row:last-child {
@@ -1679,108 +1737,8 @@ body.modo-orbital .ripple {
     pointer-events: auto;
 }
 
-.side-menu {
-    position: fixed;
-    top: 0;
-    left: -300px;
-    width: 280px;
-    height: 100%;
-    background-color: var(--material-surface-light);
-    border-right: 1px solid var(--material-surface-border);
-    box-shadow: var(--elevation-4);
-    z-index: 11000;
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease, border-color 0.5s ease;
-    display: flex;
-    flex-direction: column;
-}
+/* Side menu removed */
 
-.side-menu.open {
-    left: 0;
-}
-
-.side-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--material-surface-border);
-    flex-shrink: 0;
-    transition: border-color 0.5s ease;
-}
-
-.side-menu-header h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--text-color);
-    transition: color 0.5s ease;
-}
-
-body.lp-dark .side-menu-header h2,
-body.modo-orbital .side-menu-header h2 {
-    color: var(--text-color);
-}
-
-.menu-close-btn {
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    line-height: 1;
-    color: var(--text-color);
-    opacity: 0.6;
-    cursor: pointer;
-    padding: 0.2rem;
-    transition: opacity 0.2s ease, color 0.5s ease;
-}
-
-.menu-close-btn:hover {
-    opacity: 1;
-}
-
-.side-menu-list {
-    list-style: none;
-    padding: 0.75rem 0;
-    margin: 0;
-    overflow-y: auto;
-    flex-grow: 1;
-}
-
-.side-menu-list li {
-    margin: 0;
-}
-
-.side-menu-link {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.95rem;
-    color: var(--text-color);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.5s ease;
-}
-
-.side-menu-link:hover {
-    background-color: var(--btn-google-hover-bg);
-}
-
-.side-menu-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10999;
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-    display: none;
-}
-
-.side-menu-overlay.visible {
-    opacity: 1;
-    display: block;
-}
 
 @keyframes fadeDown {
     0% {
@@ -2243,3 +2201,391 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
 }
 
 /* --- 🔴 ESTILOS DE QR ELIMINADOS 🔴 --- */
+
+/* === NUEVO DISEÑO PREMIUM DE RESULTADOS === */
+
+.search-result-item {
+    background-color: var(--material-surface-light);
+    border: 1px solid var(--material-surface-border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.search-result-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--elevation-4);
+    border-color: rgba(var(--input-focus-border-rgb), 0.5);
+    z-index: 10;
+}
+
+.search-result-item:focus-visible {
+    outline: 2px solid var(--input-focus-border);
+    outline-offset: 4px;
+}
+
+/* Ajuste del thumbnail */
+.search-result-item .card-thumbnail {
+    height: 160px;
+    background-color: #fff;
+    border-bottom: 1px solid var(--material-surface-border);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-result-item .result-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.search-result-item:hover .result-image {
+    transform: scale(1.1);
+}
+
+/* Contenido de la tarjeta */
+.search-result-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex-grow: 1;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(var(--input-focus-border-rgb), 0.03) 100%);
+}
+
+body.lp-dark .search-result-content {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+/* Cabecera del contenido: Icono + Info Principal */
+.search-result-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* Icono circular del vehículo */
+.search-result-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--input-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    border: 1px solid var(--material-surface-border);
+}
+
+/* Info Principal: Referencias y Badge de Posición */
+.search-result-main-info {
+    flex: 1;
+    display: flex;
+    flex-flow: row wrap;
+    /* Cambiado para permitir que refs y posición fluyan juntos */
+    gap: 6px;
+    align-items: center;
+    align-content: flex-start;
+}
+
+/* Contenedor de badges de referencia - REMOVED or NO LONGER USED in HTML, but kept safe just in case */
+.card-ref-container-premium {
+    display: contents;
+    /* Truco: hace que los hijos sean parte del flex padre directo */
+}
+
+/* Badge de Posición Premium */
+.position-badge-premium {
+    font-size: 0.65rem;
+    /* Un poco más pequeño para equilibrar */
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    /* Un poco más de padding vertical */
+    border-radius: 50px;
+    /* Redondeado completo estilo 'pill' como las refs */
+    letter-spacing: 0.3px;
+    display: inline-block;
+    box-shadow: none;
+    /* Diseño más plano y limpio */
+    line-height: 1;
+}
+
+.position-badge-premium.delantera {
+    background-color: var(--badge-delantera-bg);
+    color: var(--badge-delantera-text);
+}
+
+.position-badge-premium.trasera {
+    background-color: var(--badge-trasera-bg);
+    color: var(--badge-trasera-text);
+}
+
+.position-badge-premium.ambas {
+    background-color: #8b5cf6;
+    /* Violeta/Morado vivo */
+    color: #ffffff;
+}
+
+/* Texto secundario (aplicaciones) */
+.search-result-sub-text {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    line-height: 1.4;
+    display: block;
+    /* Asegurar bloque para truncado */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: auto;
+    /* Empujar hacia abajo si hay espacio extra */
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--material-surface-border);
+}
+
+/* Ajustes para el botón de favorito dentro de la nueva estructura */
+.search-result-item .favorite-btn {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.lp-dark .search-result-item .favorite-btn {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .search-result-item .card-thumbnail {
+        height: 140px;
+    }
+
+    .search-result-content {
+        padding: 0.8rem;
+    }
+}
+
+/* --- REWORKED FAVORITE BUTTON & CARD AESTHETICS --- */
+
+.favorite-btn {
+    position: static;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.favorite-btn:hover {
+    background-color: var(--btn-google-hover-bg);
+}
+
+.favorite-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: #9ca3af;
+    /* Soft gray */
+    stroke-width: 2;
+    transition: fill 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), stroke 0.3s ease, transform 0.2s ease;
+}
+
+.favorite-btn.active svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+    animation: heartPulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.35);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Dark mode adjustments for new favorite button */
+body.lp-dark .favorite-btn svg,
+body.modo-orbital .favorite-btn svg {
+    stroke: #64748b;
+}
+
+body.lp-dark .favorite-btn.active svg,
+body.modo-orbital .favorite-btn.active svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
+
+/* Refined Card Aesthetics */
+/* --- REWORKED STRUCTURED CARD LAYOUT (V2) --- */
+
+.result-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--material-surface-light);
+    border: 1px solid var(--material-surface-border);
+    border-radius: 12px;
+    overflow: hidden;
+    /* Ensure footer adheres to border radius */
+    padding: 0;
+    /* Remove padding from container to let children handle it */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Clean initial shadow */
+    opacity: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.result-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    /* Sophisticated hover shadow */
+    transform: translateY(-4px);
+    border-color: var(--primary-color-alpha-30);
+}
+
+.card-thumbnail {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #f8fafc;
+    /* Subtle background for transparency */
+    border-bottom: 1px solid var(--material-surface-border);
+    padding: 0.5rem;
+    /* Padding for the image itself */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-image {
+    width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    /* Ensure full product is seen */
+    display: block;
+}
+
+.search-result-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0;
+}
+
+/* 1. Header Row */
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    letter-spacing: -0.02em;
+}
+
+/* Favorite Button Styles (Re-iterated) */
+.favorite-btn {
+    position: static;
+    background: none;
+    border: none;
+    padding: 4px;
+    width: 32px;
+    /* Slightly larger targets */
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.favorite-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 2. Badges Row */
+.card-badges-row {
+    padding: 0 0.75rem 0.75rem 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.ref-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: var(--material-surface-border);
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* 3. Footer Apps */
+.card-apps-footer {
+    padding: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.02);
+    /* Very subtle gray */
+    border-top: 1px solid var(--material-surface-border);
+    font-size: 0.8rem;
+    color: var(--text-color-secondary, #64748b);
+    margin-top: auto;
+    /* Push to bottom */
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Dark Mode Overrides */
+body.lp-dark .result-card {
+    background-color: #1e293b;
+}
+
+body.lp-dark .card-apps-footer {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.lp-dark .card-thumbnail {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
+}
