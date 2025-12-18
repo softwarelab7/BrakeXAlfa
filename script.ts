@@ -313,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FIN: UTILIDAD DE IMAGEN ---
 
     // --- INICIO: MEJORA - CUSTOM DROPDOWNS ---
-<<<<<<< HEAD
     // Helper para scroll automático
     const scrollToSelected = (list: HTMLElement) => {
         // Usamos requestAnimationFrame para asegurar que el renderizado esté listo
@@ -325,9 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
-
-=======
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
     const setupCustomDropdown = (
         inputId: string,
         listId: string,
@@ -353,16 +349,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-<<<<<<< HEAD
             const currentValNormalized = normalizeText(input.value);
 
             list.innerHTML = filteredItems.map(item => {
                 const isSelected = normalizeText(item) === currentValNormalized;
                 return `<li class="${isSelected ? 'selected' : ''}">${item}</li>`;
             }).join('');
-=======
-            list.innerHTML = filteredItems.map(item => `<li>${item}</li>`).join('');
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
 
             // Re-attach click events to new items
             Array.from(list.children).forEach((li) => {
@@ -388,24 +380,15 @@ document.addEventListener('DOMContentLoaded', () => {
             renderList(val);
             list.classList.remove('hidden');
             list.classList.add('show');
-<<<<<<< HEAD
             // No auto-scroll on typing, user is searching
-=======
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
         });
 
         // 2. Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
         input.addEventListener('focus', () => {
-<<<<<<< HEAD
             renderList(input.value); // Render fresh to ensure 'selected' class is correct
             list.classList.remove('hidden');
             list.classList.add('show');
             scrollToSelected(list); // Scroll to selection on open
-=======
-            renderList(input.value);
-            list.classList.remove('hidden');
-            list.classList.add('show');
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
         });
 
         // 3. Click Outside: Cerrar

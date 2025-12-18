@@ -245,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     // --- FIN: UTILIDAD DE IMAGEN ---
     // --- INICIO: MEJORA - CUSTOM DROPDOWNS ---
-<<<<<<< HEAD
     // Helper para scroll automático
     const scrollToSelected = (list) => {
         // Usamos requestAnimationFrame para asegurar que el renderizado esté listo
@@ -257,8 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
-=======
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
     const setupCustomDropdown = (inputId, listId, items, onSelect) => {
         const input = document.getElementById(inputId);
         const list = document.getElementById(listId);
@@ -274,15 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.innerHTML = '<li style="pointer-events: none; opacity: 0.6; font-style: italic; font-size: 0.8em; padding: 8px 12px;">Sin resultados</li>';
                 return;
             }
-<<<<<<< HEAD
             const currentValNormalized = normalizeText(input.value);
             list.innerHTML = filteredItems.map(item => {
                 const isSelected = normalizeText(item) === currentValNormalized;
                 return `<li class="${isSelected ? 'selected' : ''}">${item}</li>`;
             }).join('');
-=======
-            list.innerHTML = filteredItems.map(item => `<li>${item}</li>`).join('');
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
             // Re-attach click events to new items
             Array.from(list.children).forEach((li) => {
                 li.addEventListener('click', () => {
@@ -307,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderList(val);
             list.classList.remove('hidden');
             list.classList.add('show');
-<<<<<<< HEAD
             // No auto-scroll on typing, user is searching
         });
         // 2. Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
@@ -316,14 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
             list.classList.remove('hidden');
             list.classList.add('show');
             scrollToSelected(list); // Scroll to selection on open
-=======
-        });
-        // 2. Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
-        input.addEventListener('focus', () => {
-            renderList(input.value);
-            list.classList.remove('hidden');
-            list.classList.add('show');
->>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
         });
         // 3. Click Outside: Cerrar
         document.addEventListener('click', (e) => {
