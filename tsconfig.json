@@ -6,8 +6,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["DOM", "ES2020"],
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
     "sourceMap": true
   },
-  "include": ["script.ts"]
+  "include": [
+    "script.ts"
+  ]
 }

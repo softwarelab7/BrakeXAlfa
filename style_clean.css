@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿/* ======================================================= */
 /* ðŸŸ¢ CUSTOM DROPDOWNS (PREMIUM UI - BRAND MATCH)          */
 /* ======================================================= */
@@ -177,3 +178,184 @@ body.lp-dark .custom-dropdown-list li.selected::after {
 body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.15);
 }
+=======
+﻿/* ======================================================= */
+/* ðŸŸ¢ CUSTOM DROPDOWNS (PREMIUM UI - BRAND MATCH)          */
+/* ======================================================= */
+
+.custom-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper .form-input {
+    padding-right: 36px;
+    /* Space for the chevron */
+    cursor: pointer;
+    /* Changed to pointer to feel more like a select */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Active State (Red Border) */
+.input-wrapper .form-input:focus {
+    border-color: var(--btn-primary-bg);
+    /* Red */
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    /* Soft red glow */
+}
+
+.chevron-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    /* Fixed size */
+    height: 16px;
+    /* Fixed size */
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Rotate chevron */
+.input-wrapper:focus-within .chevron-icon {
+    transform: translateY(-50%) rotate(180deg);
+    opacity: 1;
+    stroke: var(--btn-primary-bg);
+    /* Red chevron on active */
+}
+
+/* Dropdown List (Floating Premium Panel) */
+.custom-dropdown-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    /* More spacing */
+    left: 0;
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+
+    /* Light Mode */
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.98);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Apple-like spring */
+}
+
+.custom-dropdown-list.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* List Items */
+.custom-dropdown-list li {
+    position: relative;
+    padding: 10px 12px;
+    padding-right: 30px;
+    /* Space for checkmark */
+    font-size: 0.95rem;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 8px;
+    /* Rounded items inside */
+    margin-bottom: 2px;
+    border-bottom: none;
+    /* Removed lines for cleaner look */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.15s ease;
+}
+
+/* Hover & Selection */
+.custom-dropdown-list li:hover,
+.custom-dropdown-list li.highlighted,
+.custom-dropdown-list li.selected {
+    background-color: rgba(239, 68, 68, 0.08);
+    /* Brand Red extremely soft */
+    color: var(--btn-primary-bg);
+    /* Brand Red text */
+    font-weight: 500;
+}
+
+/* Selected Checkmark */
+.custom-dropdown-list li.selected::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 10px;
+    border: solid var(--btn-primary-bg);
+    border-width: 0 2px 2px 0;
+    transform: translateY(-60%) rotate(45deg);
+}
+
+/* Scrollbar styling */
+.custom-dropdown-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-dropdown-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-dropdown-list::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* DARK MODE ADJUSTMENTS */
+body.lp-dark .custom-dropdown-list {
+    background-color: #1a1a1a;
+    /* Very dark grey, not black */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+body.lp-dark .custom-dropdown-list li {
+    color: #e5e7eb;
+}
+
+body.lp-dark .custom-dropdown-list li:hover,
+body.lp-dark .custom-dropdown-list li.highlighted,
+body.lp-dark .custom-dropdown-list li.selected {
+    background-color: rgba(239, 68, 68, 0.15);
+    /* Slightly stronger in dark */
+    color: #fca5a5;
+    /* Light red text */
+}
+
+body.lp-dark .custom-dropdown-list li.selected::after {
+    border-color: #fca5a5;
+}
+
+body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+>>>>>>> 4459fc2e1753dcdd759847619014a43c5c794dd0
