@@ -1,3 +1,4 @@
+"use strict";
 document.addEventListener('DOMContentLoaded', () => {
     // === Configuración de Firebase ===
     const firebaseConfig = {
@@ -10,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
     // === INICIO: MEJORA #4 (AppState Class) ===
     // === Estado de la aplicación ===
     class AppState {
@@ -21,10 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this._favorites = new Set(); // Renombrado a "privado"
             this.isFavoritesMode = false;
             this.activeManufacturer = null;
-
             this._loadFavorites(); // Carga los favoritos automáticamente al iniciar
         }
-
         // Carga los favoritos desde localStorage
         _loadFavorites() {
             try {
@@ -32,52 +30,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (favs) {
                     this._favorites = new Set(JSON.parse(favs).map(Number));
                 }
-            } catch (e) {
+            }
+            catch (e) {
                 console.error("Error al cargar favoritos:", e); // Error no crítico, solo log
                 this._favorites = new Set();
             }
         }
-
         // Guarda los favoritos en localStorage
         _saveFavorites() {
             try {
                 localStorage.setItem('brakeXFavorites', JSON.stringify([...this._favorites]));
-            } catch (e) {
+            }
+            catch (e) {
                 console.error("Error al guardar favoritos:", e); // Error no crítico, solo log
             }
         }
-
         // Método público para alternar un favorito
         toggleFavorite(itemId) {
             if (this._favorites.has(itemId)) {
                 this._favorites.delete(itemId);
-            } else {
+            }
+            else {
                 this._favorites.add(itemId);
             }
             this._saveFavorites(); // Guarda automáticamente al cambiar
         }
-
         // Método público para verificar si es favorito
         isFavorite(itemId) {
             return this._favorites.has(itemId);
         }
-
         // Getter para acceder a los favoritos
         get favorites() {
             return this._favorites;
         }
     }
-
     // Instanciar el estado global de la app
     const appState = new AppState();
     // === FIN: MEJORA #4 ===
-
     const itemsPerPage = 24;
     const MAX_HISTORY = 5;
-
     // --- CORRECCIÓN: Movido al ámbito global ---
     let lastFocusedElement = null;
-
     // === Referencias a elementos del DOM ===
     const els = {
         body: document.body,
@@ -103,9 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
         posDel: document.getElementById('positionDelantera'),
         posTras: document.getElementById('positionTrasera'),
         clearBtn: document.getElementById('clearFiltersBtn'),
-        datalistMarca: document.getElementById('marcas'),
-        datalistModelo: document.getElementById('modelos'),
-        datalistAnio: document.getElementById('anios'),
+        datalistMarca: document.getElementById('listaMarcas'),
+        datalistModelo: document.getElementById('listaModelos'),
+        datalistAnio: document.getElementById('listaAnios'),
         datalistOem: document.getElementById('oemList'),
         datalistFmsi: document.getElementById('fmsiList'),
         results: document.getElementById('results-container'),
@@ -134,10 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
         searchHistoryCard: document.getElementById('searchHistoryCard'),
         manufacturerTagsContainer: document.getElementById('manufacturer-tags-container')
     };
-
     // === Gestión del historial de búsqueda ===
     function addToSearchHistory(query) {
-        if (!query.trim()) return;
+        if (!query.trim())
+            return;
         let history = JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
         // Prevenir duplicados (ignorando mayúsculas/minúsculas)
         history = history.filter(q => q.toLowerCase() !== query.toLowerCase());
@@ -146,63 +139,57 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('brakeXSearchHistory', JSON.stringify(history));
         renderSearchHistory();
     }
-
     function deleteFromSearchHistory(query) {
-        if (!query.trim()) return;
+        if (!query.trim())
+            return;
         let history = JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
         history = history.filter(q => q !== query);
         localStorage.setItem('brakeXSearchHistory', JSON.stringify(history));
         renderSearchHistory();
     }
-
     function renderSearchHistory() {
         const history = JSON.parse(localStorage.getItem('brakeXSearchHistory') || '[]');
         const container = els.searchHistoryContainer;
-        if (!container) return;
-        container.innerHTML = history.map(q =>
-            `<button class="search-history-item" data-query="${q}">
+        if (!container)
+            return;
+        container.innerHTML = history.map(q => `<button class="search-history-item" data-query="${q}">
                 ${q}
                 <span class="delete-history-item" data-query-delete="${q}" role="button" aria-label="Eliminar ${q}">&times;</span>
-            </button>`
-        ).join('');
+            </button>`).join('');
     }
-
     // === Gestión de favoritos ===
+    // REFACTORIZADO (MEJORA #4)
     // REFACTORIZADO (MEJORA #4)
     const toggleFavorite = (e) => {
         e.stopPropagation();
         const button = e.currentTarget;
         const card = button.closest('.product-card');
-        if (!card) return;
-        const itemId = parseInt(card.dataset.id);
-        if (isNaN(itemId)) return;
-
+        if (!card)
+            return;
+        const itemId = parseInt(card.dataset.id || '0');
+        if (isNaN(itemId))
+            return;
         // 1. Llama al método de la clase. Él se encarga de guardar.
         appState.toggleFavorite(itemId);
-
         // 2. Actualiza la UI del botón
         const isNowFavorite = appState.isFavorite(itemId);
         button.classList.toggle('active', isNowFavorite);
-        button.setAttribute('aria-pressed', isNowFavorite);
-
+        button.setAttribute('aria-pressed', isNowFavorite ? 'true' : 'false');
         // 3. Refiltra si estamos en modo favoritos
-        if (appState.isFavoritesMode) filterData();
+        if (appState.isFavoritesMode)
+            filterData();
     };
-
     // === Utilidades ===
     const debounce = (func, delay) => {
         let timeout;
         return (...args) => {
             clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
+            timeout = setTimeout(() => func(...args), delay);
         };
     };
-
     // --- FUNCIÓN DE AYUDA (MEJORA #8) ---
-    const normalizeText = (text = '') =>
-        String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const normalizeText = (text = '') => String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     // --- FIN FUNCIÓN ---
-
     // --- INICIO: MEJORA #5 (MANEJO DE ERRORES) ---
     const showGlobalError = (title, message) => {
         els.results.innerHTML = `<div class="no-results-container">
@@ -218,27 +205,26 @@ document.addEventListener('DOMContentLoaded', () => {
         els.countContainer.innerHTML = '0 resultados';
     };
     // --- FIN: MEJORA #5 ---
-
     // --- CORRECCIÓN: Movida al ámbito global ---
     // Función de ayuda para la "trampa de foco" (Mejora #7)
+    // Función de ayuda para la "trampa de foco" (Mejora #7)
     const handleFocusTrap = (e) => {
-        if (e.key !== 'Tab') return;
-
+        if (e.key !== 'Tab')
+            return;
         // 'e.currentTarget' es el modal o menú que tiene el listener
-        const focusableElements = e.currentTarget.querySelectorAll(
-            'a[href], button:not([disabled]), textarea, input, select'
-        );
-        if (focusableElements.length === 0) return; // No hay nada enfocable
-
+        const target = e.currentTarget;
+        const focusableElements = target.querySelectorAll('a[href], button:not([disabled]), textarea, input, select');
+        if (focusableElements.length === 0)
+            return; // No hay nada enfocable
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
-
         if (e.shiftKey) { // Si es Shift + Tab
             if (document.activeElement === firstElement) {
                 lastElement.focus();
                 e.preventDefault();
             }
-        } else { // Si es solo Tab
+        }
+        else { // Si es solo Tab
             if (document.activeElement === lastElement) {
                 firstElement.focus();
                 e.preventDefault();
@@ -246,19 +232,122 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     // --- FIN CORRECCIÓN ---
-
-    const fillDatalist = (datalist, values) => {
-        datalist.innerHTML = values.map(v => `<option value="${v}">`).join('');
+    // --- INICIO: UTILIDAD DE IMAGEN (MEJORA: NO EXTERNAL DEPS) ---
+    const getPlaceholderImage = (text) => {
+        const svg = `
+        <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#f3f4f6"/>
+            <text x="50%" y="50%" font-family="'Inter', sans-serif" font-size="16" fill="#9ca3af" dy=".3em" text-anchor="middle">
+                ${text}
+            </text>
+        </svg>`;
+        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
     };
-
+    // --- FIN: UTILIDAD DE IMAGEN ---
+    // --- INICIO: MEJORA - CUSTOM DROPDOWNS ---
+    // Helper para scroll automático
+    const scrollToSelected = (list) => {
+        // Usamos requestAnimationFrame para asegurar que el renderizado esté listo
+        requestAnimationFrame(() => {
+            const selected = list.querySelector('.selected');
+            if (selected) {
+                // Centrar el elemento seleccionado en la vista
+                list.scrollTop = selected.offsetTop - (list.clientHeight / 2) + (selected.clientHeight / 2);
+            }
+        });
+    };
+    const setupCustomDropdown = (inputId, listId, items, onSelect) => {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+        const container = input.closest('.custom-select-container');
+        if (!input || !list || !container)
+            return;
+        // Función para renderizar la lista
+        const renderList = (filterText = '') => {
+            const normalizedFilter = normalizeText(filterText);
+            const filteredItems = items.filter(item => normalizeText(item).includes(normalizedFilter));
+            // Si no hay items o todos están filtrados
+            if (filteredItems.length === 0) {
+                list.innerHTML = '<li style="pointer-events: none; opacity: 0.6; font-style: italic; font-size: 0.8em; padding: 8px 12px;">Sin resultados</li>';
+                return;
+            }
+            const currentValNormalized = normalizeText(input.value);
+            list.innerHTML = filteredItems.map(item => {
+                const isSelected = normalizeText(item) === currentValNormalized;
+                return `<li class="${isSelected ? 'selected' : ''}">${item}</li>`;
+            }).join('');
+            // Re-attach click events to new items
+            Array.from(list.children).forEach((li) => {
+                li.addEventListener('click', () => {
+                    input.value = li.innerText; // Set value
+                    list.classList.remove('show'); // Hide list
+                    list.classList.add('hidden');
+                    // Trigger change event manually so filters update
+                    if (onSelect) {
+                        onSelect(input.value);
+                    }
+                    else {
+                        // Disparar evento de input para que filterData lo detecte si hay listener
+                        input.dispatchEvent(new Event('input'));
+                    }
+                    filterData(); // Force filter update
+                });
+            });
+        };
+        // 1. Evento Input: Filtrar lista mientras escribes
+        input.addEventListener('input', () => {
+            const val = input.value;
+            renderList(val);
+            list.classList.remove('hidden');
+            list.classList.add('show');
+            // No auto-scroll on typing, user is searching
+        });
+        // 2. Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
+        input.addEventListener('focus', () => {
+            renderList(input.value); // Render fresh to ensure 'selected' class is correct
+            list.classList.remove('hidden');
+            list.classList.add('show');
+            scrollToSelected(list); // Scroll to selection on open
+        });
+        // 3. Click Outside: Cerrar
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) {
+                list.classList.remove('show');
+                list.classList.add('hidden');
+            }
+        });
+        // Inicializar vacía
+        // renderList(''); 
+    };
+    // Reemplazo de la antigua fillDatalist
+    // Ahora esta función configura el dropdown completo
+    const updateDropdown = (listId, items) => {
+        // Encontraremos el input asociado basándonos en el ID de la lista
+        // Convención: listaMarcas -> filtroMarca
+        let inputId = '';
+        if (listId === 'listaMarcas')
+            inputId = 'filtroMarca';
+        else if (listId === 'listaModelos')
+            inputId = 'filtroModelo';
+        else if (listId === 'listaAnios')
+            inputId = 'filtroAnio';
+        else if (listId === 'oemList' || listId === 'listaOem')
+            inputId = 'filtroOem'; // Handle ID change/vars
+        else if (listId === 'fmsiList' || listId === 'listaFmsi')
+            inputId = 'filtroFmsi';
+        if (inputId) {
+            setupCustomDropdown(inputId, listId, items);
+        }
+    };
+    // --- FIN: CUSTOM DROPDOWNS ---
     const getPositionFilter = () => {
         const activePositions = [];
-        if (els.posDel.classList.contains('active')) activePositions.push('Delantera');
-        if (els.posTras.classList.contains('active')) activePositions.push('Trasera');
+        if (els.posDel.classList.contains('active'))
+            activePositions.push('Delantera');
+        if (els.posTras.classList.contains('active'))
+            activePositions.push('Trasera');
         return activePositions;
     };
-
-    // --- INICIO: MEJORA #3 (BADGES) ---
     const BADGE_CONFIG = {
         'K': { class: 'ref-k', test: (ref) => ref.startsWith('K') },
         'SP': { class: 'ref-sp', test: (ref) => ref.startsWith('SP') },
@@ -284,25 +373,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'ref-default';
     };
     // --- FIN: MEJORA #3 ---
-
     const getSortableRefNumber = (refArray) => {
-        if (!Array.isArray(refArray) || refArray.length === 0) return Infinity;
+        if (!Array.isArray(refArray) || refArray.length === 0)
+            return Infinity;
         let primaryRef = refArray.find(ref => typeof ref === 'string' && ref.toUpperCase().startsWith('K-'));
-        if (!primaryRef) primaryRef = refArray[0];
+        if (!primaryRef)
+            primaryRef = refArray[0];
         const match = String(primaryRef).match(/(\d+)/);
         return match ? parseInt(match[0], 10) : Infinity;
     };
-
     // === Filtrado y renderizado ===
-
     // --- INICIO: BLOQUE DE FILTRADO REFACTORIZADO (MEJORAS #8 Y CÓDIGO DE EJEMPLO) ---
-
     // Función de ayuda para obtener y normalizar todos los valores de los filtros
     const getActiveFilters = () => {
         const activePos = [];
-        if (els.posDel.classList.contains('active')) activePos.push('Delantera');
-        if (els.posTras.classList.contains('active')) activePos.push('Trasera');
-
+        if (els.posDel.classList.contains('active'))
+            activePos.push('Delantera');
+        if (els.posTras.classList.contains('active'))
+            activePos.push('Trasera');
         return {
             busqueda: normalizeText(els.busqueda.value),
             marca: normalizeText(els.marca.value),
@@ -317,7 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
             favorites: appState.isFavoritesMode
         };
     };
-
     // Objeto con la lógica de cada filtro (Mejora de Código de Ejemplo)
     const FILTER_STRATEGIES = {
         // Búsqueda Rápida (Mejora #8 aplicada)
@@ -342,11 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
         marca: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.marca).includes(value)),
         modelo: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.serie).includes(value)),
         anio: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.año).includes(value)),
-
         // Filtros de Referencia (Mejora #8 aplicada)
         oem: (item, value) => (item.oem || []).some(o => normalizeText(o).includes(value)),
         fmsi: (item, value) => (item.fmsi || []).some(f => normalizeText(f).includes(value)),
-
         // Filtros de Medidas (con tolerancia)
         ancho: (item, value) => {
             const TOLERANCIA = 1.0;
@@ -356,48 +441,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const TOLERANCIA = 1.0;
             return (item.altoNum >= value - TOLERANCIA && item.altoNum <= value + TOLERANCIA);
         },
-
         // Filtro de Posición (Actualizado para coincidencia parcial)
         pos: (item, activePositions) => {
-            if (activePositions.length === 0) return true;
+            if (activePositions.length === 0)
+                return true;
             // Si el item tiene "Delantera y Trasera", debe aparecer si seleccionamos Delantera O Trasera
             const itemPos = (item.posición || '').toLowerCase();
-            return activePositions.some(pos => itemPos.includes(pos.toLowerCase()));
+            return activePositions.some((pos) => itemPos.includes(pos.toLowerCase()));
         },
-
         // Filtro de Fabricante (Tag)
         manufacturer: (item, manuf) => {
             const allRefParts = (item.ref || []).flatMap(refStr => String(refStr).toUpperCase().split(' '));
             return allRefParts.some(refPart => {
-                if (manuf === 'K') return refPart.startsWith('K');
-                if (manuf === 'INC') return refPart.endsWith('INC');
-                if (manuf === 'BP') return refPart.endsWith('BP');
-                if (manuf === 'B') return refPart.endsWith('BEX');
+                if (manuf === 'K')
+                    return refPart.startsWith('K');
+                if (manuf === 'INC')
+                    return refPart.endsWith('INC');
+                if (manuf === 'BP')
+                    return refPart.endsWith('BP');
+                if (manuf === 'B')
+                    return refPart.endsWith('BEX');
                 return false;
             });
         },
-
         // Filtro de Favoritos (REFACTORIZADO - MEJORA #4)
         favorites: (item, isFavoritesMode) => !isFavoritesMode || appState.isFavorite(item._appId)
     };
-
     // Nueva función `filterData` refactorizada
     const filterData = () => {
-        if (!appState.data.length) return;
-
+        if (!appState.data.length)
+            return;
         const filters = getActiveFilters();
-
         // Guardar en historial SÓLO SI hay un término de búsqueda (Mejora de Historial)
         if (filters.busqueda) {
             addToSearchHistory(els.busqueda.value.trim()); // Usamos el valor original sin normalizar
         }
-
-        const isFiltered = Object.values(filters).some(v =>
-            v !== null && v !== false &&
+        const isFiltered = Object.values(filters).some(v => v !== null && v !== false &&
             (!Array.isArray(v) || v.length > 0) &&
-            (typeof v !== 'string' || v.trim() !== '')
-        );
-
+            (typeof v !== 'string' || v.trim() !== ''));
         // Filtramos los datos
         appState.filtered = appState.data.filter(item => {
             // 'every' se asegura de que el item pase TODOS los filtros activos
@@ -410,22 +491,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 return FILTER_STRATEGIES[key] ? FILTER_STRATEGIES[key](item, value) : true;
             });
         });
-
         // El resto sigue igual
+        // --- ORDENAMIENTO PERSONALIZADO (Mejora: Prioridad "Ambas") ---
+        if (filters.pos && filters.pos.length === 2) {
+            appState.filtered.sort((a, b) => {
+                // --- LÓGICA ROBUSTA IDENTICA A RENDER (Detectar "Ambas" real) ---
+                const getIsBoth = (item) => {
+                    const posText = (item.posición || '').toLowerCase();
+                    const apps = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
+                    // Regex para "Del..." y "Tras..." (evita "Modelo")
+                    const reFront = /\bdel/i;
+                    const reRear = /\btras/i;
+                    // 1. Check explicit application overrides
+                    const hasFrontApp = apps.some(a => reFront.test(a.posicion || ''));
+                    const hasRearApp = apps.some(a => reRear.test(a.posicion || ''));
+                    // 2. Check global definition
+                    const globalIsFront = reFront.test(posText);
+                    const globalIsRear = reRear.test(posText);
+                    const globalIsBoth = posText.includes('ambas') || (globalIsFront && globalIsRear);
+                    // 3. Combined Logic: (Front OR GlobalFront) AND (Rear OR GlobalRear)
+                    const effectiveIsFront = globalIsFront || hasFrontApp;
+                    const effectiveIsRear = globalIsRear || hasRearApp;
+                    return globalIsBoth || (effectiveIsFront && effectiveIsRear);
+                };
+                const aIsBoth = getIsBoth(a);
+                const bIsBoth = getIsBoth(b);
+                if (aIsBoth && !bIsBoth)
+                    return -1; // a va primero
+                if (!aIsBoth && bIsBoth)
+                    return 1; // b va primero
+                return 0;
+            });
+        }
         appState.currentPage = 1;
         renderCurrentPage();
         updateURLWithFilters();
         renderDynamicBrandTags(appState.filtered, isFiltered);
     };
-
     // --- FIN: BLOQUE DE FILTRADO REFACTORIZADO ---
-
-
     const renderApplicationsList = (aplicaciones, defaultPos) => {
         const safeAplicaciones = Array.isArray(aplicaciones) ? aplicaciones : [];
         const groupedApps = safeAplicaciones.reduce((acc, app) => {
             const marca = app.marca || 'N/A';
-            if (!acc[marca]) acc[marca] = [];
+            if (!acc[marca])
+                acc[marca] = [];
             acc[marca].push(app);
             return acc;
         }, {});
@@ -433,7 +542,8 @@ document.addEventListener('DOMContentLoaded', () => {
             groupedApps[marca].sort((a, b) => {
                 const serieA = a.serie || '';
                 const serieB = b.serie || '';
-                if (serieA !== serieB) return serieA < serieB ? -1 : 1;
+                if (serieA !== serieB)
+                    return serieA < serieB ? -1 : 1;
                 const anioA = a.año || '';
                 const anioB = b.año || '';
                 return anioA < anioB ? -1 : anioA > anioB ? 1 : 0;
@@ -445,17 +555,17 @@ document.addEventListener('DOMContentLoaded', () => {
             groupedApps[marca].forEach(app => {
                 // Usamos la posición específica de la aplicación si existe, sino la global
                 const posToDisplay = app.posicion || defaultPos || '';
-
                 let posClass = '';
                 const posLower = posToDisplay.toLowerCase();
                 if (posLower.includes('delantera') && posLower.includes('trasera')) {
                     posClass = 'ambas';
-                } else if (posLower.includes('delantera')) {
+                }
+                else if (posLower.includes('delantera')) {
                     posClass = 'delantera';
-                } else if (posLower.includes('trasera')) {
+                }
+                else if (posLower.includes('trasera')) {
                     posClass = 'trasera';
                 }
-
                 appListHTML += `<div class="app-detail-row">
                 <div>${app.serie || ''}</div>
                 <div>${app.litros || ''}</div>
@@ -466,12 +576,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return appListHTML;
     };
-
     const renderSpecs = (item) => {
         let specsHTML = `<div class="app-brand-header">ESPECIFICACIONES</div><div class="spec-details-grid">`;
         const refsSpecsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
-            ? item.ref.flatMap(ref => String(ref).split(' '))
-                .map(part => `<span class="ref-badge spec-ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
+            ? item.ref.flatMap((ref) => String(ref).split(' '))
+                .map((part) => `<span class="ref-badge spec-ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
                 .join('')
             : '<span class="ref-badge ref-badge-na spec-ref-badge">N/A</span>';
         specsHTML += `<div class="spec-label"><strong>Referencias</strong></div><div class="spec-value modal-ref-container">${refsSpecsHTML}</div>`;
@@ -485,7 +594,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const alto = partes[1] || 'N/A';
                 return `<div>Ancho: ${ancho} x Alto: ${alto}</div>`;
             }).join('');
-        } else {
+        }
+        else {
             const anchoVal = item.anchoNum || 'N/A';
             const altoVal = item.altoNum || 'N/A';
             medidasHTML = `<div>Ancho: ${anchoVal} x Alto: ${altoVal}</div>`;
@@ -494,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
         specsHTML += `</div>`;
         return specsHTML;
     };
-
     const showSkeletonLoader = (count = 6) => {
         let skeletonHTML = '';
         for (let i = 0; i < count; i++) {
@@ -503,11 +612,11 @@ document.addEventListener('DOMContentLoaded', () => {
         els.results.innerHTML = skeletonHTML;
         els.paginationContainer.innerHTML = '';
     };
-
     function setupPagination(totalItems) {
         els.paginationContainer.innerHTML = '';
         const totalPages = Math.ceil(totalItems / itemsPerPage);
-        if (totalPages <= 1) return;
+        if (totalPages <= 1)
+            return;
         let paginationHTML = '';
         paginationHTML += `<button class="page-btn" data-page="${appState.currentPage - 1}" ${appState.currentPage === 1 ? 'disabled' : ''}>Anterior</button>`;
         const maxPagesToShow = 5;
@@ -516,31 +625,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalPages <= maxPagesToShow) {
             startPage = 1;
             endPage = totalPages;
-        } else if (appState.currentPage <= halfPages + 1) {
+        }
+        else if (appState.currentPage <= halfPages + 1) {
             startPage = 1;
             endPage = maxPagesToShow;
-        } else if (appState.currentPage >= totalPages - halfPages) {
+        }
+        else if (appState.currentPage >= totalPages - halfPages) {
             startPage = totalPages - maxPagesToShow + 1;
             endPage = totalPages;
-        } else {
+        }
+        else {
             startPage = appState.currentPage - halfPages;
             endPage = appState.currentPage + halfPages;
         }
         if (startPage > 1) {
             paginationHTML += `<button class="page-btn" data-page="1">1</button>`;
-            if (startPage > 2) paginationHTML += `<button class="page-btn" disabled>...</button>`;
+            if (startPage > 2)
+                paginationHTML += `<button class="page-btn" disabled>...</button>`;
         }
         for (let i = startPage; i <= endPage; i++) {
             paginationHTML += `<button class="page-btn ${i === appState.currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
         }
         if (endPage < totalPages) {
-            if (endPage < totalPages - 1) paginationHTML += `<button class="page-btn" disabled>...</button>`;
+            if (endPage < totalPages - 1)
+                paginationHTML += `<button class="page-btn" disabled>...</button>`;
             paginationHTML += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
         }
         paginationHTML += `<button class="page-btn" data-page="${appState.currentPage + 1}" ${appState.currentPage === totalPages ? 'disabled' : ''}>Siguiente</button>`;
         els.paginationContainer.innerHTML = paginationHTML;
     }
-
     const renderCurrentPage = () => {
         const totalResults = appState.filtered.length;
         const startIndex = (appState.currentPage - 1) * itemsPerPage;
@@ -558,59 +671,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         els.results.innerHTML = paginatedData.map((item, index) => {
             const safeAplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-
             // Detección inteligente de posición (Revisar si aplica a ambas)
             const posText = (item.posición || '').toLowerCase();
-            // Check if applications have explicit positions varying
-            const hasFrontApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
-            const hasRearApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
-            const isExplicitlyBoth = posText.includes('delantera') && posText.includes('trasera');
-
-            let posBadgeClass = '';
-            let posBadgeText = item.posición || 'N/A';
-
-            if (isExplicitlyBoth || (hasFrontApp && hasRearApp)) {
-                posBadgeClass = 'ambas';
-                posBadgeText = 'Delantera y Trasera';
-            } else if (posText.includes('delantera') || hasFrontApp) {
-                posBadgeClass = 'delantera';
-                if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Delantera';
-            } else if (posText.includes('trasera') || hasRearApp) {
-                posBadgeClass = 'trasera';
-                if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Trasera';
+            const reFront = /\bdel/i;
+            const reRear = /\btras/i;
+            const hasFrontApp = safeAplicaciones.some(a => reFront.test(a.posicion || ''));
+            const hasRearApp = safeAplicaciones.some(a => reRear.test(a.posicion || ''));
+            const globalIsFront = reFront.test(posText);
+            const globalIsRear = reRear.test(posText);
+            const isExplicitlyBoth = posText.includes('ambas') || (globalIsFront && globalIsRear);
+            const effectiveIsFront = globalIsFront || hasFrontApp;
+            const effectiveIsRear = globalIsRear || hasRearApp;
+            const isAmbasCalculated = isExplicitlyBoth || (effectiveIsFront && effectiveIsRear);
+            let positionBadgesHTML = '';
+            // Standardized Logic: Single Badge for 'Ambas' (Mixed)
+            if (isAmbasCalculated) {
+                // Use the 'ambas' class for the specific gradient
+                positionBadgesHTML = `<span class="position-badge-premium ambas">Delantera y Trasera</span>`;
             }
-
-            // Badge más prominente usando clases nuevas o reutilizando las de variables
-            const posBadge = `<span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>`;
-
-            const refsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
-                ? item.ref.flatMap(ref => String(ref).split(' '))
-                    .map(part => `<span class="ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
-                    .join('')
-                : '<span class="ref-badge ref-badge-na">N/A</span>';
-
-            let firstImageSrc = 'https://via.placeholder.com/300x200.png?text=No+Img';
+            else if (effectiveIsFront) {
+                positionBadgesHTML = `<span class="position-badge-premium delantera">Delantera</span>`;
+            }
+            else if (effectiveIsRear) {
+                positionBadgesHTML = `<span class="position-badge-premium trasera">Trasera</span>`;
+            }
+            else {
+                // Fallback for unknown but present position
+                if (item.posición && item.posición !== 'N/A') {
+                    positionBadgesHTML = `<span class="position-badge-premium">${item.posición}</span>`;
+                }
+            }
+            // --- RESTORED LOGIC ---
+            let firstImageSrc = getPlaceholderImage('Sin Imagen');
             if (item.imagenes && item.imagenes.length > 0) {
                 firstImageSrc = item.imagenes[0];
-            } else if (item.imagen) {
-                firstImageSrc = item.imagen.replace("text=", `text=Vista+1+`);
             }
-
+            else if (item.imagen) {
+                // Si hay una imagen singular antigua, intentamos construir la URL de vistas
+                // Solo si es una URL real, si no, fallback
+                if (item.imagen.includes('http')) {
+                    firstImageSrc = item.imagen.replace("text=", `text=Vista+1+`);
+                }
+                else {
+                    firstImageSrc = item.imagen; // Asumimos que es válida si no es placeholder
+                }
+            }
             // Mostramos un resumen más limpio de aplicaciones
             const appSummaryItems = safeAplicaciones
                 .map(app => `${app.marca} ${app.serie}`)
                 .filter((value, index, self) => self.indexOf(value) === index)
                 .slice(0, 3);
-
-            let appSummaryHTML = appSummaryItems.length > 0
-                ? `<div class="search-result-sub-text">${appSummaryItems.join(', ')}${safeAplicaciones.length > 3 ? ', ...' : ''}</div>`
-                : '<div class="search-result-sub-text">Sin aplicaciones registradas</div>';
-
             const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
-
-            // REFACTORIZADO (MEJORA #4)
             const isFavorite = appState.isFavorite(item._appId);
-
             const favoriteBtnHTML = `
                 <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito" aria-pressed="${isFavorite}">
                     <svg class="heart-icon" viewBox="0 0 24 24">
@@ -618,52 +730,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </svg>
                 </button>
             `;
-
-            // --- SENIOR LEVEL CARD RENDER ---
-
-            // Helper for Badge Classes
-            const getNewBadgeClass = (ref) => {
-                if (!ref) return 'badge--primary';
-                const upperRef = String(ref).toUpperCase();
-                // Check prefixes/suffixes FIRST (before numeric)
-                if (upperRef.startsWith('K')) return 'badge--k';
-                if (upperRef.startsWith('SP')) return 'badge--sp';
-                if (upperRef.endsWith('INC')) return 'badge--inc';
-                if (upperRef.endsWith('BP')) return 'badge--bp';
-                if (upperRef.endsWith('BEX')) return 'badge--bex';
-                // Only check numeric if no suffix/prefix matched
-                if (/^\d/.test(upperRef)) return 'badge--num';
-                return 'badge--primary';
-            };
-
-            // Generate ALL reference badges (como en el modal)
+            // Generate ALL reference badges
             const allRefsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
                 ? item.ref.flatMap(ref => String(ref).split(' '))
-                    .slice(0, 5) // Máximo 5 refs en tarjeta
+                    .slice(0, 5)
                     .map(ref => `<span class="ref-badge card-ref-badge ${getRefBadgeClass(ref)}">${ref}</span>`)
                     .join('')
                 : '<span class="ref-badge ref-badge-na card-ref-badge">N/A</span>';
-
-            // Generate position badges (premium style como en modal)
-            const cardPosText = (item.posición || '').toLowerCase();
-            const cardHasFrontApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
-            const cardHasRearApp = safeAplicaciones.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
-            const cardIsExplicitlyBoth = cardPosText.includes('delantera') && cardPosText.includes('trasera');
-
-            let positionBadgesHTML = '';
-            if (cardIsExplicitlyBoth || (cardHasFrontApp && cardHasRearApp)) {
-                positionBadgesHTML = `
-                    <span class="position-badge-premium delantera">Delantera</span>
-                    <span class="position-badge-premium trasera">Trasera</span>
-                `;
-            } else if (cardPosText.includes('delantera') || cardHasFrontApp) {
-                positionBadgesHTML = `<span class="position-badge-premium delantera">Delantera</span>`;
-            } else if (cardPosText.includes('trasera') || cardHasRearApp) {
-                positionBadgesHTML = `<span class="position-badge-premium trasera">Trasera</span>`;
-            } else {
-                positionBadgesHTML = `<span class="position-badge-premium">${item.posición || 'N/A'}</span>`;
-            }
-
+            // --- END RESTORED LOGIC ---
             return `
                 <article class="product-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" role="button" tabindex="0">
                     
@@ -695,9 +769,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         setupPagination(totalResults);
     };
-
     function renderDynamicBrandTags(data, isFiltered) {
-        if (!els.brandTagsContainer) return;
+        if (!els.brandTagsContainer)
+            return;
         const allBrandsList = data.flatMap(item => (item.aplicaciones || []).map(app => app.marca)).filter(Boolean);
         const brandFrequencies = allBrandsList.reduce((counts, brand) => {
             counts[brand] = (counts[brand] || 0) + 1;
@@ -709,33 +783,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 .sort(([, countA], [, countB]) => countB - countA)
                 .slice(0, 10)
                 .map(([brand]) => brand);
-        } else {
+        }
+        else {
             const allUniqueBrands = Object.keys(brandFrequencies);
             const shuffled = [...allUniqueBrands].sort(() => 0.5 - Math.random());
             brandsToShow = shuffled.slice(0, 10);
         }
         const activeBrandFilter = els.marca.value.trim().toLowerCase();
-
         // MODIFICADO: Eliminado el style="" y la lógica de colorVar
         els.brandTagsContainer.innerHTML = brandsToShow.map(brand => {
             const isActive = brand.toLowerCase() === activeBrandFilter;
             return `<button class="brand-tag ${isActive ? 'active' : ''}" data-brand="${brand}">${brand}</button>`;
         }).join('');
-
         els.brandTagsContainer.style.display = brandsToShow.length ? 'flex' : 'none';
     }
-
+    // === Modal ===
     // === Modal ===
     function handleCardClick(event) {
-        if (event.target.closest('.product-card__favorite-btn')) return;
-        const card = event.target.closest('.product-card');
+        const target = event.target;
+        if (!target || target.closest('.product-card__favorite-btn'))
+            return;
+        const card = target.closest('.product-card');
         if (card) {
             const itemId = card.dataset.id;
-            const itemData = appState.data.find(item => item._appId == itemId);
-            if (itemData) openModal(itemData);
+            const itemData = appState.data.find(item => String(item._appId) === itemId);
+            if (itemData)
+                openModal(itemData);
         }
     }
-
     function updateScrollIndicator() {
         const wrapper = els.modalDetailsWrapper;
         const content = els.modalDetailsContent;
@@ -745,83 +820,89 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.classList.toggle('scrollable', isScrollable && !isAtBottom);
         }
     }
-
     function openModal(item) {
         const refsHeaderHTML = (Array.isArray(item.ref) && item.ref.length > 0)
-            ? item.ref.flatMap(ref => String(ref).split(' '))
-                .map(part => `<span class="ref-badge header-ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
+            ? item.ref.flatMap((ref) => String(ref).split(' '))
+                .map((part) => `<span class="ref-badge header-ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
                 .join('')
             : '<span class="ref-badge ref-badge-na header-ref-badge">N/A</span>';
         els.modalRef.innerHTML = `<div class="modal-header-ref-container">${refsHeaderHTML}</div>`;
-
         // Detección inteligente de posición para el Modal
         const safeAppsModal = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
         const posTextModal = (item.posición || '').toLowerCase();
-        const hasFrontAppModal = safeAppsModal.some(a => (a.posicion || '').toLowerCase().includes('delantera'));
-        const hasRearAppModal = safeAppsModal.some(a => (a.posicion || '').toLowerCase().includes('trasera'));
-        const isExplicitlyBothModal = posTextModal.includes('delantera') && posTextModal.includes('trasera');
-
+        // Regex para "Del..." y "Tras..."
+        const reFront = /\bdel/i;
+        const reRear = /\btras/i;
+        const hasFrontAppModal = safeAppsModal.some(a => reFront.test(a.posicion || ''));
+        const hasRearAppModal = safeAppsModal.some(a => reRear.test(a.posicion || ''));
+        const globalIsFront = reFront.test(posTextModal);
+        const globalIsRear = reRear.test(posTextModal);
+        const isExplicitlyBothModal = posTextModal.includes('ambas') || (globalIsFront && globalIsRear);
+        const effectiveIsFront = globalIsFront || hasFrontAppModal;
+        const effectiveIsRear = globalIsRear || hasRearAppModal;
+        const isAmbasCalculated = isExplicitlyBothModal || (effectiveIsFront && effectiveIsRear);
         let posBadgeClass = '';
         let posBadgeText = item.posición || 'N/A';
-
-        if (isExplicitlyBothModal || (hasFrontAppModal && hasRearAppModal)) {
+        if (isAmbasCalculated) {
             posBadgeClass = 'ambas';
             posBadgeText = 'Delantera y Trasera';
-        } else if (posTextModal.includes('delantera') || hasFrontAppModal) {
-            posBadgeClass = 'delantera';
-            if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Delantera';
-        } else if (posTextModal.includes('trasera') || hasRearAppModal) {
-            posBadgeClass = 'trasera';
-            if (!posBadgeText || posBadgeText === 'N/A') posBadgeText = 'Trasera';
         }
-
+        else if (effectiveIsFront) {
+            posBadgeClass = 'delantera';
+            if (!posBadgeText || posBadgeText === 'N/A' || !reFront.test(posBadgeText))
+                posBadgeText = 'Delantera';
+        }
+        else if (effectiveIsRear) {
+            posBadgeClass = 'trasera';
+            if (!posBadgeText || posBadgeText === 'N/A' || !reRear.test(posBadgeText))
+                posBadgeText = 'Trasera';
+        }
         els.modalPosition.innerHTML = `<span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>`;
         let images = [];
         if (item.imagenes && item.imagenes.length > 0) {
             images = item.imagenes;
-        } else if (item.imagen) {
+        }
+        else if (item.imagen) {
             images = [
                 item.imagen.replace("text=", `text=Vista+1+`),
                 item.imagen.replace("text=", `text=Vista+2+`),
                 item.imagen.replace("text=", `text=Vista+3+`)
             ];
-        } else {
+        }
+        else {
             images = ['https://via.placeholder.com/300x200.png?text=No+Img'];
         }
-        const imageTrackHTML = images.map((imgSrc, i) =>
-            `<img src="${imgSrc}" alt="Referencia ${item.ref?.[0] || 'N/A'} Vista ${i + 1}" class="result-image">`
-        ).join('');
+        const imageTrackHTML = images.map((imgSrc, i) => `<img src="${imgSrc}" alt="Referencia ${item.ref?.[0] || 'N/A'} Vista ${i + 1}" class="result-image">`).join('');
         els.modalCarousel.innerHTML = `
         <div class="image-track" style="display:flex;" data-current-index="0">${imageTrackHTML}</div>
             ${images.length > 1 ? `
                 <button class="carousel-nav-btn" data-direction="-1" aria-label="Imagen anterior">‹</button>
                 <button class="carousel-nav-btn" data-direction="1" aria-label="Siguiente imagen">›</button>
-            ` : ''
-            }
+            ` : ''}
     `;
         els.modalCarousel.querySelectorAll('.carousel-nav-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
-                const direction = parseInt(e.currentTarget.dataset.direction);
+                const current = e.currentTarget;
+                const direction = parseInt(current.dataset.direction || '0');
                 navigateCarousel(els.modalCarousel, direction);
             };
         });
         if (images.length > 1) {
             els.modalCounterWrapper.innerHTML = `<span class="carousel-counter">1 / ${images.length}</span>`;
-        } else {
+        }
+        else {
             els.modalCounterWrapper.innerHTML = '';
         }
-        els.modalAppsSpecs.innerHTML = `<div class="applications-list-container">${renderApplicationsList(item.aplicaciones, item.posición)}${renderSpecs(item)}</div>`;
+        els.modalAppsSpecs.innerHTML = `<div class="applications-list-container">${renderApplicationsList(item.aplicaciones, item.posición || '')}${renderSpecs(item)}</div>`;
         els.modalContent.classList.remove('closing');
         els.modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
         lastFocusedElement = document.activeElement;
         els.modal.addEventListener('keydown', handleFocusTrap);
         els.modalCloseBtn.focus(); // Pone el foco en el botón de cerrar
         // --- FIN: MEJORA #7 ---
-
         requestAnimationFrame(() => {
             setTimeout(() => {
                 updateScrollIndicator();
@@ -829,32 +910,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 100);
         });
     }
-
     function navigateCarousel(carouselContainer, direction) {
         const track = carouselContainer.querySelector('.image-track');
         const images = carouselContainer.querySelectorAll('.result-image');
         const counter = els.modalCounterWrapper.querySelector('.carousel-counter');
-        if (!track || images.length <= 1) return;
-        let currentIndex = parseInt(track.dataset.currentIndex) || 0;
+        if (!track || images.length <= 1)
+            return;
+        let currentIndex = parseInt(track.dataset.currentIndex || '0') || 0;
         const totalImages = images.length;
         let newIndex = currentIndex + direction;
-        if (newIndex >= totalImages) newIndex = 0;
-        else if (newIndex < 0) newIndex = totalImages - 1;
-        track.style.transform = `translateX(-${newIndex * 100} %)`;
-        track.dataset.currentIndex = newIndex;
-        if (counter) counter.textContent = `${newIndex + 1}/${totalImages}`;
+        if (newIndex >= totalImages)
+            newIndex = 0;
+        else if (newIndex < 0)
+            newIndex = totalImages - 1;
+        track.style.transform = `translateX(-${newIndex * 100}%)`;
+        track.dataset.currentIndex = String(newIndex);
+        if (counter)
+            counter.textContent = `${newIndex + 1}/${totalImages}`;
     }
-
     function closeModal() {
         els.modalContent.classList.add('closing');
         els.modalDetailsContent.removeEventListener('scroll', updateScrollIndicator);
         els.modalDetailsWrapper.classList.remove('scrollable');
-
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
         els.modal.removeEventListener('keydown', handleFocusTrap);
-        if (lastFocusedElement) lastFocusedElement.focus();
+        if (lastFocusedElement)
+            lastFocusedElement.focus();
         // --- FIN: MEJORA #7 ---
-
         setTimeout(() => {
             els.modal.style.display = 'none';
             document.body.style.overflow = '';
@@ -866,70 +948,31 @@ document.addEventListener('DOMContentLoaded', () => {
             els.modalContent.classList.remove('closing');
         }, 220);
     }
-
     function openGuideModal() {
         els.guideModalContent.classList.remove('closing');
         els.guideModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
         lastFocusedElement = document.activeElement;
         els.guideModal.addEventListener('keydown', handleFocusTrap);
         els.guideModalCloseBtn.focus();
         // --- FIN: MEJORA #7 ---
     }
-
     function closeGuideModal() {
         els.guideModalContent.classList.add('closing');
-
         // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
         els.guideModal.removeEventListener('keydown', handleFocusTrap);
-        if (lastFocusedElement) lastFocusedElement.focus();
+        if (lastFocusedElement)
+            lastFocusedElement.focus();
         // --- FIN: MEJORA #7 ---
-
         setTimeout(() => {
             els.guideModal.style.display = 'none';
             document.body.style.overflow = '';
             els.guideModalContent.classList.remove('closing');
         }, 220);
     }
-
     // === UI Interactions ===
-    function openSideMenu() {
-        // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        lastFocusedElement = document.activeElement;
-        // --- FIN: MEJORA #7 ---
-        els.sideMenu.classList.add('open');
-        els.sideMenu.setAttribute('aria-hidden', 'false');
-        els.sideMenuOverlay.style.display = 'block';
-        requestAnimationFrame(() => {
-            els.sideMenuOverlay.classList.add('visible');
-        });
-        els.menuBtn.setAttribute('aria-expanded', 'true');
-        els.menuCloseBtn.focus();
-        // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        els.sideMenu.addEventListener('keydown', handleFocusTrap);
-        // --- FIN: MEJORA #7 ---
-    }
-
-    function closeSideMenu() {
-        els.sideMenu.classList.remove('open');
-        els.sideMenu.setAttribute('aria-hidden', 'true');
-        els.sideMenuOverlay.classList.remove('visible');
-        els.menuBtn.setAttribute('aria-expanded', 'false');
-
-        // --- INICIO: MEJORA #7 (ACCESIBILIDAD) ---
-        if (lastFocusedElement) lastFocusedElement.focus();
-        els.sideMenu.removeEventListener('keydown', handleFocusTrap);
-        // --- FIN: MEJORA #7 ---
-
-        els.sideMenuOverlay.addEventListener('transitionend', () => {
-            if (!els.sideMenuOverlay.classList.contains('visible')) {
-                els.sideMenuOverlay.style.display = 'none';
-            }
-        }, { once: true });
-    }
-
+    // openSideMenu and closeSideMenu removed as they were dead code referring to removed elements
     const clearAllFilters = () => {
         [els.busqueda, els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input => input.value = '');
         els.posDel.classList.remove('active');
@@ -946,7 +989,6 @@ document.addEventListener('DOMContentLoaded', () => {
         els.searchHistoryCard.style.display = 'none';
         filterData();
     };
-
     const createRippleEffect = (event) => {
         const button = event.currentTarget;
         const circle = document.createElement('span');
@@ -958,10 +1000,10 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.top = `${event.clientY - (rect.top + radius)}px`;
         circle.classList.add('ripple');
         const ripple = button.getElementsByClassName('ripple')[0];
-        if (ripple) ripple.remove();
+        if (ripple)
+            ripple.remove();
         button.appendChild(circle);
     };
-
     const updateURLWithFilters = () => {
         const params = new URLSearchParams();
         const filters = {
@@ -974,14 +1016,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ancho: els.medidasAncho.value.trim(),
             alto: els.medidasAlto.value.trim()
         };
-        for (const key in filters) if (filters[key]) params.set(key, filters[key]);
+        for (const key in filters)
+            if (filters[key])
+                params.set(key, filters[key]);
         const activePositions = getPositionFilter();
-        if (activePositions.length) params.set('pos', activePositions.join(','));
-        if (appState.isFavoritesMode) params.set('favorites', 'true');
+        if (activePositions.length)
+            params.set('pos', activePositions.join(','));
+        if (appState.isFavoritesMode)
+            params.set('favorites', 'true');
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         history.pushState({}, '', newUrl);
     };
-
     const applyFiltersFromURL = () => {
         const params = new URLSearchParams(window.location.search);
         els.busqueda.value = params.get('busqueda') || '';
@@ -1003,11 +1048,9 @@ document.addEventListener('DOMContentLoaded', () => {
         els.filtroFavoritosBtn.classList.toggle('active', isFavMode);
         els.filtroFavoritosBtn.setAttribute('aria-pressed', isFavMode ? 'true' : 'false');
     };
-
     // === Event Listeners ===
     function setupEventListeners() {
-
-        [els.darkBtn, els.upBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', createRippleEffect));
+        [els.darkBtn, els.upBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', (e) => createRippleEffect(e)));
         // Temas
         const applyLightTheme = () => {
             els.body.classList.remove('lp-dark', 'modo-orbital');
@@ -1059,97 +1102,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const savedTheme = localStorage.getItem('themePreference');
         switch (savedTheme) {
-            case 'orbital': els.orbitalBtn ? applyOrbitalTheme() : applyLightTheme(); break;
-            case 'dark': applyAmoledDarkTheme(); break;
+            case 'orbital':
+                els.orbitalBtn ? applyOrbitalTheme() : applyLightTheme();
+                break;
+            case 'dark':
+                applyAmoledDarkTheme();
+                break;
             default: applyLightTheme();
         }
-
         // Botón Subir
         els.upBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
         // --- INICIO: MEJORA #10 (SCROLL DEBOUNCE) ---
         // 1. Creamos la función que actualiza el botón
         const handleScroll = () => {
             els.upBtn.classList.toggle('show', window.scrollY > 300);
         };
-
         // 2. Creamos una versión "debounced" de esa función
         const debouncedScroll = debounce(handleScroll, 150);
-
         // 3. Usamos la versión debounced en el listener
         window.addEventListener('scroll', debouncedScroll);
         // --- FIN: MEJORA #10 ---
-
         // Menú lateral
         // Menu listeners removed
-
         // --- INICIO: CORRECCIÓN BUG ESCAPE (keydown) ---
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 // Prioritiza cerrar la capa superior primero.
                 // Usamos "else if" para que solo cierre una cosa a la vez.
-
                 if (els.guideModal.style.display === 'flex') {
                     closeGuideModal();
-                } else if (els.modal.style.display === 'flex') {
+                }
+                else if (els.modal.style.display === 'flex') {
                     // Esta es la línea que faltaba
                     closeModal();
                 }
             }
         });
         // --- FIN: CORRECCIÓN BUG ESCAPE ---
-
         // Clic en Tarjetas
         els.results.addEventListener('click', handleCardClick);
-
         // Filtros
         const debouncedFilter = debounce(filterData, 300);
-
         els.filtroFavoritosBtn.addEventListener('click', () => {
             appState.isFavoritesMode = !appState.isFavoritesMode;
             els.filtroFavoritosBtn.classList.toggle('active', appState.isFavoritesMode);
             els.filtroFavoritosBtn.setAttribute('aria-pressed', appState.isFavoritesMode ? 'true' : 'false');
             filterData();
         });
-
         els.historialBtn?.addEventListener('click', () => {
             const isActive = els.historialBtn.getAttribute('aria-pressed') === 'true';
             els.historialBtn.classList.toggle('active', !isActive);
             els.historialBtn.setAttribute('aria-pressed', !isActive ? 'true' : 'false');
             els.searchHistoryCard.style.display = !isActive ? 'block' : 'none';
-            if (!isActive) els.searchHistoryCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (!isActive)
+                els.searchHistoryCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
-
         els.busqueda.addEventListener('input', (e) => {
-            els.searchContainer.classList.toggle('active', e.target.value.trim() !== '');
+            const target = e.target;
+            els.searchContainer.classList.toggle('active', target.value.trim() !== '');
             debouncedFilter();
         });
-
-        [els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input =>
-            input.addEventListener('input', debouncedFilter)
-        );
-
+        [els.marca, els.modelo, els.anio, els.oem, els.fmsi, els.medidasAncho, els.medidasAlto].forEach(input => input.addEventListener('input', debouncedFilter));
         [els.posDel, els.posTras].forEach(btn => btn.addEventListener('click', () => {
             btn.classList.toggle('active');
             filterData();
         }));
-
         els.clearBtn.addEventListener('click', () => {
-            if (els.clearBtn.disabled) return;
+            if (els.clearBtn.disabled)
+                return;
             els.clearBtn.disabled = true;
             const trashLid = els.clearBtn.querySelector('.trash-lid');
             const trashBody = els.clearBtn.querySelector('.trash-body');
-            if (trashLid) trashLid.classList.add('animate-lid');
-            if (trashBody) trashBody.classList.add('animate-body');
+            if (trashLid)
+                trashLid.classList.add('animate-lid');
+            if (trashBody)
+                trashBody.classList.add('animate-body');
             createSparks(els.clearBtn);
             clearAllFilters();
             setTimeout(() => {
-                if (trashLid) trashLid.classList.remove('animate-lid');
-                if (trashBody) trashBody.classList.remove('animate-body');
+                if (trashLid)
+                    trashLid.classList.remove('animate-lid');
+                if (trashBody)
+                    trashBody.classList.remove('animate-body');
                 els.clearBtn.disabled = false;
             }, 900);
         });
-
         function createSparks(button) {
             const NUM_SPARKS = 10;
             const SPARK_COLORS = ['#00ffff', '#ff00ff', '#00ff7f', '#ffc700', '#ff5722'];
@@ -1170,56 +1207,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 spark.addEventListener('animationend', () => spark.remove(), { once: true });
             }
         }
-
         if (els.brandTagsContainer) {
             els.brandTagsContainer.addEventListener('click', (e) => {
-                const tag = e.target.closest('.brand-tag');
-                if (!tag) return;
-                els.marca.value = tag.classList.contains('active') ? '' : tag.dataset.brand;
+                const target = e.target;
+                const tag = target ? target.closest('.brand-tag') : null;
+                if (!tag)
+                    return;
+                els.marca.value = tag.classList.contains('active') ? '' : tag.dataset.brand || '';
                 filterData();
             });
         }
-
         if (els.manufacturerTagsContainer) {
             els.manufacturerTagsContainer.addEventListener('click', (e) => {
-                const tag = e.target.closest('.brand-tag');
-                if (!tag) return;
-                const manufacturer = tag.dataset.manufacturer;
+                const target = e.target;
+                const tag = target ? target.closest('.brand-tag') : null;
+                if (!tag)
+                    return;
+                const manufacturer = tag.dataset.manufacturer || '';
                 const isActive = tag.classList.contains('active');
                 els.manufacturerTagsContainer.querySelectorAll('.brand-tag.active').forEach(t => {
-                    if (t !== tag) t.classList.remove('active');
+                    if (t !== tag)
+                        t.classList.remove('active');
                 });
                 if (isActive) {
                     tag.classList.remove('active');
                     appState.activeManufacturer = null;
-                } else {
+                }
+                else {
                     tag.classList.add('active');
                     appState.activeManufacturer = manufacturer;
                 }
                 filterData();
             });
         }
-
         els.paginationContainer.addEventListener('click', (e) => {
-            const btn = e.target.closest('.page-btn');
-            if (!btn || btn.disabled || btn.classList.contains('active')) return;
-            const newPage = parseInt(btn.dataset.page);
+            const target = e.target;
+            const btn = target ? target.closest('.page-btn') : null;
+            if (!btn || btn.disabled || btn.classList.contains('active'))
+                return;
+            const newPage = parseInt(btn.dataset.page || '0');
             if (newPage) {
                 appState.currentPage = newPage;
                 renderCurrentPage();
                 els.resultsHeaderCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
-
         document.addEventListener('click', (e) => {
-            const deleteBtn = e.target.closest('.delete-history-item');
+            const target = e.target;
+            if (!target)
+                return;
+            const deleteBtn = target.closest('.delete-history-item');
             if (deleteBtn) {
                 e.stopPropagation();
-                deleteFromSearchHistory(deleteBtn.dataset.queryDelete);
-            } else {
-                const historyItem = e.target.closest('.search-history-item');
+                deleteFromSearchHistory(deleteBtn.dataset.queryDelete || '');
+            }
+            else {
+                const historyItem = target.closest('.search-history-item');
                 if (historyItem) {
-                    const query = historyItem.dataset.query;
+                    const query = historyItem.dataset.query || '';
                     els.busqueda.value = query;
                     addToSearchHistory(query);
                     filterData();
@@ -1227,14 +1272,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-
         // Modales
         els.modalCloseBtn.addEventListener('click', closeModal);
-        els.modal.addEventListener('click', (e) => { if (e.target === els.modal) closeModal(); });
+        els.modal.addEventListener('click', (e) => { if (e.target === els.modal)
+            closeModal(); });
         els.guideModalCloseBtn.addEventListener('click', closeGuideModal);
-        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal) closeGuideModal(); });
+        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal)
+            closeGuideModal(); });
     }
-
     // === Inicialización ===
     async function inicializarApp() {
         showSkeletonLoader();
@@ -1243,9 +1288,10 @@ document.addEventListener('DOMContentLoaded', () => {
         els.searchHistoryCard.style.display = 'none';
         try {
             const snapshot = await db.collection('pastillas').get();
-            if (snapshot.empty) throw new Error("No se encontraron documentos en la colección 'pastillas'.");
+            if (snapshot.empty)
+                throw new Error("No se encontraron documentos en la colección 'pastillas'.");
             let data = [];
-            snapshot.forEach(doc => data.push(doc.data()));
+            snapshot.forEach((doc) => data.push(doc.data()));
             data = data.map((item, index) => {
                 if (item.imagen && (!item.imagenes || item.imagenes.length === 0)) {
                     item.imagenes = [
@@ -1257,10 +1303,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 let medidaString = null;
                 if (Array.isArray(item.medidas) && item.medidas.length > 0) {
                     medidaString = String(item.medidas[0]);
-                } else if (typeof item.medidas === 'string') {
+                }
+                else if (typeof item.medidas === 'string') {
                     medidaString = item.medidas;
                 }
-                const partes = medidaString ? medidaString.split(/x/i).map(s => parseFloat(s.trim())) : [0, 0];
+                const partes = medidaString ? medidaString.split(/x/i).map((s) => parseFloat(s.trim())) : [0, 0];
                 const safeRefs = Array.isArray(item.ref) ? item.ref.map(String) : [];
                 const safeOems = Array.isArray(item.oem) ? item.oem.map(String) : [];
                 const safeFmsis = Array.isArray(item.fmsi) ? item.fmsi.map(String) : [];
@@ -1283,35 +1330,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 appState.data.forEach(item => {
                     item.aplicaciones.forEach(app => {
                         const prop = key === 'modelo' ? 'serie' : key;
-                        if (app[prop]) allValues.add(String(app[prop]));
+                        if (app[prop])
+                            allValues.add(String(app[prop]));
                     });
                 });
                 return [...allValues].sort();
             };
-            fillDatalist(els.datalistMarca, getAllApplicationValues('marca'));
-            fillDatalist(els.datalistModelo, getAllApplicationValues('modelo'));
-            fillDatalist(els.datalistAnio, getAllApplicationValues('año'));
+            updateDropdown('listaMarcas', getAllApplicationValues('marca'));
+            updateDropdown('listaModelos', getAllApplicationValues('modelo'));
+            updateDropdown('listaAnios', getAllApplicationValues('año'));
             const allOems = [...new Set(appState.data.flatMap(i => i.oem || []))].filter(Boolean).sort();
             const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
-            fillDatalist(els.datalistOem, allOems);
-            fillDatalist(els.datalistFmsi, allFmsis);
-
+            updateDropdown('oemList', allOems);
+            updateDropdown('fmsiList', allFmsis);
             // ELIMINADO: Lógica de brandColorMap
-
             applyFiltersFromURL();
             filterData();
             setupEventListeners();
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Error al inicializar la app:", error);
             // --- INICIO: MEJORA #5 (MANEJO DE ERRORES) ---
             // Mostrar un error claro al usuario en lugar de solo en la consola
-            showGlobalError(
-                'Error al cargar datos',
-                'No se pudo conectar con la base de datos. Por favor, revisa tu conexión a internet e inténtalo de nuevo.'
-            );
+            showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos. Por favor, revisa tu conexión a internet e inténtalo de nuevo.');
             // --- FIN: MEJORA #5 ---
         }
     }
-
     inicializarApp();
 });
+//# sourceMappingURL=script.js.map

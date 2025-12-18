@@ -1,4 +1,4 @@
-/* ================== VARIABLES DE TEMA ================== */
+﻿/* ================== VARIABLES DE TEMA ================== */
 :root {
     --bg-color: #f8f9fa;
     --text-color: #000;
@@ -412,7 +412,7 @@ header .header-x path {
     transition: box-shadow 0.3s ease, border-color 0.5s ease, background-color 0.5s ease;
 }
 
-/* --- 🔴 REGLA MODIFICADA: `gap: 8px;` ELIMINADO --- */
+/* --- ðŸ”´ REGLA MODIFICADA: `gap: 8px;` ELIMINADO --- */
 .filter-title {
     font-weight: 600;
     font-size: 0.9rem;
@@ -423,7 +423,7 @@ header .header-x path {
     display: flex;
     align-items: center;
     /* gap: 8px; */
-    /* <-- Esta línea fue eliminada */
+    /* <-- Esta lÃ­nea fue eliminada */
     transition: color 0.5s ease;
     color: var(--text-color);
 }
@@ -434,7 +434,7 @@ body.modo-orbital .filter-title {
     opacity: 0.9;
 }
 
-/* --- 🔴 REGLA ELIMINADA (ESTABA VACÍA) --- */
+/* --- ðŸ”´ REGLA ELIMINADA (ESTABA VACÃA) --- */
 /* .filter-title svg { ... } */
 
 .form-input {
@@ -564,15 +564,17 @@ body.modo-orbital .form-input::placeholder {
 }
 
 #positionDelantera.active {
-    background-color: var(--badge-delantera-bg);
-    border-color: var(--badge-delantera-bg);
-    color: var(--badge-delantera-text);
+    background-color: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0369a1;
+    font-weight: 600;
 }
 
 #positionTrasera.active {
-    background-color: var(--badge-trasera-bg);
-    border-color: var(--badge-trasera-bg);
-    color: var(--badge-trasera-text);
+    background-color: #fee2e2;
+    border-color: #fecaca;
+    color: #991b1b;
+    font-weight: 600;
 }
 
 body.lp-dark .position-btn {
@@ -681,15 +683,18 @@ body.lp-dark #positionTrasera.active {
     padding: 8px 16px;
     border-radius: 0.75rem;
     margin-top: 0.8rem;
-    background-color: var(--btn-primary-bg);
-    color: var(--btn-primary-text);
-    box-shadow: var(--btn-primary-shadow);
+    background-color: #fee2e2;
+    /* Light Red */
+    color: #991b1b;
+    /* Dark Red */
+    box-shadow: none;
+    border: 1px solid #fecaca;
+    /* Red Border */
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     cursor: pointer;
-    border: none;
     outline: none;
     font-size: 0.9rem;
     font-weight: 600;
@@ -698,18 +703,23 @@ body.lp-dark #positionTrasera.active {
 }
 
 .clear-filters-btn:hover {
-    background-color: var(--btn-primary-hover-bg);
-    box-shadow: var(--elevation-4);
+    background-color: #fecaca;
+    color: #7f1d1d;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .clear-filters-btn svg {
     width: 20px;
     height: 20px;
-    stroke: var(--btn-primary-text);
+    stroke: #991b1b;
     stroke-width: 2;
     fill: none;
     position: static;
-    transition: none;
+    transition: stroke 0.3s ease;
+}
+
+.clear-filters-btn:hover svg {
+    stroke: #7f1d1d;
 }
 
 .brand-tags-container {
@@ -718,19 +728,19 @@ body.lp-dark #positionTrasera.active {
     gap: 0.5rem;
     padding: 0.5rem 0;
     justify-content: center;
-    /* <-- CORRECCIÓN DE CENTRADO */
+    /* <-- CORRECCIÃ“N DE CENTRADO */
 }
 
 /* ======================================================= */
-/* 🟢 INICIO BLOQUE ETIQUETAS (MODIFICADO) 🟢               */
+/* ðŸŸ¢ INICIO BLOQUE ETIQUETAS (MODIFICADO) ðŸŸ¢               */
 /* ======================================================= */
 .brand-tag {
     font-family: 'Inter', sans-serif;
     font-size: 0.6rem;
-    /* 20% más pequeño (original 0.75rem) */
+    /* 20% mÃ¡s pequeÃ±o (original 0.75rem) */
     font-weight: 600;
     padding: 3px 10px;
-    /* 20% más pequeño (original 4px 12px) */
+    /* 20% mÃ¡s pequeÃ±o (original 4px 12px) */
     border-radius: 50px;
     border: 1px solid var(--tag-brand-color, var(--btn-google-border));
     color: var(--tag-brand-color, var(--text-color));
@@ -751,7 +761,7 @@ body.lp-dark #positionTrasera.active {
 .brand-tag.active {
     opacity: 1;
     filter: none;
-    /* Añadimos un color gris (#6c757d) por defecto como 'fallback' */
+    /* AÃ±adimos un color gris (#6c757d) por defecto como 'fallback' */
     background-color: var(--tag-brand-color, #6c757d);
     color: #ffffff;
     border-color: var(--tag-brand-color, #6c757d);
@@ -759,7 +769,7 @@ body.lp-dark #positionTrasera.active {
 }
 
 /* ======================================================= */
-/* 🔴 FIN BLOQUE ETIQUETAS                                 */
+/* ðŸ”´ FIN BLOQUE ETIQUETAS                                 */
 /* ======================================================= */
 
 @keyframes skeleton-pulse {
@@ -829,7 +839,7 @@ body.lp-dark #positionTrasera.active {
     gap: 0.5rem;
 }
 
-/* === 🔴 INICIO CORRECCIÓN BOTONES HEADER === */
+/* === ðŸ”´ INICIO CORRECCIÃ“N BOTONES HEADER === */
 .view-btn {
     width: 36px;
     height: 36px;
@@ -838,7 +848,7 @@ body.lp-dark #positionTrasera.active {
     justify-content: center;
     border-radius: 8px;
     border: 1px solid var(--btn-google-border);
-    /* <-- MÁS OSCURO (de 0.1 a #747775) */
+    /* <-- MÃS OSCURO (de 0.1 a #747775) */
     background-color: transparent;
     cursor: pointer;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.5s ease;
@@ -849,11 +859,11 @@ body.lp-dark #positionTrasera.active {
     height: 20px;
     stroke: var(--text-color);
     opacity: 0.8;
-    /* <-- MÁS OSCURO (de 0.6 a 0.8) */
+    /* <-- MÃS OSCURO (de 0.6 a 0.8) */
     transition: opacity 0.2s ease, stroke 0.5s ease;
 }
 
-/* === 🔴 FIN CORRECCIÓN BOTONES HEADER === */
+/* === ðŸ”´ FIN CORRECCIÃ“N BOTONES HEADER === */
 
 .view-btn:hover {
     background-color: var(--btn-google-hover-bg);
@@ -869,7 +879,7 @@ body.lp-dark #positionTrasera.active {
     opacity: 1;
 }
 
-/* === 🔴 INICIO CORRECCIÓN BOTÓN HISTORIAL === */
+/* === ðŸ”´ INICIO CORRECCIÃ“N BOTÃ“N HISTORIAL === */
 #historialBtn {
     width: auto;
     display: flex;
@@ -880,7 +890,7 @@ body.lp-dark #positionTrasera.active {
     font-weight: 500;
     color: var(--text-color);
     opacity: 0.8;
-    /* <-- MÁS OSCURO (de 0.6 a 0.8) */
+    /* <-- MÃS OSCURO (de 0.6 a 0.8) */
     transition: all 0.2s ease;
 }
 
@@ -893,7 +903,7 @@ body.lp-dark #positionTrasera.active {
     transition: stroke 0.2s ease, opacity 0.2s ease;
 }
 
-/* === 🔴 FIN CORRECCIÓN BOTÓN HISTORIAL === */
+/* === ðŸ”´ FIN CORRECCIÃ“N BOTÃ“N HISTORIAL === */
 
 #historialBtn:hover {
     background-color: var(--btn-google-hover-bg);
@@ -1189,7 +1199,7 @@ body.modo-orbital .card-app-summary {
 
 .applications-list-container .app-detail-row {
     display: grid;
-    /* Adjusted for 4 columns: Serie, Litros, Año, Posición */
+    /* Adjusted for 4 columns: Serie, Litros, AÃ±o, PosiciÃ³n */
     grid-template-columns: 2fr 1fr 0.8fr 1.2fr;
     align-items: center;
     gap: 0.2rem 0.5rem;
@@ -1574,7 +1584,7 @@ body.modo-orbital .modal-apps-specs .app-brand-header {
 }
 
 #guide-modal .usage-guide-content li::before {
-    content: '✅';
+    content: 'âœ…';
     position: absolute;
     left: 0;
     top: 1px;
@@ -1843,7 +1853,7 @@ body.lp-dark {
         margin-top: 1rem;
     }
 
-    /* Esta regla asegura que las etiquetas de fabricante también se centren */
+    /* Esta regla asegura que las etiquetas de fabricante tambiÃ©n se centren */
     .manufacturer-tags-container {
         justify-content: center;
     }
@@ -1991,7 +2001,7 @@ body:not(.lp-dark):not(.modo-orbital) #orbitalBtn.active .lp-icon-palette {
     height: 60%;
     background: var(--watermark-mask-color);
 
-    /* SVG externo - archivo separado más limpio y mantenible */
+    /* SVG externo - archivo separado mÃ¡s limpio y mantenible */
     -webkit-mask-image: url('watermark.svg');
     mask-image: url('watermark.svg');
 
@@ -2064,24 +2074,24 @@ body.modo-orbital .favorite-btn:not(.active) {
     opacity: 0.7;
 }
 
-/* === 🔴 INICIO BLOQUE CORREGIDO CORAZONES === */
+/* === ðŸ”´ INICIO BLOQUE CORREGIDO CORAZONES === */
 
-/* --- 1. Corazón en la TARJETA de producto --- */
+/* --- 1. CorazÃ³n en la TARJETA de producto --- */
 body:not(.lp-dark):not(.modo-orbital) .favorite-btn:not(.active) .heart-icon {
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
 }
 
-/* CORRECTO: Forzar a negro en dark/orbital para que contraste con imágenes claras */
+/* CORRECTO: Forzar a negro en dark/orbital para que contraste con imÃ¡genes claras */
 body.lp-dark .favorite-btn:not(.active) .heart-icon,
 body.modo-orbital .favorite-btn:not(.active) .heart-icon {
     stroke: #000;
-    /* Forzado a negro para visibilidad en imágenes claras */
+    /* Forzado a negro para visibilidad en imÃ¡genes claras */
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
     /* Sombra oscura */
 }
 
 
-/* --- 2. Corazón en el BOTÓN DE FILTRO (header) --- */
+/* --- 2. CorazÃ³n en el BOTÃ“N DE FILTRO (header) --- */
 .view-btn .heart-icon {
     width: 20px;
     height: 20px;
@@ -2106,11 +2116,11 @@ body:not(.lp-dark):not(.modo-orbital) .view-btn#filtroFavoritosBtn:not(.active) 
 /* CORREGIDO: Sombra para modo oscuro/orbital */
 body.lp-dark .view-btn#filtroFavoritosBtn:not(.active) .heart-icon,
 body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
-    /* Mantenemos la sombra, pero ahora usará el color de texto (claro) del tema */
+    /* Mantenemos la sombra, pero ahora usarÃ¡ el color de texto (claro) del tema */
     filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.3));
 }
 
-/* --- FIN CORRECCIÓN 2 --- */
+/* --- FIN CORRECCIÃ“N 2 --- */
 
 .view-btn#filtroFavoritosBtn:not(.active):hover .heart-icon {
     transform: scale(1.15);
@@ -2120,7 +2130,7 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     opacity: 1;
 }
 
-/* Estilos del botón activo */
+/* Estilos del botÃ³n activo */
 .view-btn#filtroFavoritosBtn.active {
     background-color: var(--input-bg);
     border-color: var(--material-surface-border);
@@ -2131,7 +2141,7 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     transform: scale(1.05);
 }
 
-/* CORRECCIÓN DE TYPO: Se eliminó "Filtro" extra */
+/* CORRECCIÃ“N DE TYPO: Se eliminÃ³ "Filtro" extra */
 .view-btn#filtroFavoritosBtn.active .heart-icon path {
     fill: #ff0000;
     stroke: #ff0000;
@@ -2139,10 +2149,10 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     filter: drop-shadow(0 1px 2px rgba(255, 0, 0, 0.5));
 }
 
-/* === 🔴 FIN BLOQUE CORREGIDO CORAZONES === */
+/* === ðŸ”´ FIN BLOQUE CORREGIDO CORAZONES === */
 
 
-/* === Estilos para Historial de Búsqueda (Tarjeta) === */
+/* === Estilos para Historial de BÃºsqueda (Tarjeta) === */
 .search-history-item {
     position: relative;
     padding-right: 28px;
@@ -2179,7 +2189,7 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     padding: 0.5rem 0;
     margin-top: -0.5rem;
     justify-content: center;
-    /* <-- CORRECCIÓN DE CENTRADO */
+    /* <-- CORRECCIÃ“N DE CENTRADO */
 }
 
 /* Asignar colores basados en las clases de badges existentes */
@@ -2201,15 +2211,15 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
 
 @media (max-width: 767px) {
 
-    /* Esta regla asegura que las etiquetas de fabricante también se centren */
+    /* Esta regla asegura que las etiquetas de fabricante tambiÃ©n se centren */
     .manufacturer-tags-container {
         justify-content: center;
     }
 }
 
-/* --- 🔴 ESTILOS DE QR ELIMINADOS 🔴 --- */
+/* --- ðŸ”´ ESTILOS DE QR ELIMINADOS ðŸ”´ --- */
 
-/* === NUEVO DISEÑO PREMIUM DE RESULTADOS === */
+/* === NUEVO DISEÃ‘O PREMIUM DE RESULTADOS === */
 
 .search-result-item {
     background-color: var(--material-surface-light);
@@ -2279,7 +2289,7 @@ body.lp-dark .search-result-content {
     gap: 12px;
 }
 
-/* Icono circular del vehículo */
+/* Icono circular del vehÃ­culo */
 .search-result-icon {
     flex-shrink: 0;
     width: 36px;
@@ -2294,12 +2304,12 @@ body.lp-dark .search-result-content {
     border: 1px solid var(--material-surface-border);
 }
 
-/* Info Principal: Referencias y Badge de Posición */
+/* Info Principal: Referencias y Badge de PosiciÃ³n */
 .search-result-main-info {
     flex: 1;
     display: flex;
     flex-flow: row wrap;
-    /* Cambiado para permitir que refs y posición fluyan juntos */
+    /* Cambiado para permitir que refs y posiciÃ³n fluyan juntos */
     gap: 6px;
     align-items: center;
     align-content: flex-start;
@@ -2311,20 +2321,20 @@ body.lp-dark .search-result-content {
     /* Truco: hace que los hijos sean parte del flex padre directo */
 }
 
-/* Badge de Posición Premium */
+/* Badge de PosiciÃ³n Premium */
 .position-badge-premium {
     font-size: 0.65rem;
-    /* Un poco más pequeño para equilibrar */
+    /* Un poco mÃ¡s pequeÃ±o para equilibrar */
     font-weight: 800;
     text-transform: uppercase;
     padding: 4px 8px;
-    /* Un poco más de padding vertical */
+    /* Un poco mÃ¡s de padding vertical */
     border-radius: 50px;
     /* Redondeado completo estilo 'pill' como las refs */
     letter-spacing: 0.3px;
     display: inline-block;
     box-shadow: none;
-    /* Diseño más plano y limpio */
+    /* DiseÃ±o mÃ¡s plano y limpio */
     line-height: 1;
 }
 
@@ -2333,16 +2343,7 @@ body.lp-dark .search-result-content {
     color: var(--badge-delantera-text);
 }
 
-.position-badge-premium.trasera {
-    background-color: var(--badge-trasera-bg);
-    color: var(--badge-trasera-text);
-}
-
-.position-badge-premium.ambas {
-    background-color: #8b5cf6;
-    /* Violeta/Morado vivo */
-    color: #ffffff;
-}
+/* (Deleted redundant position badge block) */
 
 /* Texto secundario (aplicaciones) */
 .search-result-sub-text {
@@ -2363,7 +2364,7 @@ body.lp-dark .search-result-content {
     border-top: 1px dashed var(--material-surface-border);
 }
 
-/* Ajustes para el botón de favorito dentro de la nueva estructura */
+/* Ajustes para el botÃ³n de favorito dentro de la nueva estructura */
 .search-result-item .favorite-btn {
     top: 10px;
     right: 10px;
@@ -2523,16 +2524,7 @@ body.modo-orbital .favorite-btn.active svg {
     color: white;
 }
 
-.position-badge-premium.trasera {
-    background-color: #a855f7;
-    /* Purple */
-    color: white;
-}
-
-.position-badge-premium.ambas {
-    background: linear-gradient(90deg, #3b82f6 0%, #a855f7 100%);
-    color: white;
-}
+/* (Deleted redundant position badge block) */
 
 .card-thumbnail {
     width: 100%;
@@ -2665,42 +2657,11 @@ body.lp-dark .card-thumbnail {
     color: white !important;
 }
 
-.ref-bp {
-    background-color: #475569 !important;
-    /* Slate */
-    color: white !important;
-}
-
-.ref-bex {
-    background-color: #059669 !important;
-    /* Emerald */
-    color: white !important;
-}
-
-.ref-default {
-    background-color: var(--material-surface-border);
-    color: var(--text-color);
-}
-
-/* Position Badge Colors */
-.position-badge-premium.delantera {
-    background-color: #3b82f6;
-    color: white;
-}
-
-.position-badge-premium.trasera {
-    background-color: #a855f7;
-    /* Purple */
-    color: white;
-}
-
-.position-badge-premium.ambas {
-    background: linear-gradient(90deg, #3b82f6 0%, #a855f7 100%);
-    color: white;
-}
+/* --- BADGE COLORS RESTORE --- */
+/* (Deleted redundant block) */
 
 /* =========================================
-   🚀 SENIOR LEVEL CARD DESIGN SYSTEM (BEM)
+   ðŸš€ SENIOR LEVEL CARD DESIGN SYSTEM (BEM)
    ========================================= */
 
 .product-card {
@@ -2951,21 +2912,21 @@ body.modo-orbital .product-card__image-container {
 }
 
 .badge--delantera {
-    background: #f0f9ff;
-    color: #0ea5e9;
+    background: #e0f2fe;
+    color: #0369a1;
     border: 1px solid #bae6fd;
 }
 
 .badge--trasera {
-    background: #fef2f2;
-    color: #dc2626;
+    background: #fee2e2;
+    color: #991b1b;
     border: 1px solid #fecaca;
 }
 
 .badge--ambas {
-    background: linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%);
-    color: #6366f1;
-    border: 1px solid #c7d2fe;
+    background: linear-gradient(135deg, #e0f2fe 0%, #fee2e2 100%);
+    color: #6b21a8;
+    border: 1px solid #e9d5ff;
 }
 
 /* --- 3. Footer / Apps --- */
@@ -3054,63 +3015,63 @@ body.lp-dark .badge--bp {
 }
 
 /* Color Variants (Shared for Badge and Ref-Badge) */
-/* K (KTC) - Red */
+/* K (KTC) - Red (Pastel) */
 .ref-k,
 .badge--k {
     background-color: #fee2e2 !important;
-    color: #dc2626 !important;
+    color: #991b1b !important;
     border: 1px solid #fecaca;
 }
 
-/* INC (Incolbest) - Blue */
+/* INC (Incolbest) - Blue (Pastel) */
 .ref-inc,
 .badge--inc {
     background-color: #dbeafe !important;
-    color: #1d4ed8 !important;
+    color: #1e40af !important;
     border: 1px solid #93c5fd;
 }
 
-/* BP (Break Pak) - Gray */
+/* BP (Break Pak) - Gray (Pastel) */
 .ref-bp,
 .badge--bp {
-    background-color: #f1f5f9 !important;
-    color: #475569 !important;
-    border: 1px solid #cbd5e1;
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+    border: 1px solid #e5e7eb;
 }
 
-/* BEX (Bex-Usa) - Light Blue/Cyan */
+/* BEX (Bex-Usa) - Light Blue (Pastel) */
 .ref-bex,
 .badge--bex {
-    background-color: #cffafe !important;
-    color: #0891b2 !important;
-    border: 1px solid #67e8f9;
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+    border: 1px solid #bae6fd;
 }
 
-/* SP - Mint Green */
+/* SP - Mint Green (Pastel) */
 .ref-sp,
 .badge--sp {
     background-color: #d1fae5 !important;
-    color: #059669 !important;
+    color: #065f46 !important;
     border: 1px solid #6ee7b7;
 }
 
-/* Numeric Only - Orange */
+/* Numeric Only - Orange (Pastel) */
 .ref-num,
 .badge--num {
-    background-color: #fed7aa !important;
-    color: #c2410c !important;
-    border: 1px solid #fdba74;
+    background-color: #ffedd5 !important;
+    color: #9a3412 !important;
+    border: 1px solid #fed7aa;
 }
 
-/* Default - Gray */
+/* Default - Gray (Pastel) */
 .ref-default,
 .badge--primary {
     background-color: #f1f5f9 !important;
-    color: #475569 !important;
+    color: #64748b !important;
     border: 1px solid #e2e8f0;
 }
 
-/* Position Badges (Premium) */
+/* Position Badges (Premium - Pastel) */
 .position-badge-premium {
     display: inline-flex;
     align-items: center;
@@ -3120,25 +3081,28 @@ body.lp-dark .badge--bp {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .position-badge-premium.delantera {
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    background-color: #e0f2fe;
+    /* Light Blue */
     color: #0369a1;
-    border: 1px solid #7dd3fc;
+    border: 1px solid #bae6fd;
 }
 
 .position-badge-premium.trasera {
-    background: linear-gradient(135deg, #fae8ff 0%, #f0abfc 100%);
-    color: #a21caf;
-    border: 1px solid #e879f9;
+    background-color: #fee2e2;
+    /* Light Red */
+    color: #991b1b;
+    border: 1px solid #fecaca;
 }
 
 .position-badge-premium.ambas {
-    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-    color: #4338ca;
-    border: 1px solid #a5b4fc;
+    background: linear-gradient(135deg, #e0f2fe 0%, #fee2e2 100%);
+    color: #6b21a8;
+    /* Purple text for mixed */
+    border: 1px solid #e9d5ff;
 }
 
 /* Dark Mode Adjustments */
@@ -3189,4 +3153,184 @@ body.lp-dark .badge--primary {
     background-color: rgba(71, 85, 105, 0.4) !important;
     color: #cbd5e1 !important;
     border-color: rgba(71, 85, 105, 0.5);
+}
+
+/* ======================================================= */
+/* ðŸŸ¢ CUSTOM DROPDOWNS (PREMIUM UI - BRAND MATCH)          */
+/* ======================================================= */
+
+.custom-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper .form-input {
+    padding-right: 36px;
+    /* Space for the chevron */
+    cursor: pointer;
+    /* Changed to pointer to feel more like a select */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Active State (Red Border) */
+.input-wrapper .form-input:focus {
+    border-color: var(--btn-primary-bg);
+    /* Red */
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    /* Soft red glow */
+}
+
+.chevron-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    /* Fixed size */
+    height: 16px;
+    /* Fixed size */
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Rotate chevron */
+.input-wrapper:focus-within .chevron-icon {
+    transform: translateY(-50%) rotate(180deg);
+    opacity: 1;
+    stroke: var(--btn-primary-bg);
+    /* Red chevron on active */
+}
+
+/* Dropdown List (Floating Premium Panel) */
+.custom-dropdown-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    /* More spacing */
+    left: 0;
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+
+    /* Light Mode */
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.98);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Apple-like spring */
+}
+
+.custom-dropdown-list.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* List Items */
+.custom-dropdown-list li {
+    position: relative;
+    padding: 10px 12px;
+    padding-right: 30px;
+    /* Space for checkmark */
+    font-size: 0.95rem;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 8px;
+    /* Rounded items inside */
+    margin-bottom: 2px;
+    border-bottom: none;
+    /* Removed lines for cleaner look */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.15s ease;
+}
+
+/* Hover & Selection */
+.custom-dropdown-list li:hover,
+.custom-dropdown-list li.highlighted,
+.custom-dropdown-list li.selected {
+    background-color: rgba(239, 68, 68, 0.08);
+    /* Brand Red extremely soft */
+    color: var(--btn-primary-bg);
+    /* Brand Red text */
+    font-weight: 500;
+}
+
+/* Selected Checkmark */
+.custom-dropdown-list li.selected::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 10px;
+    border: solid var(--btn-primary-bg);
+    border-width: 0 2px 2px 0;
+    transform: translateY(-60%) rotate(45deg);
+}
+
+/* Scrollbar styling */
+.custom-dropdown-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-dropdown-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-dropdown-list::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* DARK MODE ADJUSTMENTS */
+body.lp-dark .custom-dropdown-list {
+    background-color: #1a1a1a;
+    /* Very dark grey, not black */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+body.lp-dark .custom-dropdown-list li {
+    color: #e5e7eb;
+}
+
+body.lp-dark .custom-dropdown-list li:hover,
+body.lp-dark .custom-dropdown-list li.highlighted,
+body.lp-dark .custom-dropdown-list li.selected {
+    background-color: rgba(239, 68, 68, 0.15);
+    /* Slightly stronger in dark */
+    color: #fca5a5;
+    /* Light red text */
+}
+
+body.lp-dark .custom-dropdown-list li.selected::after {
+    border-color: #fca5a5;
+}
+
+body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
 }
