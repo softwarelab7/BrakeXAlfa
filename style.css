@@ -398,7 +398,7 @@ header .header-x path {
 
 .results-wrapper {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1rem;
     padding-bottom: 2rem;
 }
@@ -947,7 +947,7 @@ body.lp-dark #positionTrasera.active {
 .results-wrapper {
     display: grid;
     gap: 0.8rem;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    /* grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); CONFLICT REMOVED */
     transition: opacity 0.3s ease;
 }
 
