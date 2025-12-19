@@ -398,7 +398,7 @@ header .header-x path {
 
 .results-wrapper {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 1rem;
     padding-bottom: 2rem;
 }
@@ -804,7 +804,7 @@ body.lp-dark #positionTrasera.active {
 
 .skeleton-box {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 2;
     border-radius: 0.5rem;
     animation: skeleton-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -1066,8 +1066,8 @@ body.lp-dark #positionTrasera.active {
 }
 
 .card-app-summary {
-    font-size: 0.65rem;
-    line-height: 1.3;
+    font-size: 0.95rem;
+    line-height: 1.5;
     color: var(--text-color);
     opacity: 0.7;
     max-height: 2.6em;
@@ -2563,7 +2563,7 @@ body.modo-orbital .favorite-btn.active svg {
 }
 
 .card-title {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--text-color);
     letter-spacing: -0.02em;
@@ -2667,14 +2667,17 @@ body.lp-dark .card-thumbnail {
 .product-card {
     --card-bg: #ffffff;
     --card-border: #e2e8f0;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    --card-shadow-hover: 0 12px 24px -6px rgba(0, 0, 0, 0.08);
+    /* Sombra muy marcada y evidente */
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     --text-primary: #1e293b;
     --text-secondary: #64748b;
     --accent-color: var(--primary-color);
 
     background: var(--card-bg);
     border: 1px solid var(--card-border);
+    /* Forzamos sombra siempre */
+    box-shadow: var(--card-shadow);
     border-radius: 16px;
     /* Modern, softer radius */
     display: flex;
@@ -2684,6 +2687,7 @@ body.lp-dark .card-thumbnail {
     overflow: hidden;
     cursor: pointer;
     height: 100%;
+    /* aspect-ratio: 1 / 1; Eliminado para altura natural */
 }
 
 .product-card:hover {
@@ -2708,6 +2712,10 @@ body.lp-dark .product-card__image-container {
     background-color: #09090b;
 }
 
+body.lp-dark .product-card__position-top {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
 /* Orbital Mode Card Improvements */
 body.modo-orbital .product-card {
     background: rgba(10, 10, 15, 0.85);
@@ -2727,13 +2735,21 @@ body.modo-orbital .product-card__image-container {
 /* --- 1. Hero Image Section --- */
 .product-card__image-container {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    background-color: #f8fafc;
+    flex: 1;
+    /* Ocupar espacio restante */
+    min-height: 0;
+    /* Ocupar espacio restante */
+    min-height: 0;
+    /* Permitir encogimiento si es necesario */
+    background-color: transparent;
+    /* Fondo gris eliminado */
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Padding restaurado ligeramente */
     padding: 0.5rem;
     position: relative;
+    padding-top: 0;
 }
 
 .product-card__image {
@@ -2743,16 +2759,25 @@ body.modo-orbital .product-card__image-container {
     transition: transform 0.5s ease;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
     display: block;
+    /* Zoom eliminado para nitidez */
+    /* transform: scale(1); */
     /* Ensure no extra space */
 }
 
 .product-card:hover .product-card__image {
     transform: scale(1.05);
+    /* Zoom sutil en hover */
 }
 
-/* Position badges above image */
+/* Position badges above image (RESTORED TO BLOCK LAYOUT) */
 .product-card__position-top {
-    padding: 0.75rem 1rem 0.5rem;
+    position: relative;
+    /* De vuelta al flujo normal */
+    /* top, left, z-index eliminados */
+    padding: 0.75rem 1rem 0;
+    /* Padding inferior 0 para pegar a imagen */
+    background: transparent;
+    /* Sin gradiente */
     display: flex;
     gap: 0.4rem;
     flex-wrap: wrap;
@@ -3011,7 +3036,7 @@ body.lp-dark .badge--bp {
 
 .card-ref-badge {
     font-size: 0.65rem;
-    padding: 0.2rem 0.5rem;
+    padding: 0.3rem 0.6rem;
 }
 
 /* Color Variants (Shared for Badge and Ref-Badge) */
@@ -3334,4 +3359,3 @@ body.lp-dark .custom-dropdown-list li.selected::after {
 body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.15);
 }
-
