@@ -398,7 +398,7 @@ header .header-x path {
 
 .results-wrapper {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 1rem;
     padding-bottom: 2rem;
 }
@@ -2264,9 +2264,10 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     transition: transform 0.5s ease;
 }
 
-.search-result-item:hover .result-image {
+/* Zoom eliminado por solicitud */
+/* .search-result-item:hover .result-image {
     transform: scale(1.1);
-}
+} */
 
 /* Contenido de la tarjeta */
 .search-result-content {
@@ -2757,7 +2758,7 @@ body.modo-orbital .product-card__image-container {
     height: 100%;
     object-fit: contain;
     transition: transform 0.5s ease;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+    /* filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05)); ELIMINADO */
     display: block;
     /* Zoom eliminado para nitidez */
     /* transform: scale(1); */
@@ -2774,8 +2775,8 @@ body.modo-orbital .product-card__image-container {
     position: relative;
     /* De vuelta al flujo normal */
     /* top, left, z-index eliminados */
-    padding: 0.75rem 1rem 0;
-    /* Padding inferior 0 para pegar a imagen */
+    padding: 0.75rem 1rem 0.75rem;
+    /* Padding inferior aumentado para el borde */
     background: transparent;
     /* Sin gradiente */
     display: flex;
@@ -2784,6 +2785,8 @@ body.modo-orbital .product-card__image-container {
     align-items: center;
     justify-content: space-between;
     /* Ensures heart goes to right */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    /* Divisor sutil */
 }
 
 /* Ensure position badges wrapper takes available space */
@@ -2792,21 +2795,36 @@ body.modo-orbital .product-card__image-container {
 }
 
 /* Favourites Button - integrated in top bar */
-.product-card__favorite-btn {
-    position: static;
-    /* No longer absolute */
-    width: 28px;
-    height: 28px;
+.product-card .product-card__favorite-btn {
+    position: static !important;
+    /* Force override of .search-result-item .favorite-btn */
+    width: 28px !important;
+    height: 28px !important;
     border-radius: 50%;
-    background: transparent;
-    border: none;
+    background: transparent !important;
+    border: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
     margin-left: auto;
-    /* Push to right just in case */
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure image container has consistent padding */
+.product-card__image-container {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Aumentado de 0.5rem para "Internal Padding" */
+    position: relative;
 }
 
 /* Favourites Button - Floating Elegant */
@@ -2838,6 +2856,8 @@ body.modo-orbital .product-card__image-container {
     flex-direction: column;
     gap: 0.6rem;
     flex: 1;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    /* Divisor sutil */
 }
 
 /* Header: Title & Badges */
@@ -3040,36 +3060,37 @@ body.lp-dark .badge--bp {
 }
 
 /* Color Variants (Shared for Badge and Ref-Badge) */
-/* K (KTC) - Red (Pastel) */
+/* K (KTC) - Red (Brand Soft) */
 .ref-k,
 .badge--k {
-    background-color: #fee2e2 !important;
-    color: #991b1b !important;
-    border: 1px solid #fecaca;
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* INC (Incolbest) - Blue (Pastel) */
+/* INC (Incolbest) - Dark Blue (Brand Soft) */
 .ref-inc,
 .badge--inc {
-    background-color: #dbeafe !important;
-    color: #1e40af !important;
-    border: 1px solid #93c5fd;
+    background-color: rgba(13, 71, 161, 0.15) !important;
+    color: #0d47a1 !important;
+    border: 1px solid rgba(13, 71, 161, 0.3);
 }
 
-/* BP (Break Pak) - Gray (Pastel) */
+/* BP (Break Pak) - Gray (Brand Soft) */
 .ref-bp,
 .badge--bp {
-    background-color: #f3f4f6 !important;
-    color: #374151 !important;
-    border: 1px solid #e5e7eb;
+    background-color: rgba(108, 117, 125, 0.15) !important;
+    color: #6c757d !important;
+    border: 1px solid rgba(108, 117, 125, 0.3);
 }
 
-/* BEX (Bex-Usa) - Light Blue (Pastel) */
+/* BEX (Bex-Usa) - Light Blue (Brand Soft) */
 .ref-bex,
 .badge--bex {
-    background-color: #e0f2fe !important;
-    color: #0369a1 !important;
-    border: 1px solid #bae6fd;
+    background-color: rgba(100, 181, 246, 0.15) !important;
+    color: #0277bd !important;
+    /* Darker blue for readable text */
+    border: 1px solid rgba(100, 181, 246, 0.3);
 }
 
 /* SP - Mint Green (Pastel) */
