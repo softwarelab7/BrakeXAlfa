@@ -407,25 +407,102 @@ header .header-x path {
     background-color: var(--material-surface-light);
     border: 1px solid var(--material-surface-border);
     border-radius: 1rem;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.8rem;
+    /* Reduced padding */
     box-shadow: var(--elevation-1);
     transition: box-shadow 0.3s ease, border-color 0.5s ease, background-color 0.5s ease;
 }
 
-/* --- ðŸ”´ REGLA MODIFICADA: `gap: 8px;` ELIMINADO --- */
+/* --- Filter Titles: Compact & Clean --- */
 .filter-title {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
+    /* Slightly smaller */
     margin-bottom: 0.3rem;
+    /* Tighter */
     padding-bottom: 0;
     border-bottom: none;
     text-align: left;
     display: flex;
     align-items: center;
-    /* gap: 8px; */
-    /* <-- Esta lÃ­nea fue eliminada */
-    transition: color 0.5s ease;
     color: var(--text-color);
+    width: 100%;
+}
+
+.input-group {
+    margin-bottom: 0.4rem;
+    /* Compact */
+}
+
+/* Espaciado para inputs de Detalles del Vehículo (y otros customs) */
+.custom-select-container {
+    margin-bottom: 0.4rem;
+    /* Compact */
+}
+
+/* --- Filter Groups: Compact Divider --- */
+.filter-group {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 0.6rem;
+    /* Reduced */
+    margin-top: 0.6rem;
+    /* Reduced */
+}
+
+/* El último no necesita margen extra si es el final del grupo */
+.filter-group .custom-select-container:last-child {
+    margin-bottom: 0;
+}
+
+
+/* --- Clear Filters Button: Soft Red Design --- */
+.clear-filters-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    /* Compact padding */
+    background-color: #dc2626;
+    /* Darker Red-600 */
+    color: #ffffff;
+    /* White Text */
+    border: 1px solid #dc2626;
+    /* Darker Border */
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    /* Technical, slightly smaller */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3);
+    /* Darker Shadow Base */
+}
+
+.clear-filters-btn:hover {
+    background-color: #b91c1c;
+    /* Even Darker Red-700 */
+    border-color: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(220, 38, 38, 0.5);
+    /* Stronger Shadow */
+}
+
+.clear-filters-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    /* Uses text color */
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    overflow: visible;
+    /* Prevent clipping of animated lid */
 }
 
 body.lp-dark .filter-title,
@@ -439,16 +516,21 @@ body.modo-orbital .filter-title {
 
 .form-input {
     width: 100%;
-    padding: 6px 10px;
-    border-radius: 10px;
+    padding: 4px 10px;
+    /* Reduced vertical padding */
+    min-height: 32px;
+    /* Ensure logical minimum height */
+    border-radius: 8px;
+    /* Slightly reduced radius for compact look */
     border: 1px solid var(--material-surface-border);
     background-color: var(--input-bg);
     color: var(--text-color);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    /* Slightly smaller text */
     transition: all 0.3s ease;
     box-sizing: border-box;
     box-shadow: none;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
 }
 
 .form-input:last-of-type {
@@ -2189,24 +2271,69 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     padding: 0.5rem 0;
     margin-top: -0.5rem;
     justify-content: center;
-    /* <-- CORRECCIÃ“N DE CENTRADO */
+    /* <-- CORRECCIÓN DE CENTRADO */
 }
 
-/* Asignar colores basados en las clases de badges existentes */
+/* Asignar colores basados en las clases de badges existentes (SUAVIZADOS & CUADRADOS & PERMANENTES) */
+
+/* INC (Incolbest) */
 .brand-tag[data-manufacturer="INC"] {
-    --tag-brand-color: #0d47a1;
+    color: #0d47a1 !important;
+    border: 1px solid #0d47a1 !important;
+    border-radius: 4px !important;
+    background-color: transparent;
 }
 
+.brand-tag[data-manufacturer="INC"]:hover,
+.brand-tag[data-manufacturer="INC"].active {
+    background-color: rgba(13, 71, 161, 0.15) !important;
+}
+
+/* K (KTC) */
 .brand-tag[data-manufacturer="K"] {
-    --tag-brand-color: var(--badge-trasera-bg);
+    color: #ef4444 !important;
+    border: 1px solid #ef4444 !important;
+    border-radius: 4px !important;
+    background-color: transparent;
 }
 
+.brand-tag[data-manufacturer="K"]:hover,
+.brand-tag[data-manufacturer="K"].active {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* BP (Break Pak) */
 .brand-tag[data-manufacturer="BP"] {
-    --tag-brand-color: #6c757d;
+    color: #6c757d !important;
+    border: 1px solid #6c757d !important;
+    border-radius: 4px !important;
+    background-color: transparent;
 }
 
+.brand-tag[data-manufacturer="BP"]:hover,
+.brand-tag[data-manufacturer="BP"].active {
+    background-color: rgba(108, 117, 125, 0.15) !important;
+}
+
+/* B (Bex) */
 .brand-tag[data-manufacturer="B"] {
-    --tag-brand-color: #64b5f6;
+    color: #0277bd !important;
+    border: 1px solid #0277bd !important;
+    border-radius: 4px !important;
+    background-color: transparent;
+}
+
+.brand-tag[data-manufacturer="B"]:hover,
+.brand-tag[data-manufacturer="B"].active {
+    background-color: rgba(100, 181, 246, 0.15) !important;
+}
+
+/* Fallback general para tags activos si no tienen data-manufacturer específico o limpio */
+.brand-tag.active {
+    opacity: 1;
+    filter: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* Sombra mucho más sutil */
 }
 
 @media (max-width: 767px) {

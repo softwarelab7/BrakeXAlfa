@@ -302,12 +302,35 @@ document.addEventListener('DOMContentLoaded', () => {
             list.classList.add('show');
             // No auto-scroll on typing, user is searching
         });
-        // 2. Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
+        // 2. Evento Focus & Click: Fix Bounce Issue
+        let skipFocus = false;
+        input.addEventListener('mousedown', () => {
+            skipFocus = true; // El usuario hizo clic, ignoramos el evento focus inmediato
+            // Restablecer después de que pase el ciclo de eventos (mousedown -> focus -> click)
+            setTimeout(() => { skipFocus = false; }, 200);
+        });
+        const toggleDropdown = (e) => {
+            e.stopPropagation();
+            if (list.classList.contains('show')) {
+                list.classList.remove('show');
+                list.classList.add('hidden');
+            } else {
+                renderList(input.value);
+                list.classList.remove('hidden');
+                list.classList.add('show');
+                scrollToSelected(list);
+            }
+        };
+        input.addEventListener('click', toggleDropdown);
         input.addEventListener('focus', () => {
-            renderList(input.value); // Render fresh to ensure 'selected' class is correct
-            list.classList.remove('hidden');
-            list.classList.add('show');
-            scrollToSelected(list); // Scroll to selection on open
+            if (skipFocus)
+                return; // Si vino de un clic, no hacemos nada (el click lo manejará)
+            if (!list.classList.contains('show')) {
+                renderList(input.value);
+                list.classList.remove('hidden');
+                list.classList.add('show');
+                scrollToSelected(list);
+            }
         });
         // 3. Click Outside: Cerrar
         document.addEventListener('click', (e) => {
@@ -1274,11 +1297,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Modales
         els.modalCloseBtn.addEventListener('click', closeModal);
-        els.modal.addEventListener('click', (e) => { if (e.target === els.modal)
-            closeModal(); });
+        els.modal.addEventListener('click', (e) => {
+            if (e.target === els.modal)
+                closeModal();
+        });
         els.guideModalCloseBtn.addEventListener('click', closeGuideModal);
-        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal)
-            closeGuideModal(); });
+        els.guideModal.addEventListener('click', (e) => {
+            if (e.target === els.guideModal)
+                closeGuideModal();
+        });
     }
     // === Inicialización ===
     async function inicializarApp() {
