@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const comps = localStorage.getItem('brakeXComparisons');
                 if (comps)
-                    this._comparisons = new Set(JSON.parse(comps).map(Number));
+                    this._comparisons = new Set(JSON.parse(comps));
             }
             catch (e) {
                 console.error("Error loading comparisons:", e);
@@ -145,6 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Persistencia de notificaciones? Por ahora no lo pidió, pero sería ideal.
                 // localStorage.setItem('brakeXNotifications', JSON.stringify(this._notifications));
             }
+        }
+
+        addNotification(title, body) {
+            this._notifications.unshift({
+                id: Date.now(),
+                title,
+                body,
+                read: false
+            });
+            this.updateNotificationBadge();
         }
         updateNotificationBadge() {
             const badge = document.getElementById('notificationBadge');
@@ -1517,78 +1527,113 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
     // === Inicialización ===
-    async function inicializarApp() {
+    // === Inicialización Real-time con Notificaciones ===
+    function inicializarApp() {
         showSkeletonLoader();
-        // appState.loadFavorites(); // ELIMINADO (MEJORA #4) - La clase AppState lo hace
         renderSearchHistory();
         els.searchHistoryCard.style.display = 'none';
-        try {
-            const snapshot = await db.collection('pastillas').get();
-            if (snapshot.empty)
-                throw new Error("No se encontraron documentos en la colección 'pastillas'.");
-            let data = [];
-            snapshot.forEach((doc) => data.push(doc.data()));
-            data = data.map((item, index) => {
-                if (item.imagen && (!item.imagenes || item.imagenes.length === 0)) {
-                    item.imagenes = [
-                        item.imagen.replace("text=", `text=Vista+1+`),
-                        item.imagen.replace("text=", `text=Vista+2+`),
-                        item.imagen.replace("text=", `text=Vista+3+`)
+
+        db.collection('pastillas').onSnapshot((snapshot) => {
+            let isInitialLoad = appState.data.length === 0;
+            let changesCount = 0;
+
+            snapshot.docChanges().forEach((change) => {
+                const docData = change.doc.data();
+                const docId = change.doc.id;
+
+                // Normalización de imagen
+                if (docData.imagen && (!docData.imagenes || docData.imagenes.length === 0)) {
+                    docData.imagenes = [
+                        docData.imagen.replace("text=", `text=Vista+1+`),
+                        docData.imagen.replace("text=", `text=Vista+2+`),
+                        docData.imagen.replace("text=", `text=Vista+3+`)
                     ];
                 }
+
                 let medidaString = null;
-                if (Array.isArray(item.medidas) && item.medidas.length > 0) {
-                    medidaString = String(item.medidas[0]);
-                }
-                else if (typeof item.medidas === 'string') {
-                    medidaString = item.medidas;
+                if (Array.isArray(docData.medidas) && docData.medidas.length > 0) {
+                    medidaString = String(docData.medidas[0]);
+                } else if (typeof docData.medidas === 'string') {
+                    medidaString = docData.medidas;
                 }
                 const partes = medidaString ? medidaString.split(/x/i).map((s) => parseFloat(s.trim())) : [0, 0];
-                const safeRefs = Array.isArray(item.ref) ? item.ref.map(String) : [];
-                const safeOems = Array.isArray(item.oem) ? item.oem.map(String) : [];
-                const safeFmsis = Array.isArray(item.fmsi) ? item.fmsi.map(String) : [];
-                const aplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-                return {
-                    ...item,
+                const safeRefs = Array.isArray(docData.ref) ? docData.ref : [];
+                const safeOems = Array.isArray(docData.oem) ? docData.oem : [];
+                const safeFmsis = Array.isArray(docData.fmsi) ? docData.fmsi : [];
+                const aplicaciones = Array.isArray(docData.aplicaciones) ? docData.aplicaciones : [];
+
+                const item = {
+                    ...docData,
                     aplicaciones,
-                    _appId: index,
+                    _appId: docId,
                     ref: safeRefs,
                     oem: safeOems,
                     fmsi: safeFmsis,
-                    anchoNum: partes[0] || 0,
-                    altoNum: partes[1] || 0
+                    anchoNum: docData.anchoNum || partes[0] || 0,
+                    altoNum: docData.altoNum || partes[1] || 0
                 };
+
+                if (change.type === "added") {
+                    appState.data.push(item);
+                    if (!isInitialLoad) {
+                        const refName = safeRefs.length > 0 ? safeRefs[0] : 'Desconocida';
+                        appState.addNotification("Nueva Referencia", `Se ha agregado ${refName}.`);
+                        changesCount++;
+                    }
+                }
+                if (change.type === "modified") {
+                    const index = appState.data.findIndex(p => p._appId === docId);
+                    if (index !== -1) {
+                        appState.data[index] = item;
+                        const refName = safeRefs.length > 0 ? safeRefs[0] : 'Desconocida';
+                        appState.addNotification("Actualización", `Referencia ${refName} actualizada.`);
+                        changesCount++;
+                    }
+                }
+                if (change.type === "removed") {
+                    appState.data = appState.data.filter(p => p._appId !== docId);
+                    changesCount++;
+                }
             });
-            data.sort((a, b) => getSortableRefNumber(a.ref) - getSortableRefNumber(b.ref));
-            appState.data = data;
-            const getAllApplicationValues = (key) => {
-                const allValues = new Set();
-                appState.data.forEach(item => {
-                    item.aplicaciones.forEach(app => {
-                        const prop = key === 'modelo' ? 'serie' : key;
-                        if (app[prop])
-                            allValues.add(String(app[prop]));
+
+            if (isInitialLoad || changesCount > 0) {
+                // Reordenar
+                appState.data.sort((a, b) => getSortableRefNumber(a.ref) - getSortableRefNumber(b.ref));
+
+                // Actualizar filtros dropdowns
+                const getAllApplicationValues = (key) => {
+                    const allValues = new Set();
+                    appState.data.forEach(item => {
+                        item.aplicaciones.forEach(app => {
+                            const prop = key === 'modelo' ? 'serie' : key;
+                            if (app[prop])
+                                allValues.add(String(app[prop]));
+                        });
                     });
-                });
-                return [...allValues].sort();
-            };
-            updateDropdown('listaMarcas', getAllApplicationValues('marca'));
-            updateDropdown('listaModelos', getAllApplicationValues('modelo'));
-            updateDropdown('listaAnios', getAllApplicationValues('año'));
-            const allOems = [...new Set(appState.data.flatMap(i => i.oem || []))].filter(Boolean).sort();
-            const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
-            updateDropdown('oemList', allOems);
-            updateDropdown('fmsiList', allFmsis);
-            // ELIMINADO: Lógica de brandColorMap
-            applyFiltersFromURL();
-            filterData();
-            setupEventListeners();
-            setupComparisonModal();
-        }
-        catch (error) {
+                    return [...allValues].sort();
+                };
+                updateDropdown('listaMarcas', getAllApplicationValues('marca'));
+                updateDropdown('listaModelos', getAllApplicationValues('modelo'));
+                updateDropdown('listaAnios', getAllApplicationValues('año'));
+                const allOems = [...new Set(appState.data.flatMap(i => i.oem || []))].filter(Boolean).sort();
+                const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
+                updateDropdown('oemList', allOems);
+                updateDropdown('fmsiList', allFmsis);
+
+                if (isInitialLoad) {
+                    applyFiltersFromURL();
+                    setupEventListeners();
+                    setupComparisonModal();
+                }
+
+                // Siempre refrescar datos y tags
+                filterData();
+                renderDynamicBrandTags(appState.data, false);
+            }
+        }, (error) => {
             console.error('Error al inicializar la app:', error);
             showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos.');
-        }
+        });
     }
     // Inicializar contadores y badges después de que DOM esté listo
     appState.updateFavoriteBadge();

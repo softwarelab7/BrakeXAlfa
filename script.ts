@@ -11,7 +11,7 @@ interface Application {
 }
 
 interface Product {
-    _appId: number;
+    _appId: string; // Changed from number to string for Firebase IDs
     aplicaciones: Application[];
     ref: string[];
     oem: string[];
@@ -59,18 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
         data: Product[];
         filtered: Product[];
         currentPage: number;
-        private _favorites: Set<number>;
+        currentPage: number;
+        private _favorites: Set<string>; // Changed to store string IDs
         isFavoritesMode: boolean;
         activeManufacturer: string | null;
-        private _comparisons: Set<number>;
+        private _comparisons: Set<string>; // Changed to store string IDs
         private _notifications: any[]; // Array de notificaciones
 
         constructor() {
             this.data = [];
             this.filtered = [];
             this.currentPage = 1;
-            this._favorites = new Set<number>(); // Renombrado a "privado"
-            this._comparisons = new Set<number>();
+            this._favorites = new Set<string>();
+            this._comparisons = new Set<string>();
             this.isFavoritesMode = false;
             this.activeManufacturer = null;
 
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const favs = localStorage.getItem('brakeXFavorites');
                 if (favs) {
-                    this._favorites = new Set(JSON.parse(favs).map(Number));
+                    this._favorites = new Set(JSON.parse(favs));
                 }
             } catch (e) {
                 console.error("Error al cargar favoritos:", e); // Error no crítico, solo log
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Método público para alternar un favorito
-        toggleFavorite(itemId: number): boolean {
+        toggleFavorite(itemId: string): boolean {
             if (this._favorites.has(itemId)) {
                 this._favorites.delete(itemId);
             } else {
@@ -121,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Método público para verificar si es favorito
-        isFavorite(itemId: number): boolean {
+        isFavorite(itemId: string): boolean {
             return this._favorites.has(itemId);
         }
 
@@ -154,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         _loadComparisons() {
             try {
                 const comps = localStorage.getItem('brakeXComparisons');
-                if (comps) this._comparisons = new Set(JSON.parse(comps).map(Number));
+                if (comps) this._comparisons = new Set(JSON.parse(comps));
             } catch (e) {
                 console.error("Error loading comparisons:", e);
                 this._comparisons = new Set();
@@ -165,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('brakeXComparisons', JSON.stringify([...this._comparisons]));
         }
 
-        toggleComparison(itemId: number): boolean {
+        toggleComparison(itemId: string): boolean {
             if (this._comparisons.has(itemId)) {
                 this._comparisons.delete(itemId);
             } else {
@@ -180,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return this._comparisons.has(itemId);
         }
 
-        isComparison(itemId: number): boolean {
+        isComparison(itemId: string): boolean {
             return this._comparisons.has(itemId);
         }
 
@@ -196,6 +197,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 badge.classList.add('pop');
                 count > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
             }
+        }
+
+        addNotification(title: string, body: string) {
+            this._notifications.unshift({
+                id: Date.now(),
+                title,
+                body,
+                read: false
+            });
+            this.updateNotificationBadge();
         }
 
 
@@ -241,8 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Instanciar el estado global de la app
     const appState = new AppState();
-    (window as any).toggleComparisonGlobally = (id: number) => appState.toggleComparison(id);
-    const toggleComparisonGlobally = (id: number) => appState.toggleComparison(id);
+    (window as any).toggleComparisonGlobally = (id: string) => appState.toggleComparison(id);
+    const toggleComparisonGlobally = (id: string) => appState.toggleComparison(id);
     // === FIN: MEJORA #4 ===
 
     const itemsPerPage = 24;
@@ -1664,108 +1675,128 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
-    // === Inicialización ===
-    async function inicializarApp() {
+    // === Inicialización Real-time con Notificaciones ===
+    function inicializarApp() {
         showSkeletonLoader();
-        // appState.loadFavorites(); // ELIMINADO (MEJORA #4) - La clase AppState lo hace
         renderSearchHistory();
         els.searchHistoryCard.style.display = 'none';
-        try {
-            const snapshot = await db.collection('pastillas').get();
-            if (snapshot.empty) throw new Error("No se encontraron documentos en la colección 'pastillas'.");
-            let data: Product[] = [];
-            snapshot.forEach((doc: any) => data.push(doc.data() as Product));
-            data = data.map((item, index) => {
-                if (item.imagen && (!item.imagenes || item.imagenes.length === 0)) {
-                    item.imagenes = [
-                        item.imagen.replace("text=", `text=Vista+1+`),
-                        item.imagen.replace("text=", `text=Vista+2+`),
-                        item.imagen.replace("text=", `text=Vista+3+`)
+
+        // Escucha en tiempo real
+        db.collection('pastillas').onSnapshot((snapshot: any) => {
+            let isInitialLoad = appState.data.length === 0;
+            let changesCount = 0;
+
+            // Procesar cambios
+            snapshot.docChanges().forEach((change: any) => {
+                const docData = change.doc.data() as Product;
+                const docId = change.doc.id;
+
+                // Normalizar datos (igual que antes)
+                if (docData.imagen && (!docData.imagenes || docData.imagenes.length === 0)) {
+                    docData.imagenes = [
+                        docData.imagen.replace("text=", `text=Vista+1+`),
+                        docData.imagen.replace("text=", `text=Vista+2+`),
+                        docData.imagen.replace("text=", `text=Vista+3+`)
                     ];
                 }
-                let medidaString = null;
-                if (Array.isArray(item.medidas) && item.medidas.length > 0) {
-                    medidaString = String(item.medidas[0]);
-                } else if (typeof item.medidas === 'string') {
-                    medidaString = item.medidas;
-                }
-                const partes = medidaString ? medidaString.split(/x/i).map((s: string) => parseFloat(s.trim())) : [0, 0];
-                const safeRefs = Array.isArray(item.ref) ? item.ref.map(String) : [];
-                const safeOems = Array.isArray(item.oem) ? item.oem.map(String) : [];
-                const safeFmsis = Array.isArray(item.fmsi) ? item.fmsi.map(String) : [];
-                const aplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-                return {
-                    ...item,
-                    aplicaciones,
-                    _appId: index,
-                    ref: safeRefs,
-                    oem: safeOems,
-                    fmsi: safeFmsis,
-                    anchoNum: partes[0] || 0,
-                    altoNum: partes[1] || 0
+
+                // Procesar medidas y aplicar ID del documento
+                const item: Product = {
+                    ...docData,
+                    _appId: docId, // Usamos ID de Firebase
+                    aplicaciones: Array.isArray(docData.aplicaciones) ? docData.aplicaciones : [],
+                    // Asegurar arrays seguros
+                    ref: Array.isArray(docData.ref) ? docData.ref : [],
+                    oem: Array.isArray(docData.oem) ? docData.oem : [],
+                    fmsi: Array.isArray(docData.fmsi) ? docData.fmsi : [],
+                    anchoNum: docData.anchoNum || 0,
+                    altoNum: docData.altoNum || 0
                 };
+
+                // Calcular medidas si no existen numéricas (lógica original simplificada)
+                if (!item.anchoNum || !item.altoNum) {
+                    let medidaString = null;
+                    if (Array.isArray(item.medidas) && item.medidas.length > 0) {
+                        medidaString = String(item.medidas[0]);
+                    } else if (typeof item.medidas === 'string') {
+                        medidaString = item.medidas;
+                    }
+                    const partes = medidaString ? medidaString.split(/x/i).map((s: string) => parseFloat(s.trim())) : [0, 0];
+                    item.anchoNum = partes[0] || 0;
+                    item.altoNum = partes[1] || 0;
+                }
+
+                if (change.type === "added") {
+                    appState.data.push(item);
+                    if (!isInitialLoad) {
+                        const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
+                        appState.addNotification("Nueva Referencia", `Se ha agregado la pastilla ${refName}.`);
+                        changesCount++;
+                    }
+                }
+                if (change.type === "modified") {
+                    const index = appState.data.findIndex(p => p._appId === docId);
+                    if (index !== -1) {
+                        appState.data[index] = item;
+                        const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
+                        appState.addNotification("Actualización", `La referencia ${refName} ha sido actualizada.`);
+                        changesCount++;
+                    }
+                }
+                if (change.type === "removed") {
+                    appState.data = appState.data.filter(p => p._appId !== docId);
+                    // Opcional: Notificar eliminación
+                    changesCount++;
+                }
             });
-            data.sort((a, b) => getSortableRefNumber(a.ref) - getSortableRefNumber(b.ref));
-            appState.data = data;
-            const getAllApplicationValues = (key: string): string[] => {
-                const allValues = new Set<string>();
-                appState.data.forEach(item => {
-                    item.aplicaciones.forEach(app => {
-                        const prop = key === 'modelo' ? 'serie' : key;
-                        if (app[prop]) allValues.add(String(app[prop]));
-                    });
-                });
-                return [...allValues].sort();
-            };
-            updateDropdown('listaMarcas', getAllApplicationValues('marca'));
-            updateDropdown('listaModelos', getAllApplicationValues('modelo'));
-            updateDropdown('listaAnios', getAllApplicationValues('año'));
-            const allOems = [...new Set(appState.data.flatMap(i => i.oem || []))].filter(Boolean).sort();
-            const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
-            updateDropdown('oemList', allOems);
-            updateDropdown('fmsiList', allFmsis);
 
-            // ELIMINADO: Lógica de brandColorMap
+            // Si hubo cambios o es carga inicial, re-renderizar
+            if (isInitialLoad || changesCount > 0) {
+                filterData();
+                renderDynamicBrandTags(appState.data, false);
+            }
+        }, (error: any) => {
+            console.error("Error obteniendo datos en tiempo real:", error);
+            els.results.innerHTML = `<div class="error-container"><p>Error cargando datos. Por favor intenta recargar.</p></div>`;
+            els.paginationContainer.innerHTML = '';
+        });
+    }
+    // Fin de inicializarApp
 
-            applyFiltersFromURL();
-
-            filterData();
-            setupEventListeners();
-            setupComparisonModal();
-        } catch (error) {
-            console.error('Error al inicializar la app:', error);
-            showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos.');
-        }
+} catch (error) {
+    console.error('Error al inicializar la app:', error);
+    showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos.');
+}
     }
 
 
-    // Inicializar contadores y badges después de que DOM esté listo
-    appState.updateFavoriteBadge();
-    appState.updateComparisonBadge();
-    appState.updateNotificationBadge();
+// Inicializar contadores y badges después de que DOM esté listo
+appState.updateFavoriteBadge();
+appState.updateComparisonBadge();
+appState.updateNotificationBadge();
 
-    // Toggle Notifications
-    const notifBtn = document.getElementById('notificacionesBtn');
-    if (notifBtn) {
-        notifBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const panel = document.getElementById('notificationsPanel');
-            panel?.classList.toggle('hidden');
+// Toggle Notifications
+const notifBtn = document.getElementById('notificacionesBtn');
+if (notifBtn) {
+    notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const panel = document.getElementById('notificationsPanel');
+        panel?.classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => {
+        document.getElementById('notificationsPanel')?.classList.add('hidden');
+    });
+    document.getElementById('notificationsPanel')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    // Listener para "Marcar leídas"
+    const markReadBtn = document.getElementById('markNotificationsReadBtn');
+    if (markReadBtn) {
+        markReadBtn.addEventListener('click', () => {
+            appState.markAllAsRead();
         });
-        document.addEventListener('click', () => {
-            document.getElementById('notificationsPanel')?.classList.add('hidden');
-        });
-        document.getElementById('notificationsPanel')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-        // Listener para "Marcar leídas"
-        const markReadBtn = document.getElementById('markNotificationsReadBtn');
-        if (markReadBtn) {
-            markReadBtn.addEventListener('click', () => {
-                appState.markAllAsRead();
-            });
-        }
     }
+}
 
-    inicializarApp();
+inicializarApp();
 });
