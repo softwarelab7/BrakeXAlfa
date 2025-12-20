@@ -62,16 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
         private _favorites: Set<number>;
         isFavoritesMode: boolean;
         activeManufacturer: string | null;
+        private _comparisons: Set<number>;
+        private _notifications: any[]; // Array de notificaciones
 
         constructor() {
             this.data = [];
             this.filtered = [];
             this.currentPage = 1;
             this._favorites = new Set<number>(); // Renombrado a "privado"
+            this._comparisons = new Set<number>();
             this.isFavoritesMode = false;
             this.activeManufacturer = null;
 
             this._loadFavorites(); // Carga los favoritos automáticamente al iniciar
+            this._loadComparisons();
+            this._notifications = []; // Initialize notifications
+            // Simular notificaciones
+            this._notifications = [
+                { id: 1, title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
+            ];
         }
 
         // Carga los favoritos desde localStorage
@@ -97,13 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Método público para alternar un favorito
-        toggleFavorite(itemId: number) {
+        toggleFavorite(itemId: number): boolean {
             if (this._favorites.has(itemId)) {
                 this._favorites.delete(itemId);
             } else {
                 this._favorites.add(itemId);
             }
             this._saveFavorites(); // Guarda automáticamente al cambiar
+            // Inicializar contador de favoritos después de que DOM esté listo
+            this.updateFavoriteBadge();
+            this.updateComparisonBadge(); // Actualiza el badge
+            this.updateNotificationBadge();
+            return this._favorites.has(itemId);
         }
 
         // Método público para verificar si es favorito
@@ -115,10 +129,120 @@ document.addEventListener('DOMContentLoaded', () => {
         get favorites() {
             return this._favorites;
         }
+
+        // Método para actualizar el badge de favoritos en el UI
+        updateFavoriteBadge() {
+            const badge = document.getElementById('favCountBadge');
+            if (badge) {
+                const count = this._favorites.size;
+                badge.innerText = count.toString(); // Use innerText for text content
+
+                // Animación "Pop" para feedback visual
+                badge.classList.remove('pop');
+                void badge.offsetWidth; // Trigger reflow
+                badge.classList.add('pop');
+
+                if (count > 0) {
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+
+        // --- Comparaciones Logic ---
+        _loadComparisons() {
+            try {
+                const comps = localStorage.getItem('brakeXComparisons');
+                if (comps) this._comparisons = new Set(JSON.parse(comps).map(Number));
+            } catch (e) {
+                console.error("Error loading comparisons:", e);
+                this._comparisons = new Set();
+            }
+        }
+
+        _saveComparisons() {
+            localStorage.setItem('brakeXComparisons', JSON.stringify([...this._comparisons]));
+        }
+
+        toggleComparison(itemId: number): boolean {
+            if (this._comparisons.has(itemId)) {
+                this._comparisons.delete(itemId);
+            } else {
+                if (this._comparisons.size >= 4) {
+                    alert("Máximo 4 productos para comparar"); // Simple validación
+                    return false;
+                }
+                this._comparisons.add(itemId);
+            }
+            this._saveComparisons();
+            this.updateComparisonBadge();
+            return this._comparisons.has(itemId);
+        }
+
+        isComparison(itemId: number): boolean {
+            return this._comparisons.has(itemId);
+        }
+
+        get comparisons() { return this._comparisons; }
+
+        updateComparisonBadge() {
+            const badge = document.getElementById('compareCountBadge');
+            if (badge) {
+                const count = this._comparisons.size;
+                badge.innerText = count.toString();
+                badge.classList.remove('pop');
+                void badge.offsetWidth;
+                badge.classList.add('pop');
+                count > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
+            }
+        }
+
+
+        markAllAsRead() {
+            if (this._notifications) {
+                this._notifications.forEach(n => n.read = true);
+                this.updateNotificationBadge();
+                // Persistencia de notificaciones? Por ahora no lo pidió, pero sería ideal.
+                // localStorage.setItem('brakeXNotifications', JSON.stringify(this._notifications));
+            }
+        }
+
+        updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            const panel = document.getElementById('notificationsList');
+
+            if (badge) {
+                const unread = this._notifications ? this._notifications.filter(n => !n.read).length : 0;
+                badge.innerText = unread.toString();
+                // Animación Pop
+                badge.classList.remove('pop');
+                void badge.offsetWidth; badge.classList.add('pop');
+                unread > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
+            }
+
+            if (panel) {
+                if (!this._notifications || this._notifications.length === 0) {
+                    panel.innerHTML = '<div class="notif-empty">Sin nuevas notificaciones</div>';
+                } else {
+                    panel.innerHTML = this._notifications.map(n => `
+                        <div class="notif-item ${n.read ? '' : 'unread'}">
+                            <div class="notif-icon">🔔</div>
+                            <div class="notif-content">
+                                <h4>${n.title}</h4>
+                                <p>${n.body}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
     }
 
     // Instanciar el estado global de la app
     const appState = new AppState();
+    (window as any).toggleComparisonGlobally = (id: number) => appState.toggleComparison(id);
+    const toggleComparisonGlobally = (id: number) => appState.toggleComparison(id);
     // === FIN: MEJORA #4 ===
 
     const itemsPerPage = 24;
@@ -237,6 +361,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Refiltra si estamos en modo favoritos
         if (appState.isFavoritesMode) filterData();
+    };
+
+    // Handler global para comparación
+    const toggleComparison = (e: Event) => {
+        e.stopPropagation();
+        const button = e.currentTarget as HTMLElement;
+        const card = button.closest('.product-card') as HTMLElement;
+        if (!card) return;
+        const itemId = parseInt(card.dataset.id || '0');
+        if (isNaN(itemId)) return;
+
+        appState.toggleComparison(itemId);
+
+        const isNowActive = appState.isComparison(itemId);
+        button.classList.toggle('active', isNowActive);
     };
 
     // === Utilidades ===
@@ -589,29 +728,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- ORDENAMIENTO PERSONALIZADO (Mejora: Prioridad "Ambas") ---
         if (filters.pos && filters.pos.length === 2) {
             appState.filtered.sort((a, b) => {
-                // --- LÓGICA ROBUSTA IDENTICA A RENDER (Detectar "Ambas" real) ---
+                // --- LÓGICA REFINADA PARA ORDENAMIENTO: POSICIÓN RESUELTA (App || Global) ---
                 const getIsBoth = (item: Product) => {
-                    const posText = (item.posición || '').toLowerCase();
+                    const globalPos = (item.posición || '').toLowerCase();
                     const apps = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-
-                    // Regex para "Del..." y "Tras..." (evita "Modelo")
                     const reFront = /\bdel/i;
                     const reRear = /\btras/i;
 
-                    // 1. Check explicit application overrides
-                    const hasFrontApp = apps.some(a => reFront.test(a.posicion || ''));
-                    const hasRearApp = apps.some(a => reRear.test(a.posicion || ''));
+                    // 1. Resolver posición para cada aplicación (Prioridad App > Global)
+                    const resolvedPositions = apps.map(a => {
+                        const appPos = (a.posicion || '').toLowerCase();
+                        return (appPos && appPos !== 'n/a') ? appPos : globalPos;
+                    }).filter(p => p && p !== 'n/a');
 
-                    // 2. Check global definition
-                    const globalIsFront = reFront.test(posText);
-                    const globalIsRear = reRear.test(posText);
-                    const globalIsBoth = posText.includes('ambas') || (globalIsFront && globalIsRear);
+                    // 2. Analizar el set de posiciones resueltas (o global si no hay apps)
+                    const positionsToAnalyze = resolvedPositions.length > 0 ? resolvedPositions : [globalPos];
 
-                    // 3. Combined Logic: (Front OR GlobalFront) AND (Rear OR GlobalRear)
-                    const effectiveIsFront = globalIsFront || hasFrontApp;
-                    const effectiveIsRear = globalIsRear || hasRearApp;
+                    const hasFront = positionsToAnalyze.some(p => reFront.test(p));
+                    const hasRear = positionsToAnalyze.some(p => reRear.test(p));
 
-                    return globalIsBoth || (effectiveIsFront && effectiveIsRear);
+                    return hasFront && hasRear;
                 };
 
                 const aIsBoth = getIsBoth(a);
@@ -679,14 +815,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderSpecs = (item: Product) => {
         let specsHTML = `<div class="app-brand-header">ESPECIFICACIONES</div><div class="spec-details-grid">`;
+
+        // Referencias
         const refsSpecsHTML = (Array.isArray(item.ref) && item.ref.length > 0)
             ? item.ref.flatMap((ref: any) => String(ref).split(' '))
                 .map((part: string) => `<span class="ref-badge spec-ref-badge ${getRefBadgeClass(part)}">${part}</span>`)
                 .join('')
             : '<span class="ref-badge ref-badge-na spec-ref-badge">N/A</span>';
         specsHTML += `<div class="spec-label"><strong>Referencias</strong></div><div class="spec-value modal-ref-container">${refsSpecsHTML}</div>`;
+
+        // OEM
         specsHTML += `<div class="spec-label"><strong>OEM</strong></div><div class="spec-value">${(Array.isArray(item.oem) && item.oem.length > 0) ? item.oem.join(', ') : 'N/A'}</div>`;
+
+        // FMSI
         specsHTML += `<div class="spec-label"><strong>Platina FMSI</strong></div><div class="spec-value">${(Array.isArray(item.fmsi) && item.fmsi.length > 0) ? item.fmsi.join(', ') : 'N/A'}</div>`;
+
+        // Medidas
         let medidasHTML = '';
         if (Array.isArray(item.medidas) && item.medidas.length > 0) {
             medidasHTML = item.medidas.map(medida => {
@@ -701,6 +845,27 @@ document.addEventListener('DOMContentLoaded', () => {
             medidasHTML = `<div>Ancho: ${anchoVal} x Alto: ${altoVal}</div>`;
         }
         specsHTML += `<div class="spec-label"><strong>Medidas (mm)</strong></div><div class="spec-value">${medidasHTML}</div>`;
+
+        // Especificaciones Completas
+        const specsSet = new Set<string>();
+        if (Array.isArray(item.aplicaciones)) {
+            item.aplicaciones.forEach(app => {
+                if (app.especificacion && app.especificacion.trim() !== '') {
+                    specsSet.add(app.especificacion.trim());
+                }
+            });
+        }
+
+        if (specsSet.size > 0) {
+            const uniqueSpecs = Array.from(specsSet).sort();
+            const specsContent = uniqueSpecs.length > 1
+                ? `<ul class="spec-list"><li>${uniqueSpecs.join('</li><li>')}</li></ul>`
+                : uniqueSpecs[0];
+            specsHTML += `<div class="spec-label"><strong>Especificación</strong></div><div class="spec-value specs-highlight">${specsContent}</div>`;
+        } else {
+            specsHTML += `<div class="spec-label"><strong>Especificación</strong></div><div class="spec-value">N/A</div>`;
+        }
+
         specsHTML += `</div>`;
         return specsHTML;
     };
@@ -769,28 +934,28 @@ document.addEventListener('DOMContentLoaded', () => {
         els.results.innerHTML = paginatedData.map((item: Product, index: number) => {
             const safeAplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
 
-            // Detección inteligente de posición (Revisar si aplica a ambas)
+            // --- LÓGICA REFINADA: POSICIÓN RESUELTA (App || Global) ---
             const posText = (item.posición || '').toLowerCase();
             const reFront = /\bdel/i;
             const reRear = /\btras/i;
 
-            const hasFrontApp = safeAplicaciones.some(a => reFront.test(a.posicion || ''));
-            const hasRearApp = safeAplicaciones.some(a => reRear.test(a.posicion || ''));
+            const resolvedPositions = safeAplicaciones.map(a => {
+                const appPos = (a.posicion || '').toLowerCase();
+                return (appPos && appPos !== 'n/a') ? appPos : posText;
+            }).filter(p => p && p !== 'n/a');
 
-            const globalIsFront = reFront.test(posText);
-            const globalIsRear = reRear.test(posText);
-            const isExplicitlyBoth = posText.includes('ambas') || (globalIsFront && globalIsRear);
+            const positionsToAnalyze = resolvedPositions.length > 0 ? resolvedPositions : [posText];
 
-            const effectiveIsFront = globalIsFront || hasFrontApp;
-            const effectiveIsRear = globalIsRear || hasRearApp;
-            const isAmbasCalculated = isExplicitlyBoth || (effectiveIsFront && effectiveIsRear);
+            const effectiveIsFront = positionsToAnalyze.some(p => reFront.test(p));
+            const effectiveIsRear = positionsToAnalyze.some(p => reRear.test(p));
+            const isAmbasCalculated = effectiveIsFront && effectiveIsRear;
 
             let positionBadgesHTML = '';
 
             // Standardized Logic: Single Badge for 'Ambas' (Mixed)
             if (isAmbasCalculated) {
                 // Use the 'ambas' class for the specific gradient
-                positionBadgesHTML = `<span class="position-badge-premium ambas">Delantera y Trasera</span>`;
+                positionBadgesHTML = `<span class="position-badge-premium ambas">delantera/trasera</span>`;
             } else if (effectiveIsFront) {
                 positionBadgesHTML = `<span class="position-badge-premium delantera">Delantera</span>`;
             } else if (effectiveIsRear) {
@@ -826,11 +991,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
 
             const isFavorite = appState.isFavorite(item._appId);
+            const isComparison = appState.isComparison(item._appId); // Asumiendo que isComparison existe en AppState
 
             const favoriteBtnHTML = `
                 <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito" aria-pressed="${isFavorite}">
                     <svg class="heart-icon" viewBox="0 0 24 24">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            `;
+
+            const compareBtnHTML = `
+                <button class="compare-btn ${isComparison ? 'active' : ''}" data-id="${item._appId}" aria-label="Comparar" aria-pressed="${isComparison}">
+                     <svg class="compare-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 10h14l-4-4" />
+                        <path d="M17 14H3l4 4" />
                     </svg>
                 </button>
             `;
@@ -850,6 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="product-card__position-top">
                         ${positionBadgesHTML}
                         ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
+                        ${compareBtnHTML.replace('compare-btn', 'product-card__compare-btn')}
                     </div>
                     
                     <div class="product-card__image-container">
@@ -870,9 +1046,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 </article>
             `;
         }).join('');
+
+        // Listeners para Favoritos
         els.results.querySelectorAll('.product-card__favorite-btn').forEach(btn => {
             btn.addEventListener('click', toggleFavorite);
         });
+
+        // Listeners para Comparar
+        els.results.querySelectorAll('.product-card__compare-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const targetBtn = e.currentTarget as HTMLElement;
+                const card = targetBtn.closest('.product-card') as HTMLElement;
+
+                if (card && card.dataset.id) {
+                    const id = parseInt(card.dataset.id);
+                    // Feedback inmediato en la interfaz
+                    const isNowComparison = appState.toggleComparison(id);
+                    targetBtn.classList.toggle('active', isNowComparison);
+                    targetBtn.setAttribute('aria-pressed', isNowComparison ? 'true' : 'false');
+                }
+            });
+        });
+
         setupPagination(totalResults);
     };
 
@@ -936,31 +1134,29 @@ document.addEventListener('DOMContentLoaded', () => {
             : '<span class="ref-badge ref-badge-na header-ref-badge">N/A</span>';
         els.modalRef.innerHTML = `<div class="modal-header-ref-container">${refsHeaderHTML}</div>`;
 
-        // Detección inteligente de posición para el Modal
+        // --- LÓGICA REFINADA PARA MODAL: POSICIÓN RESUELTA (App || Global) ---
         const safeAppsModal = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
         const posTextModal = (item.posición || '').toLowerCase();
-
-        // Regex para "Del..." y "Tras..."
         const reFront = /\bdel/i;
         const reRear = /\btras/i;
 
-        const hasFrontAppModal = safeAppsModal.some(a => reFront.test(a.posicion || ''));
-        const hasRearAppModal = safeAppsModal.some(a => reRear.test(a.posicion || ''));
+        const resolvedPositionsModal = safeAppsModal.map((a: Application) => {
+            const appPos = (a.posicion || '').toLowerCase();
+            return (appPos && appPos !== 'n/a') ? appPos : posTextModal;
+        }).filter(p => p && p !== 'n/a');
 
-        const globalIsFront = reFront.test(posTextModal);
-        const globalIsRear = reRear.test(posTextModal);
-        const isExplicitlyBothModal = posTextModal.includes('ambas') || (globalIsFront && globalIsRear);
+        const positionsToAnalyzeModal = resolvedPositionsModal.length > 0 ? resolvedPositionsModal : [posTextModal];
 
-        const effectiveIsFront = globalIsFront || hasFrontAppModal;
-        const effectiveIsRear = globalIsRear || hasRearAppModal;
-        const isAmbasCalculated = isExplicitlyBothModal || (effectiveIsFront && effectiveIsRear);
+        const effectiveIsFront = positionsToAnalyzeModal.some(p => reFront.test(p));
+        const effectiveIsRear = positionsToAnalyzeModal.some(p => reRear.test(p));
+        const isAmbasCalculated = effectiveIsFront && effectiveIsRear;
 
         let posBadgeClass = '';
         let posBadgeText = item.posición || 'N/A';
 
         if (isAmbasCalculated) {
             posBadgeClass = 'ambas';
-            posBadgeText = 'Delantera y Trasera';
+            posBadgeText = 'delantera/trasera';
         } else if (effectiveIsFront) {
             posBadgeClass = 'delantera';
             if (!posBadgeText || posBadgeText === 'N/A' || !reFront.test(posBadgeText)) posBadgeText = 'Delantera';
@@ -1404,6 +1600,66 @@ document.addEventListener('DOMContentLoaded', () => {
         els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal) closeGuideModal(); });
     }
 
+
+    function setupComparisonModal() {
+        const compareBtn = document.getElementById('compareBtn');
+        const comparisonModal = document.getElementById('comparisonModal');
+        const closeComparisonModal = document.getElementById('closeComparisonModal');
+
+        if (compareBtn && comparisonModal) {
+            compareBtn.addEventListener('click', () => {
+                if (appState.comparisons.size < 2) {
+                    alert("Selecciona al menos 2 productos para comparar.");
+                    return;
+                }
+                renderComparisonView();
+                comparisonModal.style.display = 'flex';
+                comparisonModal.classList.remove('hidden');
+            });
+
+            closeComparisonModal?.addEventListener('click', () => {
+                comparisonModal.style.display = 'none';
+                comparisonModal.classList.add('hidden');
+            });
+
+            comparisonModal.addEventListener('click', (e) => {
+                if (e.target === comparisonModal) {
+                    comparisonModal.style.display = 'none';
+                    comparisonModal.classList.add('hidden');
+                }
+            });
+        }
+    }
+
+    function renderComparisonView() {
+        const container = document.getElementById('comparisonContent');
+        if (!container) return;
+
+        const items = appState.data.filter(item => appState.comparisons.has(item._appId));
+
+        container.innerHTML = items.map(item => `
+            <div class="comparison-column" style="min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--material-surface-border); padding-right: 1rem;">
+                <div class="comp-header">
+                    <img src="${item.imagenes && item.imagenes[0] ? item.imagenes[0] : 'https://via.placeholder.com/300'}" style="width: 100%; height: 200px; object-fit: contain;">
+                    <h3 style="margin-top: 1rem;">${item.ref ? item.ref[0] : 'N/A'}</h3>
+                    <span class="position-badge-premium ${item.posicion ? item.posicion.toLowerCase() : ''}">${item.posicion || 'N/A'}</span>
+                </div>
+                <div class="comp-specs">
+                    <div class="spec-row"><strong>Medidas:</strong> ${item.anchoNum} x ${item.altoNum} mm</div>
+                    <div class="spec-row"><strong>Espesor:</strong> ${item.espesor || '-'} mm</div>
+                    <div class="spec-row"><strong>WVA:</strong> ${item.wva || '-'}</div>
+                    <div class="spec-row"><strong>Sistema:</strong> ${item.sistema || '-'}</div>
+                </div>
+                <div class="comp-apps" style="flex: 1; overflow-y: auto;">
+                    <strong>Aplicaciones:</strong>
+                    <ul style="font-size: 0.8rem; padding-left: 1.2rem;">
+                        ${item.aplicaciones.slice(0, 5).map(app => `<li>${app.marca} ${app.modelo} ${app.año}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        `).join('');
+    }
+
     // === Inicialización ===
     async function inicializarApp() {
         showSkeletonLoader();
@@ -1468,17 +1724,42 @@ document.addEventListener('DOMContentLoaded', () => {
             // ELIMINADO: Lógica de brandColorMap
 
             applyFiltersFromURL();
+
             filterData();
             setupEventListeners();
+            setupComparisonModal();
         } catch (error) {
-            console.error("Error al inicializar la app:", error);
-            // --- INICIO: MEJORA #5 (MANEJO DE ERRORES) ---
-            // Mostrar un error claro al usuario en lugar de solo en la consola
-            showGlobalError(
-                'Error al cargar datos',
-                'No se pudo conectar con la base de datos. Por favor, revisa tu conexión a internet e inténtalo de nuevo.'
-            );
-            // --- FIN: MEJORA #5 ---
+            console.error('Error al inicializar la app:', error);
+            showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos.');
+        }
+    }
+
+
+    // Inicializar contadores y badges después de que DOM esté listo
+    appState.updateFavoriteBadge();
+    appState.updateComparisonBadge();
+    appState.updateNotificationBadge();
+
+    // Toggle Notifications
+    const notifBtn = document.getElementById('notificacionesBtn');
+    if (notifBtn) {
+        notifBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const panel = document.getElementById('notificationsPanel');
+            panel?.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('notificationsPanel')?.classList.add('hidden');
+        });
+        document.getElementById('notificationsPanel')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        // Listener para "Marcar leídas"
+        const markReadBtn = document.getElementById('markNotificationsReadBtn');
+        if (markReadBtn) {
+            markReadBtn.addEventListener('click', () => {
+                appState.markAllAsRead();
+            });
         }
     }
 
