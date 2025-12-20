@@ -899,10 +899,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <article class="product-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" role="button" tabindex="0">
                     
-                    <div class="product-card__position-top">
-                        ${positionBadgesHTML}
-                        ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
-                        ${compareBtnHTML.replace('compare-btn', 'product-card__compare-btn')}
+                    <div class="product-card__header-bar">
+                        <div class="product-card__position-wrapper">
+                            ${positionBadgesHTML}
+                        </div>
+                        <div class="product-card__actions-wrapper">
+                            ${compareBtnHTML.replace('compare-btn', 'product-card__compare-btn')}
+                            ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
+                        </div>
                     </div>
                     
                     <div class="product-card__image-container">
@@ -1449,11 +1453,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Modales
         els.modalCloseBtn.addEventListener('click', closeModal);
-        els.modal.addEventListener('click', (e) => { if (e.target === els.modal)
-            closeModal(); });
+        els.modal.addEventListener('click', (e) => {
+            if (e.target === els.modal)
+                closeModal();
+        });
         els.guideModalCloseBtn.addEventListener('click', closeGuideModal);
-        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal)
-            closeGuideModal(); });
+        els.guideModal.addEventListener('click', (e) => {
+            if (e.target === els.guideModal)
+                closeGuideModal();
+        });
     }
     function setupComparisonModal() {
         const compareBtn = document.getElementById('compareBtn');

@@ -732,20 +732,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const getIsBoth = (item: Product) => {
                     const globalPos = (item.posición || '').toLowerCase();
                     const apps = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-                    const reFront = /\bdel/i;
-                    const reRear = /\btras/i;
+                    const reFront = /\bdel(antera)?\b/i;
+                    const reRear = /\btras(era)?\b/i;
 
                     // 1. Resolver posición para cada aplicación (Prioridad App > Global)
                     const resolvedPositions = apps.map(a => {
                         const appPos = (a.posicion || '').toLowerCase();
+                        // Si la app tiene posición, la usamos. Si es 'n/a' o vacía, usamos la global.
                         return (appPos && appPos !== 'n/a') ? appPos : globalPos;
                     }).filter(p => p && p !== 'n/a');
 
                     // 2. Analizar el set de posiciones resueltas (o global si no hay apps)
                     const positionsToAnalyze = resolvedPositions.length > 0 ? resolvedPositions : [globalPos];
 
-                    const hasFront = positionsToAnalyze.some(p => reFront.test(p));
-                    const hasRear = positionsToAnalyze.some(p => reRear.test(p));
+                    const hasFront = positionsToAnalyze.some(p => reFront.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
+                    const hasRear = positionsToAnalyze.some(p => reRear.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
 
                     return hasFront && hasRear;
                 };
@@ -936,8 +937,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- LÓGICA REFINADA: POSICIÓN RESUELTA (App || Global) ---
             const posText = (item.posición || '').toLowerCase();
-            const reFront = /\bdel/i;
-            const reRear = /\btras/i;
+            const reFront = /\bdel(antera)?\b/i;
+            const reRear = /\btras(era)?\b/i;
 
             const resolvedPositions = safeAplicaciones.map(a => {
                 const appPos = (a.posicion || '').toLowerCase();
@@ -946,8 +947,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const positionsToAnalyze = resolvedPositions.length > 0 ? resolvedPositions : [posText];
 
-            const effectiveIsFront = positionsToAnalyze.some(p => reFront.test(p));
-            const effectiveIsRear = positionsToAnalyze.some(p => reRear.test(p));
+            const effectiveIsFront = positionsToAnalyze.some(p => reFront.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
+            const effectiveIsRear = positionsToAnalyze.some(p => reRear.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
             const isAmbasCalculated = effectiveIsFront && effectiveIsRear;
 
             let positionBadgesHTML = '';
@@ -1022,10 +1023,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <article class="product-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" role="button" tabindex="0">
                     
-                    <div class="product-card__position-top">
-                        ${positionBadgesHTML}
-                        ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
-                        ${compareBtnHTML.replace('compare-btn', 'product-card__compare-btn')}
+                    <div class="product-card__header-bar">
+                        <div class="product-card__position-wrapper">
+                            ${positionBadgesHTML}
+                        </div>
+                        <div class="product-card__actions-wrapper">
+                            ${compareBtnHTML.replace('compare-btn', 'product-card__compare-btn')}
+                            ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
+                        </div>
                     </div>
                     
                     <div class="product-card__image-container">
@@ -1036,7 +1041,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="product-card__refs">
                             ${allRefsHTML}
                         </div>
-
                         <footer class="product-card__footer">
                             <p class="product-card__apps">
                                 ${appSummaryItems.length > 0 ? appSummaryItems.join(', ') : 'Aplicaciones no disponibles'}
@@ -1137,8 +1141,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- LÓGICA REFINADA PARA MODAL: POSICIÓN RESUELTA (App || Global) ---
         const safeAppsModal = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
         const posTextModal = (item.posición || '').toLowerCase();
-        const reFront = /\bdel/i;
-        const reRear = /\btras/i;
+        const reFront = /\bdel(antera)?\b/i;
+        const reRear = /\btras(era)?\b/i;
 
         const resolvedPositionsModal = safeAppsModal.map((a: Application) => {
             const appPos = (a.posicion || '').toLowerCase();
@@ -1147,8 +1151,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const positionsToAnalyzeModal = resolvedPositionsModal.length > 0 ? resolvedPositionsModal : [posTextModal];
 
-        const effectiveIsFront = positionsToAnalyzeModal.some(p => reFront.test(p));
-        const effectiveIsRear = positionsToAnalyzeModal.some(p => reRear.test(p));
+        const effectiveIsFront = positionsToAnalyzeModal.some(p => reFront.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
+        const effectiveIsRear = positionsToAnalyzeModal.some(p => reRear.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
         const isAmbasCalculated = effectiveIsFront && effectiveIsRear;
 
         let posBadgeClass = '';
