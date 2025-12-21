@@ -18,24 +18,21 @@ document.addEventListener('DOMContentLoaded', () => {
             this.data = [];
             this.filtered = [];
             this.currentPage = 1;
-            this._favorites = new Set(); // Renombrado a "privado"
+            this._favorites = new Set();
             this._comparisons = new Set();
             this.isFavoritesMode = false;
             this.activeManufacturer = null;
             this._loadFavorites(); // Carga los favoritos automáticamente al iniciar
             this._loadComparisons();
             this._notifications = []; // Initialize notifications
-            // Simular notificaciones
-            this._notifications = [
-                { id: 1, title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
-            ];
+            this._loadNotifications(); // Cargar notificaciones desde localStorage
         }
         // Carga los favoritos desde localStorage
         _loadFavorites() {
             try {
                 const favs = localStorage.getItem('brakeXFavorites');
                 if (favs) {
-                    this._favorites = new Set(JSON.parse(favs).map(Number));
+                    this._favorites = new Set(JSON.parse(favs));
                 }
             }
             catch (e) {
@@ -127,6 +124,36 @@ document.addEventListener('DOMContentLoaded', () => {
             return this._comparisons.has(itemId);
         }
         get comparisons() { return this._comparisons; }
+        // --- Notifications Logic ---
+        _loadNotifications() {
+            try {
+                const notifs = localStorage.getItem('brakeXNotifications');
+                if (notifs) {
+                    this._notifications = JSON.parse(notifs);
+                }
+                else {
+                    // Notificación de bienvenida por defecto
+                    this._notifications = [
+                        { id: Date.now(), title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
+                    ];
+                    this._saveNotifications();
+                }
+            }
+            catch (e) {
+                console.error("Error loading notifications:", e);
+                this._notifications = [
+                    { id: Date.now(), title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
+                ];
+            }
+        }
+        _saveNotifications() {
+            try {
+                localStorage.setItem('brakeXNotifications', JSON.stringify(this._notifications));
+            }
+            catch (e) {
+                console.error("Error saving notifications:", e);
+            }
+        }
         updateComparisonBadge() {
             const badge = document.getElementById('compareCountBadge');
             if (badge) {
@@ -138,15 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 count > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
             }
         }
-        markAllAsRead() {
-            if (this._notifications) {
-                this._notifications.forEach(n => n.read = true);
-                this.updateNotificationBadge();
-                // Persistencia de notificaciones? Por ahora no lo pidió, pero sería ideal.
-                // localStorage.setItem('brakeXNotifications', JSON.stringify(this._notifications));
-            }
-        }
-
         addNotification(title, body) {
             this._notifications.unshift({
                 id: Date.now(),
@@ -154,6 +172,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 body,
                 read: false
             });
+            // Límite de 25 notificaciones (FIFO)
+            if (this._notifications.length > 25) {
+                this._notifications = this._notifications.slice(0, 25);
+            }
+            this._saveNotifications();
+            this.updateNotificationBadge();
+        }
+        markAllAsRead() {
+            if (this._notifications) {
+                this._notifications.forEach(n => n.read = true);
+                this._saveNotifications();
+                this.updateNotificationBadge();
+            }
+        }
+        markAsRead(notifId) {
+            const notif = this._notifications.find(n => n.id === notifId);
+            if (notif) {
+                notif.read = true;
+                this._saveNotifications();
+                this.updateNotificationBadge();
+            }
+        }
+        deleteNotification(notifId) {
+            this._notifications = this._notifications.filter(n => n.id !== notifId);
+            this._saveNotifications();
             this.updateNotificationBadge();
         }
         updateNotificationBadge() {
@@ -174,11 +217,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else {
                     panel.innerHTML = this._notifications.map(n => `
-                        <div class="notif-item ${n.read ? '' : 'unread'}">
-                            <div class="notif-icon">🔔</div>
+                        <div class="notif-item ${n.read ? '' : 'unread'}" data-notif-id="${n.id}">
+                            <div class="notif-icon">
+                                <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </div>
                             <div class="notif-content">
                                 <h4>${n.title}</h4>
                                 <p>${n.body}</p>
+                            </div>
+                            <div class="notif-actions">
+                                ${!n.read ? `<button class="notif-action-btn mark-read" onclick="appState.markAsRead(${n.id})" title="Marcar como leída">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>` : ''}
+                                <button class="notif-action-btn delete" onclick="appState.deleteNotification(${n.id})" title="Eliminar">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     `).join('');
@@ -188,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Instanciar el estado global de la app
     const appState = new AppState();
+    window.appState = appState; // Exponer globalmente para onclick
     window.toggleComparisonGlobally = (id) => appState.toggleComparison(id);
     const toggleComparisonGlobally = (id) => appState.toggleComparison(id);
     // === FIN: MEJORA #4 ===
@@ -290,8 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = button.closest('.product-card');
         if (!card)
             return;
-        const itemId = parseInt(card.dataset.id || '0');
-        if (isNaN(itemId))
+        const itemId = card.dataset.id || '';
+        if (!itemId)
             return;
         // 1. Llama al método de la clase. Él se encarga de guardar.
         appState.toggleFavorite(itemId);
@@ -310,8 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = button.closest('.product-card');
         if (!card)
             return;
-        const itemId = parseInt(card.dataset.id || '0');
-        if (isNaN(itemId))
+        const itemId = card.dataset.id || '';
+        if (!itemId)
             return;
         appState.toggleComparison(itemId);
         const isNowActive = appState.isComparison(itemId);
@@ -637,17 +699,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const getIsBoth = (item) => {
                     const globalPos = (item.posición || '').toLowerCase();
                     const apps = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
-                    const reFront = /\bdel/i;
-                    const reRear = /\btras/i;
+                    const reFront = /\bdel(antera)?\b/i;
+                    const reRear = /\btras(era)?\b/i;
                     // 1. Resolver posición para cada aplicación (Prioridad App > Global)
                     const resolvedPositions = apps.map(a => {
                         const appPos = (a.posicion || '').toLowerCase();
+                        // Si la app tiene posición, la usamos. Si es 'n/a' o vacía, usamos la global.
                         return (appPos && appPos !== 'n/a') ? appPos : globalPos;
                     }).filter(p => p && p !== 'n/a');
                     // 2. Analizar el set de posiciones resueltas (o global si no hay apps)
                     const positionsToAnalyze = resolvedPositions.length > 0 ? resolvedPositions : [globalPos];
-                    const hasFront = positionsToAnalyze.some(p => reFront.test(p));
-                    const hasRear = positionsToAnalyze.some(p => reRear.test(p));
+                    const hasFront = positionsToAnalyze.some(p => reFront.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
+                    const hasRear = positionsToAnalyze.some(p => reRear.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
                     return hasFront && hasRear;
                 };
                 const aIsBoth = getIsBoth(a);
@@ -832,15 +895,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const safeAplicaciones = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
             // --- LÓGICA REFINADA: POSICIÓN RESUELTA (App || Global) ---
             const posText = (item.posición || '').toLowerCase();
-            const reFront = /\bdel/i;
-            const reRear = /\btras/i;
+            const reFront = /\bdel(antera)?\b/i;
+            const reRear = /\btras(era)?\b/i;
             const resolvedPositions = safeAplicaciones.map(a => {
                 const appPos = (a.posicion || '').toLowerCase();
                 return (appPos && appPos !== 'n/a') ? appPos : posText;
             }).filter(p => p && p !== 'n/a');
             const positionsToAnalyze = resolvedPositions.length > 0 ? resolvedPositions : [posText];
-            const effectiveIsFront = positionsToAnalyze.some(p => reFront.test(p));
-            const effectiveIsRear = positionsToAnalyze.some(p => reRear.test(p));
+            const effectiveIsFront = positionsToAnalyze.some(p => reFront.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
+            const effectiveIsRear = positionsToAnalyze.some(p => reRear.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
             const isAmbasCalculated = effectiveIsFront && effectiveIsRear;
             let positionBadgesHTML = '';
             // Standardized Logic: Single Badge for 'Ambas' (Mixed)
@@ -927,7 +990,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="product-card__refs">
                             ${allRefsHTML}
                         </div>
-
                         <footer class="product-card__footer">
                             <p class="product-card__apps">
                                 ${appSummaryItems.length > 0 ? appSummaryItems.join(', ') : 'Aplicaciones no disponibles'}
@@ -949,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetBtn = e.currentTarget;
                 const card = targetBtn.closest('.product-card');
                 if (card && card.dataset.id) {
-                    const id = parseInt(card.dataset.id);
+                    const id = card.dataset.id;
                     // Feedback inmediato en la interfaz
                     const isNowComparison = appState.toggleComparison(id);
                     targetBtn.classList.toggle('active', isNowComparison);
@@ -1020,15 +1082,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- LÓGICA REFINADA PARA MODAL: POSICIÓN RESUELTA (App || Global) ---
         const safeAppsModal = Array.isArray(item.aplicaciones) ? item.aplicaciones : [];
         const posTextModal = (item.posición || '').toLowerCase();
-        const reFront = /\bdel/i;
-        const reRear = /\btras/i;
+        const reFront = /\bdel(antera)?\b/i;
+        const reRear = /\btras(era)?\b/i;
         const resolvedPositionsModal = safeAppsModal.map((a) => {
             const appPos = (a.posicion || '').toLowerCase();
             return (appPos && appPos !== 'n/a') ? appPos : posTextModal;
         }).filter(p => p && p !== 'n/a');
         const positionsToAnalyzeModal = resolvedPositionsModal.length > 0 ? resolvedPositionsModal : [posTextModal];
-        const effectiveIsFront = positionsToAnalyzeModal.some(p => reFront.test(p));
-        const effectiveIsRear = positionsToAnalyzeModal.some(p => reRear.test(p));
+        const effectiveIsFront = positionsToAnalyzeModal.some(p => reFront.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
+        const effectiveIsRear = positionsToAnalyzeModal.some(p => reRear.test(p) || p.includes('ambas') || (p.includes('del') && p.includes('tras')));
         const isAmbasCalculated = effectiveIsFront && effectiveIsRear;
         let posBadgeClass = '';
         let posBadgeText = item.posición || 'N/A';
@@ -1463,15 +1525,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Modales
         els.modalCloseBtn.addEventListener('click', closeModal);
-        els.modal.addEventListener('click', (e) => {
-            if (e.target === els.modal)
-                closeModal();
-        });
+        els.modal.addEventListener('click', (e) => { if (e.target === els.modal)
+            closeModal(); });
         els.guideModalCloseBtn.addEventListener('click', closeGuideModal);
-        els.guideModal.addEventListener('click', (e) => {
-            if (e.target === els.guideModal)
-                closeGuideModal();
-        });
+        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal)
+            closeGuideModal(); });
     }
     function setupComparisonModal() {
         const compareBtn = document.getElementById('compareBtn');
@@ -1526,22 +1584,21 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
     }
-    // === Inicialización ===
     // === Inicialización Real-time con Notificaciones ===
     function inicializarApp() {
         showSkeletonLoader();
         renderSearchHistory();
         els.searchHistoryCard.style.display = 'none';
-
+        // Escucha en tiempo real
         db.collection('pastillas').onSnapshot((snapshot) => {
             let isInitialLoad = appState.data.length === 0;
             let changesCount = 0;
-
+            let addedItems = []; // Para almacenar items agregados en carga inicial
+            // Procesar cambios
             snapshot.docChanges().forEach((change) => {
                 const docData = change.doc.data();
                 const docId = change.doc.id;
-
-                // Normalización de imagen
+                // Normalizar datos (igual que antes)
                 if (docData.imagen && (!docData.imagenes || docData.imagenes.length === 0)) {
                     docData.imagenes = [
                         docData.imagen.replace("text=", `text=Vista+1+`),
@@ -1549,35 +1606,40 @@ document.addEventListener('DOMContentLoaded', () => {
                         docData.imagen.replace("text=", `text=Vista+3+`)
                     ];
                 }
-
-                let medidaString = null;
-                if (Array.isArray(docData.medidas) && docData.medidas.length > 0) {
-                    medidaString = String(docData.medidas[0]);
-                } else if (typeof docData.medidas === 'string') {
-                    medidaString = docData.medidas;
-                }
-                const partes = medidaString ? medidaString.split(/x/i).map((s) => parseFloat(s.trim())) : [0, 0];
-                const safeRefs = Array.isArray(docData.ref) ? docData.ref : [];
-                const safeOems = Array.isArray(docData.oem) ? docData.oem : [];
-                const safeFmsis = Array.isArray(docData.fmsi) ? docData.fmsi : [];
-                const aplicaciones = Array.isArray(docData.aplicaciones) ? docData.aplicaciones : [];
-
+                // Procesar medidas y aplicar ID del documento
                 const item = {
                     ...docData,
-                    aplicaciones,
-                    _appId: docId,
-                    ref: safeRefs,
-                    oem: safeOems,
-                    fmsi: safeFmsis,
-                    anchoNum: docData.anchoNum || partes[0] || 0,
-                    altoNum: docData.altoNum || partes[1] || 0
+                    _appId: docId, // Usamos ID de Firebase
+                    aplicaciones: Array.isArray(docData.aplicaciones) ? docData.aplicaciones : [],
+                    // Asegurar arrays seguros
+                    ref: Array.isArray(docData.ref) ? docData.ref : [],
+                    oem: Array.isArray(docData.oem) ? docData.oem : [],
+                    fmsi: Array.isArray(docData.fmsi) ? docData.fmsi : [],
+                    anchoNum: docData.anchoNum || 0,
+                    altoNum: docData.altoNum || 0
                 };
-
+                // Calcular medidas si no existen numéricas (lógica original simplificada)
+                if (!item.anchoNum || !item.altoNum) {
+                    let medidaString = null;
+                    if (Array.isArray(item.medidas) && item.medidas.length > 0) {
+                        medidaString = String(item.medidas[0]);
+                    }
+                    else if (typeof item.medidas === 'string') {
+                        medidaString = item.medidas;
+                    }
+                    const partes = medidaString ? medidaString.split(/x/i).map((s) => parseFloat(s.trim())) : [0, 0];
+                    item.anchoNum = partes[0] || 0;
+                    item.altoNum = partes[1] || 0;
+                }
                 if (change.type === "added") {
                     appState.data.push(item);
-                    if (!isInitialLoad) {
-                        const refName = safeRefs.length > 0 ? safeRefs[0] : 'Desconocida';
-                        appState.addNotification("Nueva Referencia", `Se ha agregado ${refName}.`);
+                    if (isInitialLoad) {
+                        // Guardar para procesar después
+                        addedItems.push(item);
+                    }
+                    else {
+                        const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
+                        appState.addNotification("Nueva Referencia", `Se ha agregado la pastilla ${refName}.`);
                         changesCount++;
                     }
                 }
@@ -1585,8 +1647,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const index = appState.data.findIndex(p => p._appId === docId);
                     if (index !== -1) {
                         appState.data[index] = item;
-                        const refName = safeRefs.length > 0 ? safeRefs[0] : 'Desconocida';
-                        appState.addNotification("Actualización", `Referencia ${refName} actualizada.`);
+                        const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
+                        appState.addNotification("Actualización", `La referencia ${refName} ha sido actualizada.`);
                         changesCount++;
                     }
                 }
@@ -1595,46 +1657,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     changesCount++;
                 }
             });
-
+            // Si es carga inicial, generar notificaciones de las últimas 25 modificaciones
+            if (isInitialLoad && addedItems.length > 0) {
+                // Tomar las últimas 25 (o menos si hay menos de 25)
+                const recentItems = addedItems.slice(-25).reverse();
+                recentItems.forEach(item => {
+                    const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
+                    appState.addNotification("Referencia en catálogo", `${refName}`);
+                });
+            }
+            // Si hubo cambios o es carga inicial, re-renderizar
             if (isInitialLoad || changesCount > 0) {
-                // Reordenar
-                appState.data.sort((a, b) => getSortableRefNumber(a.ref) - getSortableRefNumber(b.ref));
-
-                // Actualizar filtros dropdowns
-                const getAllApplicationValues = (key) => {
-                    const allValues = new Set();
-                    appState.data.forEach(item => {
-                        item.aplicaciones.forEach(app => {
-                            const prop = key === 'modelo' ? 'serie' : key;
-                            if (app[prop])
-                                allValues.add(String(app[prop]));
-                        });
-                    });
-                    return [...allValues].sort();
-                };
-                updateDropdown('listaMarcas', getAllApplicationValues('marca'));
-                updateDropdown('listaModelos', getAllApplicationValues('modelo'));
-                updateDropdown('listaAnios', getAllApplicationValues('año'));
-                const allOems = [...new Set(appState.data.flatMap(i => i.oem || []))].filter(Boolean).sort();
-                const allFmsis = [...new Set(appState.data.flatMap(i => i.fmsi || []))].filter(Boolean).sort();
-                updateDropdown('oemList', allOems);
-                updateDropdown('fmsiList', allFmsis);
-
-                if (isInitialLoad) {
-                    applyFiltersFromURL();
-                    setupEventListeners();
-                    setupComparisonModal();
-                }
-
-                // Siempre refrescar datos y tags
                 filterData();
                 renderDynamicBrandTags(appState.data, false);
             }
         }, (error) => {
-            console.error('Error al inicializar la app:', error);
-            showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos.');
+            console.error("Error obteniendo datos en tiempo real:", error);
+            els.results.innerHTML = `<div class="error-container"><p>Error cargando datos. Por favor intenta recargar.</p></div>`;
+            els.paginationContainer.innerHTML = '';
         });
+        // Configurar event listeners
+        setupEventListeners();
     }
+    // Fin de inicializarApp
     // Inicializar contadores y badges después de que DOM esté listo
     appState.updateFavoriteBadge();
     appState.updateComparisonBadge();

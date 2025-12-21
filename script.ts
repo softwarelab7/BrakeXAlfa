@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
         data: Product[];
         filtered: Product[];
         currentPage: number;
-        currentPage: number;
         private _favorites: Set<string>; // Changed to store string IDs
         isFavoritesMode: boolean;
         activeManufacturer: string | null;
@@ -78,10 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this._loadFavorites(); // Carga los favoritos automáticamente al iniciar
             this._loadComparisons();
             this._notifications = []; // Initialize notifications
-            // Simular notificaciones
-            this._notifications = [
-                { id: 1, title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
-            ];
+            this._loadNotifications(); // Cargar notificaciones desde localStorage
         }
 
         // Carga los favoritos desde localStorage
@@ -187,6 +183,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         get comparisons() { return this._comparisons; }
 
+        // --- Notifications Logic ---
+        _loadNotifications() {
+            try {
+                const notifs = localStorage.getItem('brakeXNotifications');
+                if (notifs) {
+                    this._notifications = JSON.parse(notifs);
+                } else {
+                    // Notificación de bienvenida por defecto
+                    this._notifications = [
+                        { id: Date.now(), title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
+                    ];
+                    this._saveNotifications();
+                }
+            } catch (e) {
+                console.error("Error loading notifications:", e);
+                this._notifications = [
+                    { id: Date.now(), title: 'Bienvenido', body: 'Bienvenido a Brake X', read: false }
+                ];
+            }
+        }
+
+        _saveNotifications() {
+            try {
+                localStorage.setItem('brakeXNotifications', JSON.stringify(this._notifications));
+            } catch (e) {
+                console.error("Error saving notifications:", e);
+            }
+        }
+
         updateComparisonBadge() {
             const badge = document.getElementById('compareCountBadge');
             if (badge) {
@@ -206,6 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 body,
                 read: false
             });
+            // Límite de 25 notificaciones (FIFO)
+            if (this._notifications.length > 25) {
+                this._notifications = this._notifications.slice(0, 25);
+            }
+            this._saveNotifications();
             this.updateNotificationBadge();
         }
 
@@ -213,10 +243,24 @@ document.addEventListener('DOMContentLoaded', () => {
         markAllAsRead() {
             if (this._notifications) {
                 this._notifications.forEach(n => n.read = true);
+                this._saveNotifications();
                 this.updateNotificationBadge();
-                // Persistencia de notificaciones? Por ahora no lo pidió, pero sería ideal.
-                // localStorage.setItem('brakeXNotifications', JSON.stringify(this._notifications));
             }
+        }
+
+        markAsRead(notifId: number) {
+            const notif = this._notifications.find(n => n.id === notifId);
+            if (notif) {
+                notif.read = true;
+                this._saveNotifications();
+                this.updateNotificationBadge();
+            }
+        }
+
+        deleteNotification(notifId: number) {
+            this._notifications = this._notifications.filter(n => n.id !== notifId);
+            this._saveNotifications();
+            this.updateNotificationBadge();
         }
 
         updateNotificationBadge() {
@@ -228,7 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 badge.innerText = unread.toString();
                 // Animación Pop
                 badge.classList.remove('pop');
-                void badge.offsetWidth; badge.classList.add('pop');
+                void badge.offsetWidth;
+                badge.classList.add('pop');
                 unread > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
             }
 
@@ -237,11 +282,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     panel.innerHTML = '<div class="notif-empty">Sin nuevas notificaciones</div>';
                 } else {
                     panel.innerHTML = this._notifications.map(n => `
-                        <div class="notif-item ${n.read ? '' : 'unread'}">
-                            <div class="notif-icon">🔔</div>
+                        <div class="notif-item ${n.read ? '' : 'unread'}" data-notif-id="${n.id}">
+                            <div class="notif-icon">
+                                <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </div>
                             <div class="notif-content">
                                 <h4>${n.title}</h4>
                                 <p>${n.body}</p>
+                            </div>
+                            <div class="notif-actions">
+                                ${!n.read ? `<button class="notif-action-btn mark-read" onclick="appState.markAsRead(${n.id})" title="Marcar como leída">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>` : ''}
+                                <button class="notif-action-btn delete" onclick="appState.deleteNotification(${n.id})" title="Eliminar">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     `).join('');
@@ -252,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Instanciar el estado global de la app
     const appState = new AppState();
+    (window as any).appState = appState; // Exponer globalmente para onclick
     (window as any).toggleComparisonGlobally = (id: string) => appState.toggleComparison(id);
     const toggleComparisonGlobally = (id: string) => appState.toggleComparison(id);
     // === FIN: MEJORA #4 ===
@@ -359,8 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const button = e.currentTarget as HTMLElement;
         const card = button.closest('.product-card') as HTMLElement;
         if (!card) return;
-        const itemId = parseInt(card.dataset.id || '0');
-        if (isNaN(itemId)) return;
+        const itemId = card.dataset.id || '';
+        if (!itemId) return;
 
         // 1. Llama al método de la clase. Él se encarga de guardar.
         appState.toggleFavorite(itemId);
@@ -380,8 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const button = e.currentTarget as HTMLElement;
         const card = button.closest('.product-card') as HTMLElement;
         if (!card) return;
-        const itemId = parseInt(card.dataset.id || '0');
-        if (isNaN(itemId)) return;
+        const itemId = card.dataset.id || '';
+        if (!itemId) return;
 
         appState.toggleComparison(itemId);
 
@@ -1077,7 +1141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = targetBtn.closest('.product-card') as HTMLElement;
 
                 if (card && card.dataset.id) {
-                    const id = parseInt(card.dataset.id);
+                    const id = card.dataset.id;
                     // Feedback inmediato en la interfaz
                     const isNowComparison = appState.toggleComparison(id);
                     targetBtn.classList.toggle('active', isNowComparison);
@@ -1685,6 +1749,7 @@ document.addEventListener('DOMContentLoaded', () => {
         db.collection('pastillas').onSnapshot((snapshot: any) => {
             let isInitialLoad = appState.data.length === 0;
             let changesCount = 0;
+            let addedItems: any[] = []; // Para almacenar items agregados en carga inicial
 
             // Procesar cambios
             snapshot.docChanges().forEach((change: any) => {
@@ -1728,7 +1793,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (change.type === "added") {
                     appState.data.push(item);
-                    if (!isInitialLoad) {
+                    if (isInitialLoad) {
+                        // Guardar para procesar después
+                        addedItems.push(item);
+                    } else {
                         const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
                         appState.addNotification("Nueva Referencia", `Se ha agregado la pastilla ${refName}.`);
                         changesCount++;
@@ -1745,10 +1813,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (change.type === "removed") {
                     appState.data = appState.data.filter(p => p._appId !== docId);
-                    // Opcional: Notificar eliminación
                     changesCount++;
                 }
             });
+
+            // Si es carga inicial, generar notificaciones de las últimas 25 modificaciones
+            if (isInitialLoad && addedItems.length > 0) {
+                // Tomar las últimas 25 (o menos si hay menos de 25)
+                const recentItems = addedItems.slice(-25).reverse();
+                recentItems.forEach(item => {
+                    const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
+                    appState.addNotification("Referencia en catálogo", `${refName}`);
+                });
+            }
 
             // Si hubo cambios o es carga inicial, re-renderizar
             if (isInitialLoad || changesCount > 0) {
@@ -1760,43 +1837,40 @@ document.addEventListener('DOMContentLoaded', () => {
             els.results.innerHTML = `<div class="error-container"><p>Error cargando datos. Por favor intenta recargar.</p></div>`;
             els.paginationContainer.innerHTML = '';
         });
+
+        // Configurar event listeners
+        setupEventListeners();
     }
     // Fin de inicializarApp
 
-} catch (error) {
-    console.error('Error al inicializar la app:', error);
-    showGlobalError('Error al cargar datos', 'No se pudo conectar con la base de datos.');
-}
-    }
 
+    // Inicializar contadores y badges después de que DOM esté listo
+    appState.updateFavoriteBadge();
+    appState.updateComparisonBadge();
+    appState.updateNotificationBadge();
 
-// Inicializar contadores y badges después de que DOM esté listo
-appState.updateFavoriteBadge();
-appState.updateComparisonBadge();
-appState.updateNotificationBadge();
-
-// Toggle Notifications
-const notifBtn = document.getElementById('notificacionesBtn');
-if (notifBtn) {
-    notifBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const panel = document.getElementById('notificationsPanel');
-        panel?.classList.toggle('hidden');
-    });
-    document.addEventListener('click', () => {
-        document.getElementById('notificationsPanel')?.classList.add('hidden');
-    });
-    document.getElementById('notificationsPanel')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-    // Listener para "Marcar leídas"
-    const markReadBtn = document.getElementById('markNotificationsReadBtn');
-    if (markReadBtn) {
-        markReadBtn.addEventListener('click', () => {
-            appState.markAllAsRead();
+    // Toggle Notifications
+    const notifBtn = document.getElementById('notificacionesBtn');
+    if (notifBtn) {
+        notifBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const panel = document.getElementById('notificationsPanel');
+            panel?.classList.toggle('hidden');
         });
+        document.addEventListener('click', () => {
+            document.getElementById('notificationsPanel')?.classList.add('hidden');
+        });
+        document.getElementById('notificationsPanel')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        // Listener para "Marcar leídas"
+        const markReadBtn = document.getElementById('markNotificationsReadBtn');
+        if (markReadBtn) {
+            markReadBtn.addEventListener('click', () => {
+                appState.markAllAsRead();
+            });
+        }
     }
-}
 
-inicializarApp();
+    inicializarApp();
 });
