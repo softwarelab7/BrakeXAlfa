@@ -507,26 +507,27 @@ header .header-x path {
 
 /* --- Clear Filters Button: Soft Red Design --- */
 .clear-filters-btn {
-    margin-top: 1rem;
-    padding: 0.6rem 1rem;
-    background-color: #dc2626;
-    /* Rojo Sólido */
-    color: #ffffff;
-    /* Blanco */
-    border: none;
-    /* Sin borde */
-    border-radius: 12px;
-    font-weight: 500;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: auto;
+    padding: 8px 16px;
+    border-radius: 50px; /* Unified Pill Shape */
+    margin-top: 0.8rem;
+    background-color: #fee2e2;
+    color: #991b1b;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #fecaca;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3);
+    gap: 10px;
+    cursor: pointer;
+    outline: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: 40px;
 }
 
 .clear-filters-btn:hover {
@@ -816,15 +817,12 @@ body.lp-dark #positionTrasera.active {
     width: 100%;
     height: auto;
     padding: 8px 16px;
-    border-radius: 0.75rem;
+    border-radius: 50px; /* Unified Pill Shape */
     margin-top: 0.8rem;
     background-color: #fee2e2;
-    /* Light Red */
     color: #991b1b;
-    /* Dark Red */
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border: 1px solid #fecaca;
-    /* Red Border */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -833,7 +831,7 @@ body.lp-dark #positionTrasera.active {
     outline: none;
     font-size: 0.9rem;
     font-weight: 500;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+    transition: all 0.2s ease;
     min-height: 40px;
 }
 
@@ -871,20 +869,18 @@ body.lp-dark #positionTrasera.active {
 /* ======================================================= */
 .brand-tag {
     font-family: 'Inter', sans-serif;
-    font-size: 0.6rem;
-    /* 20% mÃ¡s pequeÃ±o (original 0.75rem) */
+    font-size: 0.75rem; /* Match ref-badge size */
     font-weight: 500;
-    padding: 3px 10px;
-    /* 20% mÃ¡s pequeÃ±o (original 4px 12px) */
+    padding: 4px 12px;
     border-radius: 50px;
     border: 1px solid var(--tag-brand-color, var(--btn-google-border));
     color: var(--tag-brand-color, var(--text-color));
-    background-color: transparent;
-    opacity: 0.85;
+    background-color: transparent; /* Default transparent */
+    opacity: 0.9;
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
-    box-shadow: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .brand-tag:hover {
@@ -1213,28 +1209,32 @@ body.lp-dark #positionTrasera.active {
 }
 
 .product-card__footer {
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 10px;
     margin-top: auto;
-    padding-top: 0.5rem;
-    border-top: 1px dashed var(--material-surface-border);
+    width: 100%;
+    display: block; /* Ensure it takes full width */
 }
 
 .product-card__apps {
-    font-size: 0.85rem;
-    color: var(--text-color);
-    opacity: 0.8;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    text-align: left; /* Better readability for lists */
     display: -webkit-box;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin: 0;
 }
 
 /* Badges Premium */
 .position-badge-premium {
-    padding: 4px 10px;
+    padding: 3px 8px; /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.7rem;
+    font-size: 0.65rem; /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -1244,14 +1244,17 @@ body.lp-dark #positionTrasera.active {
 
 .position-badge-premium.delantera {
     background-color: #3b82f6;
+    border: none; /* Removed light border */
 }
 
 .position-badge-premium.trasera {
     background-color: #ef4444;
+    border: none; /* Removed light border */
 }
 
 .position-badge-premium.ambas {
     background: linear-gradient(90deg, #3b82f6, #ef4444);
+    border: none; /* Removed light border */
 }
 
 .product-card__favorite-btn {
@@ -1290,13 +1293,16 @@ body.lp-dark #positionTrasera.active {
 
 /* Reusing Ref Badges */
 .ref-badge {
-    padding: 0.15rem 0.6rem;
-    border-radius: 4px;
+    padding: 3px 10px;
+    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
     font-size: 0.75rem;
     white-space: nowrap;
     border: none;
-    /* Solid */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Ensure dark mode support */
@@ -2588,24 +2594,20 @@ body.lp-dark .search-result-content {
 
 /* Badge de PosiciÃ³n Premium */
 .position-badge-premium {
-    font-size: 0.65rem;
-    /* Un poco mÃ¡s pequeÃ±o para equilibrar */
-    font-weight: 800;
-    text-transform: uppercase;
-    padding: 4px 8px;
-    /* Un poco mÃ¡s de padding vertical */
+    padding: 3px 8px; /* Slightly smaller padding */
     border-radius: 50px;
-    /* Redondeado completo estilo 'pill' como las refs */
-    letter-spacing: 0.3px;
-    display: inline-block;
-    box-shadow: none;
-    /* DiseÃ±o mÃ¡s plano y limpio */
-    line-height: 1;
+    font-weight: 500;
+    font-size: 0.65rem; /* Smaller text size */
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
 }
 
 .position-badge-premium.delantera {
-    background-color: var(--badge-delantera-bg);
-    color: var(--badge-delantera-text);
+    background-color: #3b82f6;
+    border: none; /* Removed light border */
 }
 
 /* (Deleted redundant position badge block) */
@@ -2751,7 +2753,16 @@ body.modo-orbital .favorite-btn.active svg {
 
 /* --- BADGE COLORS RESTORE --- */
 .ref-badge {
+    padding: 3px 10px;
+    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    font-weight: 500;
+    font-size: 0.75rem;
+    white-space: nowrap;
     border: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .ref-k {
@@ -2786,7 +2797,7 @@ body.modo-orbital .favorite-btn.active svg {
 /* Position Badge Colors */
 .position-badge-premium.delantera {
     background-color: #3b82f6;
-    color: white;
+    border: none; /* Removed light border */
 }
 
 /* (Deleted redundant position badge block) */
@@ -2865,12 +2876,16 @@ body.modo-orbital .favorite-btn.active svg {
 }
 
 .ref-badge {
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background-color: var(--material-surface-border);
-    color: var(--text-color);
+    padding: 3px 10px;
+    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 3. Footer Apps */
@@ -2907,7 +2922,16 @@ body.lp-dark .card-thumbnail {
 
 /* --- BADGE COLORS RESTORE --- */
 .ref-badge {
+    padding: 3px 10px;
+    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    font-weight: 500;
+    font-size: 0.75rem;
+    white-space: nowrap;
     border: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .ref-k {
@@ -3051,7 +3075,15 @@ body.modo-orbital .product-card__image-container {
 
 /* Ensure position badges wrapper takes available space */
 .product-card__position-top>.position-badge-premium {
-    margin: 0 !important;
+    padding: 3px 8px; /* Slightly smaller padding */
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.65rem; /* Smaller text size */
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
 }
 
 /* Favourites Button - integrated in top bar */
@@ -3270,37 +3302,30 @@ body.modo-orbital .product-card__image-container {
 
 /* === Premium Position Badges (Solid) === */
 .position-badge-premium {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.8rem;
-    border-radius: 99px;
-    font-size: 0.72rem;
-    font-weight: 800;
+    padding: 3px 8px; /* Slightly smaller padding */
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.65rem; /* Smaller text size */
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    white-space: nowrap;
+    letter-spacing: 0.5px;
     border: none;
 }
 
 .position-badge-premium.delantera {
-    background-color: #2563eb !important;
-    /* Blue */
-    color: white !important;
+    background-color: #3b82f6;
+    border: none; /* Removed light border */
 }
 
 .position-badge-premium.trasera {
-    background-color: #dc2626 !important;
-    /* Red */
-    color: white !important;
+    background-color: #ef4444;
+    border: none; /* Removed light border */
 }
 
 .position-badge-premium.ambas {
-    background-color: #9333ea !important;
-    /* Purple */
-    color: white !important;
-    background-image: none !important;
-    /* Remove gradient */
+    background: linear-gradient(90deg, #3b82f6, #ef4444);
+    border: none; /* Removed light border */
 }
 
 .badge--ambas {
@@ -3311,23 +3336,21 @@ body.modo-orbital .product-card__image-container {
 
 /* --- 3. Footer / Apps --- */
 .product-card__footer {
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 10px;
     margin-top: auto;
-    padding-top: 0.85rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    display: flex !important;
-    justify-content: center !important;
-    width: 100% !important;
+    width: 100%;
+    display: block; /* Ensure it takes full width */
 }
 
 .product-card__apps {
-    font-size: 0.7rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     line-height: 1.4;
-    text-align: center;
-    /* Centrar texto */
+    text-align: left; /* Better readability for lists */
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
@@ -3375,14 +3398,16 @@ body.lp-dark .badge--bp {
 
 /* Base Styles */
 .ref-badge {
-    display: inline-block;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    margin-right: 4px;
-    margin-bottom: 4px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    padding: 3px 10px;
+    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    font-weight: 500;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .header-ref-badge {
@@ -3459,36 +3484,30 @@ body.lp-dark .badge--bp {
 
 /* Position Badges (Premium - Pastel) */
 .position-badge-premium {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.65rem;
-    font-weight: 700;
+    padding: 3px 8px; /* Slightly smaller padding */
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.65rem; /* Smaller text size */
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.5px;
+    border: none;
 }
 
 .position-badge-premium.delantera {
-    background-color: #e0f2fe;
-    /* Light Blue */
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+    background-color: #3b82f6;
+    border: none; /* Removed light border */
 }
 
 .position-badge-premium.trasera {
-    background-color: #fee2e2;
-    /* Light Red */
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: #ef4444;
+    border: none; /* Removed light border */
 }
 
 .position-badge-premium.ambas {
-    background: linear-gradient(135deg, #e0f2fe 0%, #fee2e2 100%);
-    color: #6b21a8;
-    /* Purple text for mixed */
-    border: 1px solid #e9d5ff;
+    background: linear-gradient(90deg, #3b82f6, #ef4444);
+    border: none; /* Removed light border */
 }
 
 /* Dark Mode Adjustments */
@@ -4539,7 +4558,15 @@ body.lp-dark .product-card__image {
 
 /* Ensure position badges don't look weird without a bar */
 .product-card__position-wrapper .position-badge-premium {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15); /* More shadow for contrast over image */
+    padding: 3px 8px; /* Slightly smaller padding */
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.65rem; /* Smaller text size */
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
 }
 
 /* Dark mode adjustment for overlay buttons */
@@ -4751,3 +4778,36 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
     fill: #ef4444;
     stroke: #ef4444;
 }
+
+
+
+
+
+
+
+
+.product-card__footer {
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 10px;
+    margin-top: auto;
+    width: 100%;
+    display: block; /* Ensure it takes full width */
+}
+
+/* New Brands Container in Card */
+.product-card__brands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--material-surface-border);
+    justify-content: center;
+}
+
+
+
+
+
+
+
