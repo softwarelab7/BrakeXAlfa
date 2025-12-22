@@ -1,0 +1,61 @@
+/* === NOTIFICATION ITEM ACTION BUTTONS === */
+.notif-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.notif-action-btn {
+    padding: 6px;
+    border: 1px solid var(--material-surface-border);
+    background: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.notif-action-btn:hover {
+    background: var(--material-surface-border);
+    transform: translateY(-1px);
+}
+
+.notif-action-btn.mark-read {
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.notif-action-btn.mark-read:hover {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+}
+
+.notif-action-btn.delete {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.notif-action-btn.delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+}
+
+.notif-action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+body.lp-dark .notif-action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.lp-dark .notif-action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}

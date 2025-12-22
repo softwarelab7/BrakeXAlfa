@@ -1,4 +1,3 @@
-"use strict";
 document.addEventListener('DOMContentLoaded', () => {
     // === Configuración de Firebase ===
     const firebaseConfig = {
@@ -11,6 +10,51 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    // === FUNCIONES DE TOAST NOTIFICATIONS (ANTES DE AppState) ===
+    function showToastNotification(title, body) {
+        console.log('🔔 Toast called:', title, body);
+        const container = document.getElementById('toastContainer');
+        console.log('📦 Container:', container);
+        if (!container)
+            return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <div class="toast-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-body">${body}</div>
+            </div>
+            <button class="toast-close" aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="toast-progress"></div>
+        `;
+        container.appendChild(toast);
+        const closeBtn = toast.querySelector('.toast-close');
+        closeBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeToast(toast);
+        });
+        toast.addEventListener('click', () => {
+            const panel = document.getElementById('notificationsPanel');
+            panel?.classList.remove('hidden');
+            removeToast(toast);
+        });
+        setTimeout(() => removeToast(toast), 4000);
+    }
+    function removeToast(toast) {
+        toast.classList.add('toast-exit');
+        setTimeout(() => toast.remove(), 300);
+    }
     // === INICIO: MEJORA #4 (AppState Class) ===
     // === Estado de la aplicación ===
     class AppState {
@@ -165,11 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 count > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
             }
         }
-        addNotification(title, body) {
+        addNotification(title, body, productId) {
             this._notifications.unshift({
                 id: Date.now(),
                 title,
                 body,
+                productId: productId || null,
                 read: false
             });
             // Límite de 25 notificaciones (FIFO)
@@ -178,6 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             this._saveNotifications();
             this.updateNotificationBadge();
+            // Mostrar toast solo si no es carga inicial
+            if (productId) {
+                showToastNotification(title, body);
+            }
         }
         markAllAsRead() {
             if (this._notifications) {
@@ -199,6 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this._saveNotifications();
             this.updateNotificationBadge();
         }
+        deleteAllNotifications() {
+            this._notifications = [];
+            this._saveNotifications();
+            this.updateNotificationBadge();
+        }
         updateNotificationBadge() {
             const badge = document.getElementById('notificationBadge');
             const panel = document.getElementById('notificationsList');
@@ -217,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else {
                     panel.innerHTML = this._notifications.map(n => `
-                        <div class="notif-item ${n.read ? '' : 'unread'}" data-notif-id="${n.id}">
+                        <div class="notif-item ${n.read ? '' : 'unread'}" data-notif-id="${n.id}" data-product-id="${n.productId || ''}">
                             <div class="notif-icon">
                                 <svg class="notif-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -230,12 +284,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             <div class="notif-actions">
                                 ${!n.read ? `<button class="notif-action-btn mark-read" onclick="appState.markAsRead(${n.id})" title="Marcar como leída">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                 </button>` : ''}
                                 <button class="notif-action-btn delete" onclick="appState.deleteNotification(${n.id})" title="Eliminar">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
@@ -445,13 +499,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     // --- FIN: UTILIDAD DE IMAGEN ---
     // --- INICIO: MEJORA - CUSTOM DROPDOWNS ---
+    const dropdownMap = new Map(); // Almacena los items actuales por ID de lista
     // Helper para scroll automático
     const scrollToSelected = (list) => {
-        // Usamos requestAnimationFrame para asegurar que el renderizado esté listo
         requestAnimationFrame(() => {
             const selected = list.querySelector('.selected');
             if (selected) {
-                // Centrar el elemento seleccionado en la vista
                 list.scrollTop = selected.offsetTop - (list.clientHeight / 2) + (selected.clientHeight / 2);
             }
         });
@@ -462,10 +515,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = input.closest('.custom-select-container');
         if (!input || !list || !container)
             return;
-        // Función para renderizar la lista
+        // 1. Actualizar siempre los datos más recientes en el mapa
+        dropdownMap.set(listId, items);
+        if (input.dataset.dropdownInitialized === 'true') {
+            return;
+        }
+        // Marcar como inicializado
+        input.dataset.dropdownInitialized = 'true';
+        // Función para renderizar la lista usando los datos ACTUALES del mapa
         const renderList = (filterText = '') => {
+            const currentItems = dropdownMap.get(listId) || []; // Obtener items frescos
             const normalizedFilter = normalizeText(filterText);
-            const filteredItems = items.filter(item => normalizeText(item).includes(normalizedFilter));
+            const filteredItems = currentItems.filter(item => normalizeText(item).includes(normalizedFilter));
             // Si no hay items o todos están filtrados
             if (filteredItems.length === 0) {
                 list.innerHTML = '<li style="pointer-events: none; opacity: 0.6; font-style: italic; font-size: 0.8em; padding: 8px 12px;">Sin resultados</li>';
@@ -481,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.addEventListener('click', () => {
                     input.value = li.innerText; // Set value
                     list.classList.remove('show'); // Hide list
-                    list.classList.add('hidden');
+                    list.classList.add('hidden'); // Ensure CSS hides it
                     // Trigger change event manually so filters update
                     if (onSelect) {
                         onSelect(input.value);
@@ -490,34 +551,67 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Disparar evento de input para que filterData lo detecte si hay listener
                         input.dispatchEvent(new Event('input'));
                     }
-                    filterData(); // Force filter update
+                    // Importante: filterData() se llamará por el evento 'input' adjunto en main
                 });
             });
         };
-        // 1. Evento Input: Filtrar lista mientras escribes
-        input.addEventListener('input', () => {
+        // Evento Input: Filtrar lista mientras escribes
+        input.addEventListener('input', (e) => {
+            // Ignorar eventos generados por script (al seleccionar una opción)
+            if (!e.isTrusted)
+                return;
             const val = input.value;
             renderList(val);
             list.classList.remove('hidden');
             list.classList.add('show');
-            // No auto-scroll on typing, user is searching
         });
-        // 2. Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
+        // Evento Focus: Mostrar lista completa (o filtrada si ya hay texto)
         input.addEventListener('focus', () => {
-            renderList(input.value); // Render fresh to ensure 'selected' class is correct
+            renderList(input.value);
             list.classList.remove('hidden');
             list.classList.add('show');
-            scrollToSelected(list); // Scroll to selection on open
+            scrollToSelected(list);
         });
-        // 3. Click Outside: Cerrar
+        // Evento Click en Input: Si ya tiene foco pero estaba cerrado, abrirlo
+        input.addEventListener('click', () => {
+            // Solo re-abrir si está oculto y tiene el foco
+            if (document.activeElement === input && list.classList.contains('hidden')) {
+                renderList(input.value);
+                list.classList.remove('hidden');
+                list.classList.add('show');
+                scrollToSelected(list);
+            }
+        });
+        // Click Outside: Cerrar
         document.addEventListener('click', (e) => {
             if (!container.contains(e.target)) {
                 list.classList.remove('show');
                 list.classList.add('hidden');
             }
         });
-        // Inicializar vacía
-        // renderList(''); 
+        // Icon click to toggle
+        const icon = container.querySelector('.chevron-icon');
+        if (icon) {
+            icon.addEventListener('click', (e) => {
+                e.preventDefault(); // Evitar comportamientos por defecto
+                e.stopPropagation(); // Evitar cierre inmediato por click outside
+                // Toggle logic
+                if (list.classList.contains('show')) {
+                    list.classList.remove('show');
+                    list.classList.add('hidden');
+                }
+                else {
+                    input.focus(); // El evento focus abrirá la lista si no está focused
+                    // Si ya estaba focused, el evento focus no dispara, así que forzamos apertura
+                    if (document.activeElement === input) {
+                        renderList(input.value);
+                        list.classList.remove('hidden');
+                        list.classList.add('show');
+                        scrollToSelected(list);
+                    }
+                }
+            });
+        }
     };
     // Reemplazo de la antigua fillDatalist
     // Ahora esta función configura el dropdown completo
@@ -726,6 +820,46 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCurrentPage();
         updateURLWithFilters();
         renderDynamicBrandTags(appState.filtered, isFiltered);
+        // --- INICIO: POBLAR DROPDOWNS (Corrección "No sale nada") ---
+        // Recolectar datos únicos de los productos filtrados para llenar las listas
+        const uniqueMarcas = new Set();
+        const uniqueModelos = new Set();
+        const uniqueAnios = new Set();
+        const uniqueOems = new Set();
+        const uniqueFmsis = new Set();
+        // Usamos appState.data si no hay filtros, o appState.filtered.
+        // MEJOR: Usar appState.filtered para que sean "inteligentes", 
+        // pero si el filtro actual es el causante de la restricción, cuidado.
+        // Para simplificar y asegurar que aparezcan opciones:: 
+        // Si el usuario está escribiendo en "Marca", no queremos restringir "Marca" a solo lo que ha escrito hasta que borre.
+        // PERO el comportamiento estándar es que el dropdown muestre opciones válidas.
+        const sourceData = appState.filtered.length > 0 ? appState.filtered : appState.data;
+        sourceData.forEach(p => {
+            if (Array.isArray(p.aplicaciones)) {
+                p.aplicaciones.forEach(app => {
+                    if (app.marca)
+                        uniqueMarcas.add(app.marca);
+                    // Combinamos modelo y serie como se ve en tu interfaz
+                    const mod = app.modelo || app.serie;
+                    if (mod)
+                        uniqueModelos.add(mod);
+                    if (app.año)
+                        uniqueAnios.add(app.año);
+                });
+            }
+            if (Array.isArray(p.oem))
+                p.oem.forEach(o => uniqueOems.add(String(o)));
+            if (Array.isArray(p.fmsi))
+                p.fmsi.forEach(f => uniqueFmsis.add(String(f)));
+        });
+        const sortAlpha = (a, b) => a.localeCompare(b);
+        // Actualizamos los Mapas de opciones
+        updateDropdown('listaMarcas', Array.from(uniqueMarcas).sort(sortAlpha));
+        updateDropdown('listaModelos', Array.from(uniqueModelos).sort(sortAlpha));
+        updateDropdown('listaAnios', Array.from(uniqueAnios).sort((a, b) => b.localeCompare(a))); // Años descendente
+        updateDropdown('oemList', Array.from(uniqueOems).sort(sortAlpha));
+        updateDropdown('fmsiList', Array.from(uniqueFmsis).sort(sortAlpha));
+        // --- FIN: POBLAR DROPDOWNS ---
     };
     // --- FIN: BLOQUE DE FILTRADO REFACTORIZADO ---
     const renderApplicationsList = (aplicaciones, defaultPos) => {
@@ -1307,6 +1441,13 @@ document.addEventListener('DOMContentLoaded', () => {
             els.body.classList.remove('lp-dark', 'modo-orbital');
             els.darkBtn.setAttribute('aria-pressed', 'false');
             els.darkBtn.setAttribute('aria-label', 'Activar modo oscuro');
+            // Toggle icons: show sun, hide moon
+            const sunIcon = els.darkBtn.querySelector('.lp-icon-sun');
+            const moonIcon = els.darkBtn.querySelector('.lp-icon-moon');
+            if (sunIcon)
+                sunIcon.style.opacity = '1';
+            if (moonIcon)
+                moonIcon.style.opacity = '0';
             if (els.orbitalBtn) {
                 els.orbitalBtn.classList.remove('active');
                 els.orbitalBtn.setAttribute('aria-pressed', 'false');
@@ -1318,6 +1459,13 @@ document.addEventListener('DOMContentLoaded', () => {
             els.body.classList.remove('modo-orbital');
             els.darkBtn.setAttribute('aria-pressed', 'true');
             els.darkBtn.setAttribute('aria-label', 'Activar modo claro');
+            // Toggle icons: hide sun, show moon
+            const sunIcon = els.darkBtn.querySelector('.lp-icon-sun');
+            const moonIcon = els.darkBtn.querySelector('.lp-icon-moon');
+            if (sunIcon)
+                sunIcon.style.opacity = '0';
+            if (moonIcon)
+                moonIcon.style.opacity = '1';
             if (els.orbitalBtn) {
                 els.orbitalBtn.classList.remove('active');
                 els.orbitalBtn.setAttribute('aria-pressed', 'false');
@@ -1329,6 +1477,13 @@ document.addEventListener('DOMContentLoaded', () => {
             els.body.classList.remove('lp-dark');
             els.darkBtn.setAttribute('aria-pressed', 'false');
             els.darkBtn.setAttribute('aria-label', 'Activar modo claro');
+            // Toggle icons: show sun, hide moon (orbital is a dark theme variant)
+            const sunIcon = els.darkBtn.querySelector('.lp-icon-sun');
+            const moonIcon = els.darkBtn.querySelector('.lp-icon-moon');
+            if (sunIcon)
+                sunIcon.style.opacity = '1';
+            if (moonIcon)
+                moonIcon.style.opacity = '0';
             if (els.orbitalBtn) {
                 els.orbitalBtn.classList.add('active');
                 els.orbitalBtn.setAttribute('aria-pressed', 'true');
@@ -1639,7 +1794,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     else {
                         const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
-                        appState.addNotification("Nueva Referencia", `Se ha agregado la pastilla ${refName}.`);
+                        appState.addNotification("Nueva Referencia", `Se ha agregado la pastilla ${refName}.`, item._appId);
                         changesCount++;
                     }
                 }
@@ -1648,7 +1803,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (index !== -1) {
                         appState.data[index] = item;
                         const refName = Array.isArray(item.ref) && item.ref.length > 0 ? item.ref[0] : 'Desconocida';
-                        appState.addNotification("Actualización", `La referencia ${refName} ha sido actualizada.`);
+                        appState.addNotification("Actualización", `La referencia ${refName} ha sido actualizada.`, item._appId);
                         changesCount++;
                     }
                 }
@@ -1678,6 +1833,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Configurar event listeners
         setupEventListeners();
+        setupComparisonModal();
     }
     // Fin de inicializarApp
     // Inicializar contadores y badges después de que DOM esté listo
@@ -1705,7 +1861,123 @@ document.addEventListener('DOMContentLoaded', () => {
                 appState.markAllAsRead();
             });
         }
+        // Listener para "Borrar Todas"
+        const deleteAllBtn = document.getElementById('deleteAllNotificationsBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+        if (deleteAllBtn && confirmModal && confirmDeleteBtn && confirmCancelBtn) {
+            deleteAllBtn.addEventListener('click', () => {
+                // Mostrar modal de confirmación
+                confirmModal.style.display = 'flex';
+            });
+            confirmDeleteBtn.addEventListener('click', () => {
+                appState.deleteAllNotifications();
+                confirmModal.style.display = 'none';
+            });
+            confirmCancelBtn.addEventListener('click', () => {
+                confirmModal.style.display = 'none';
+            });
+            // Cerrar modal al hacer click fuera
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) {
+                    confirmModal.style.display = 'none';
+                }
+            });
+            // Cerrar modal con Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && confirmModal.style.display === 'flex') {
+                    confirmModal.style.display = 'none';
+                }
+            });
+        }
+        // Listener para notificaciones clickeables
+        let currentNotificationProduct = null;
+        document.addEventListener('click', (e) => {
+            const notifItem = e.target.closest('.notif-item');
+            if (notifItem) {
+                console.log('📌 Notification clicked!');
+                const productId = notifItem.getAttribute('data-product-id');
+                const notifId = parseInt(notifItem.getAttribute('data-notif-id') || '0');
+                console.log('🆔 Product ID:', productId, 'Notif ID:', notifId);
+                // Marcar como leída
+                if (notifId) {
+                    appState.markAsRead(notifId);
+                }
+                // Mostrar modal de acción si tiene productId
+                if (productId && productId !== 'null' && productId !== '') {
+                    const product = appState.data.find(p => p._appId === productId);
+                    console.log('🔍 Product found:', product);
+                    if (product) {
+                        currentNotificationProduct = product;
+                        // Obtener título y mensaje de la notificación
+                        const titleEl = notifItem.querySelector('.notif-content h4');
+                        const bodyEl = notifItem.querySelector('.notif-content p');
+                        const title = titleEl?.textContent || 'Notificación';
+                        const body = bodyEl?.textContent || '';
+                        // Actualizar contenido del modal
+                        const actionModal = document.getElementById('notificationActionModal');
+                        const actionTitle = document.getElementById('notifActionTitle');
+                        const actionMessage = document.getElementById('notifActionMessage');
+                        if (actionTitle)
+                            actionTitle.textContent = title;
+                        if (actionMessage)
+                            actionMessage.textContent = body;
+                        // Mostrar modal de acción
+                        if (actionModal) {
+                            actionModal.style.display = 'flex';
+                            // Cerrar panel de notificaciones
+                            document.getElementById('notificationsPanel')?.classList.add('hidden');
+                        }
+                    }
+                    else {
+                        console.error('❌ Product not found with ID:', productId);
+                    }
+                }
+            }
+        });
+        // Event listeners para el modal de acción
+        const notifActionModal = document.getElementById('notificationActionModal');
+        const notifActionView = document.getElementById('notifActionView');
+        const notifActionDismiss = document.getElementById('notifActionDismiss');
+        const notifActionClose = document.getElementById('notifActionCloseBtn');
+        if (notifActionView) {
+            notifActionView.addEventListener('click', () => {
+                if (currentNotificationProduct) {
+                    notifActionModal.style.display = 'none';
+                    openModal(currentNotificationProduct);
+                    currentNotificationProduct = null;
+                }
+            });
+        }
+        if (notifActionDismiss) {
+            notifActionDismiss.addEventListener('click', () => {
+                notifActionModal.style.display = 'none';
+                currentNotificationProduct = null;
+            });
+        }
+        if (notifActionClose) {
+            notifActionClose.addEventListener('click', () => {
+                notifActionModal.style.display = 'none';
+                currentNotificationProduct = null;
+            });
+        }
+        // Cerrar modal al hacer click fuera
+        if (notifActionModal) {
+            notifActionModal.addEventListener('click', (e) => {
+                if (e.target === notifActionModal) {
+                    notifActionModal.style.display = 'none';
+                    currentNotificationProduct = null;
+                }
+            });
+        }
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && notifActionModal?.style.display === 'flex') {
+                notifActionModal.style.display = 'none';
+                currentNotificationProduct = null;
+            }
+        });
     }
     inicializarApp();
 });
-//# sourceMappingURL=script.js.map

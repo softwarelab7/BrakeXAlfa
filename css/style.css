@@ -37,6 +37,9 @@
     --badge-menta-bg: #98FB98;
     --badge-menta-text: #006400;
     --watermark-mask-color: rgba(0, 0, 0, 0.04);
+    --brand-color-1: #2563eb;
+    --brand-color-2: #ef4444;
+    --brand-color-3: #8b5cf6;
 }
 
 /* === MODO OSCURO AMOLED === */
@@ -123,6 +126,10 @@ body.modo-orbital {
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+}
+
+.hidden {
+    display: none !important;
 }
 
 * {
@@ -684,16 +691,16 @@ body.modo-orbital .form-input::placeholder {
 }
 
 #positionDelantera.active {
-    background-color: #e0f2fe;
-    border-color: #bae6fd;
-    color: #0369a1;
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
     font-weight: 600;
 }
 
 #positionTrasera.active {
-    background-color: #fee2e2;
-    border-color: #fecaca;
-    color: #991b1b;
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
     font-weight: 600;
 }
 
@@ -709,8 +716,16 @@ body.lp-dark .position-btn:hover {
     opacity: 1;
 }
 
-body.lp-dark #positionDelantera.active,
+body.lp-dark #positionDelantera.active {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+    opacity: 1;
+}
+
 body.lp-dark #positionTrasera.active {
+    background-color: #ef4444;
+    border-color: #ef4444;
     color: #fff;
     opacity: 1;
 }
@@ -2130,7 +2145,8 @@ body.lp-dark {
 #orbitalBtn.active {
     background-color: var(--brand-color-3);
     border-color: var(--brand-color-3);
-    box-shadow: 0 4px 6px rgba(232, 62, 140, 0.4);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    color: white;
 }
 
 body:not(.lp-dark):not(.modo-orbital) #orbitalBtn.active .lp-icon-palette {
@@ -3705,64 +3721,91 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* === Badge Favoritos y Contadores === */
+/* === Badge Favoritos y Contadores - ESTILO BOOTSTRAP === */
 .view-btn {
     position: relative;
 }
 
 .fav-count-badge {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    background-color: #ef4444;
-    /* Rojo Sólido (Tailwind red-500) */
-    color: #ffffff;
+    top: -4px;
+    right: -4px;
+
+    /* Estilo Bootstrap limpio */
+    background: #dc3545;
+    color: #fff;
+
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: 600;
     min-width: 18px;
     height: 18px;
     padding: 0 4px;
-    border-radius: 99px;
-    /* Pill shape if number gets large, or circle */
+    border-radius: 10px;
+
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 20;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border: 2px solid var(--bg-color);
-    /* Efecto de recorte contra el fondo */
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    /* Sombra Bootstrap simple */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+    transition: transform 0.15s ease;
 }
 
+/* Hover simple */
+.view-btn:hover .fav-count-badge {
+    transform: scale(1.05);
+}
+
+/* Pop simple */
 .fav-count-badge.pop {
-    animation: badgePop 0.3s forwards;
+    animation: simplePop 0.3s ease;
 }
 
-@keyframes badgePop {
-    0% {
+@keyframes simplePop {
+
+    0%,
+    100% {
         transform: scale(1);
     }
 
     50% {
-        transform: scale(1.5);
-    }
-
-    100% {
-        transform: scale(1);
+        transform: scale(1.2);
     }
 }
 
 .fav-count-badge.hidden {
     display: none;
-    /* O opacity: 0 con transición si se prefiere */
+}
+
+/* Dark mode */
+body.lp-dark .fav-count-badge {
+    background: #dc3545;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Orbital mode */
+body.modo-orbital .fav-count-badge {
+    background: #8b5cf6;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* === Botones Header Toolbar === */
-.compare-icon,
-.bell-icon {
-    width: 20px;
-    height: 20px;
-    stroke: currentColor;
+.header-notif-btn i {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.header-notif-btn:hover i {
+    transform: scale(1.1) rotate(15deg);
+}
+
+.notif-header-btn i {
+    font-size: 0.9rem;
+    color: var(--text-color);
 }
 
 /* === Panel de Notificaciones - Diseño Minimalista === */
@@ -3775,12 +3818,13 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     background-color: var(--material-surface-light);
     border: 1px solid var(--material-surface-border);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
-    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
     overflow: hidden;
     transform-origin: top right;
     animation: scaleIn 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
 .notifications-panel.hidden {
@@ -3799,23 +3843,39 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     color: var(--text-color);
 }
 
-.notif-header button {
-    font-size: 0.75rem;
-    padding: 4px 10px;
+.notif-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.notif-header-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
     border: 1px solid var(--material-surface-border);
     background-color: transparent;
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-weight: 500;
     opacity: 0.7;
 }
 
-.notif-header button:hover {
+.notif-header-btn:hover {
     opacity: 1;
     background-color: rgba(0, 0, 0, 0.04);
     transform: translateY(-1px);
+}
+
+.notif-header-btn svg {
+    stroke: currentColor;
+}
+
+body.lp-dark .notif-header-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
 .notif-list {
@@ -3858,7 +3918,16 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
 }
 
 .notif-item.unread {
-    background-color: rgba(59, 130, 246, 0.04);
+    background-color: rgba(59, 130, 246, 0.08);
+    /* More visible blue */
+}
+
+body.lp-dark .notif-item.unread {
+    background-color: rgba(96, 165, 250, 0.15);
+}
+
+body.modo-orbital .notif-item.unread {
+    background-color: rgba(139, 92, 246, 0.15);
 }
 
 .notif-item.unread::before {
@@ -3986,6 +4055,27 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     color: #ef4444;
 }
 
+/* Dark/Orbital Adaptations */
+body.lp-dark .notif-item {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+body.lp-dark .notif-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+body.lp-dark .notif-bell-icon {
+    stroke: #fff;
+}
+
+body.lp-dark .notif-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+body.modo-orbital .notif-item.unread::before {
+    background-color: #8b5cf6;
+}
+
 .notif-empty {
     padding: 24px;
     text-align: center;
@@ -4062,3 +4152,268 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     margin-bottom: 0.3rem;
     opacity: 0.9;
 }
+
+/* === CONFIRMATION MODAL === */
+.confirm-modal-content {
+    max-width: 420px;
+    background: var(--material-surface-light);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--material-surface-border);
+    animation: scaleIn 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.confirm-modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.confirm-modal-message {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.75;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    min-width: 100px;
+}
+
+.confirm-btn-cancel {
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--material-surface-border);
+}
+
+.confirm-btn-cancel:hover {
+    background: var(--material-surface-border);
+}
+
+.confirm-btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.confirm-btn-delete:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* === TOAST NOTIFICATIONS === */
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: auto;
+    background: var(--material-surface-light);
+    border: 1px solid var(--material-surface-border);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 320px;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    animation: toastSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toast:hover {
+    transform: translateX(-4px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: #ef4444;
+}
+
+.toast-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.toast-body {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.4;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+.toast-close svg {
+    width: 100%;
+    height: 100%;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    width: 100%;
+    animation: toastProgress 4s linear;
+    transform-origin: left;
+}
+
+.toast-exit {
+    animation: toastFadeOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastFadeOut {
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+@keyframes toastProgress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Dark mode */
+body.lp-dark .toast {
+    background: var(--material-surface-dark);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Orbital mode */
+body.modo-orbital .toast-icon {
+    color: #8b5cf6;
+}
+
+body.modo-orbital .toast-progress {
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .toast-container {
+        right: 12px;
+        left: 12px;
+        top: 70px;
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: none;
+    }
+}
+/* === COLORES INDEPENDIENTES PARA CONTADORES (User Request) === */
+
+/* Favorites: Red/Pink to match heart */
+#favCountBadge {
+    background-color: #ef4444; 
+    color: #ffffff;
+}
+
+/* Compare: Blue for contrast and 'utility' feel */
+#compareCountBadge {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+/* Notification: Orange/Amber */
+#notificationBadge {
+    background-color: #f97316;
+    color: #ffffff;
+}
+
+/* Dark Mode Overrides */
+body.lp-dark #favCountBadge { background-color: #dc2626; }
+body.lp-dark #compareCountBadge { background-color: #2563eb; }
+body.lp-dark #notificationBadge { background-color: #ea580c; }
+
+/* Orbital Mode Overrides */
+body.modo-orbital #favCountBadge { background-color: #ec4899; box-shadow: 0 0 10px rgba(236, 72, 153, 0.5); }
+body.modo-orbital #compareCountBadge { background-color: #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+body.modo-orbital #notificationBadge { background-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+
+
+/* Ensure dropdown is always on top */
+.custom-dropdown-list {
+    z-index: 1000 !important;
+    background-color: var(--material-surface-light); /* Asegurar fondo opaco */
+}
+

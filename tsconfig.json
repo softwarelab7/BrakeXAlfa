@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "None",
-    "strict": true,
+    "outFile": "./script.js",
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -13,6 +14,10 @@
     "sourceMap": true
   },
   "include": [
-    "script.ts"
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "script.ts",
+    "node_modules"
   ]
 }
