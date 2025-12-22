@@ -4417,3 +4417,147 @@ body.modo-orbital #notificationBadge { background-color: #f59e0b; box-shadow: 0 
     background-color: var(--material-surface-light); /* Asegurar fondo opaco */
 }
 
+
+/* === FIX: FULL WIDTH CARD IMAGES === */
+.product-card {
+    padding: 0 !important; /* Ensure card has no internal padding */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* Ensure content stays inside border radius */
+}
+
+/* Force image container to be full width block */
+.product-card__image-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: none !important; /* Stop flex resizing */
+    aspect-ratio: 4/3 !important; /* Maintain consistent height */
+    background-color: #fff !important; /* Clean background */
+    border-bottom: 1px solid var(--material-surface-border);
+    position: relative !important;
+}
+
+/* Force image to fill the container */
+.product-card__image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important; /* Ensure full product is visible */
+    object-position: center !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 10px !important; /* Slight breathing room for 'contain' so it doesn't hit edges */
+    display: block !important;
+}
+
+/* Dark mode adjustment */
+body.lp-dark .product-card__image-container,
+body.lp-dark .product-card__image {
+    background-color: #1e1e1e !important;
+}
+
+
+/* === FIX: IMAGE OVERLAY HEADER === */
+/* Ensure the wrapper respects the full width requirement from before */
+.product-card__image-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: none !important;
+    aspect-ratio: 4/3 !important;
+    background-color: #fff !important;
+    border-bottom: 1px solid var(--material-surface-border);
+    position: relative !important;
+}
+
+/* Ensure buttons in overlay are clickable and visible */
+.product-card__overlay-header .product-card__favorite-btn,
+.product-card__overlay-header .product-card__compare-btn {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border-radius: 50%; /* Make them circular */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.product-card__overlay-header .product-card__favorite-btn:hover,
+.product-card__overlay-header .product-card__compare-btn:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+/* Ensure position badges don't look weird without a bar */
+.product-card__position-wrapper .position-badge-premium {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15); /* More shadow for contrast over image */
+}
+
+/* Dark mode adjustment for overlay buttons */
+body.lp-dark .product-card__overlay-header .product-card__favorite-btn,
+body.lp-dark .product-card__overlay-header .product-card__compare-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+
+/* === FIX: REMOVE IMAGE PADDING FOR REAL FULL WIDTH === */
+.product-card__image {
+    padding: 0 !important; /* Remove the breathing room */
+    object-fit: cover !important; /* Force fill the box so it touches edges */
+}
+
+/* Ensure the wrapper is truly edge-to-edge */
+.product-card__image-wrapper {
+    border-radius: 0 !important; /* No rounded corners that might look like padding */
+    border: none !important;
+}
+
+/* Ensure card doesn't have overflow hiding that clips shadows if we use them, 
+   but for full width image usually we want overflow hidden on card to round corners */
+.product-card {
+    overflow: hidden !important; 
+}
+
+
+/* === FIX: HEADER BAR RESTORED === */
+/* Reset image container to ensure full width block below header */
+.product-card__image-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: none !important;
+    aspect-ratio: 4/3 !important;
+    background-color: #fff !important;
+    border-bottom: 1px solid var(--material-surface-border);
+    position: relative !important;
+}
+
+/* Ensure header bar sits nicely at the top */
+.product-card__header-bar {
+    background-color: transparent !important; /* Or white if preferred, but transparent matches card bg */
+    z-index: 2;
+    position: relative;
+}
+
+/* Revert button styles to be clean (no overlay styling needed) */
+.product-card__header-bar .product-card__favorite-btn,
+.product-card__header-bar .product-card__compare-btn {
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+}
+.product-card__header-bar .product-card__favorite-btn:hover,
+.product-card__header-bar .product-card__compare-btn:hover {
+    background: rgba(0,0,0,0.05); /* Subtle hover */
+    transform: scale(1.1);
+}
+

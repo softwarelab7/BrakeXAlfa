@@ -1106,18 +1106,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <article class="product-card search-result-item" data-id="${item._appId}" style="animation-delay: ${index * 50}ms" role="button" tabindex="0">
                     
-                    <div class="product-card__header-bar">
+                    <div class="product-card__header-bar" style="display: flex; justify-content: space-between; padding: 10px 10px 5px 10px;">
                         <div class="product-card__position-wrapper">
                             ${positionBadgesHTML}
                         </div>
-                        <div class="product-card__actions-wrapper">
+                        <div class="product-card__actions-wrapper" style="display: flex; gap: 8px;">
                             ${compareBtnHTML.replace('compare-btn', 'product-card__compare-btn')}
                             ${favoriteBtnHTML.replace('favorite-btn', 'product-card__favorite-btn')}
                         </div>
                     </div>
                     
                     <div class="product-card__image-container">
-                        <img src="${firstImageSrc}" alt="${primaryRefForData}" class="product-card__image" loading="lazy"> 
+                         <img src="${firstImageSrc}" alt="${primaryRefForData}" class="product-card__image" loading="lazy">
                     </div>
 
                     <div class="product-card__body">
