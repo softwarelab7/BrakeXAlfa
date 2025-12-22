@@ -433,20 +433,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // REFACTORIZADO (MEJORA #4)
     // REFACTORIZADO (MEJORA #4)
     const toggleFavorite = (e) => {
+        e.preventDefault(); // Evitar navegación si fuera un link
         e.stopPropagation();
         const button = e.currentTarget;
-        const card = button.closest('.product-card');
-        if (!card)
-            return;
-        const itemId = card.dataset.id || '';
+        // Intentar obtener ID directamente del botón (caso Modal) o de la tarjeta padre (caso Lista)
+        let itemId = button.dataset.id;
+        if (!itemId) {
+            const card = button.closest('.product-card');
+            if (card)
+                itemId = card.dataset.id;
+        }
         if (!itemId)
             return;
         // 1. Llama al método de la clase. Él se encarga de guardar.
         appState.toggleFavorite(itemId);
-        // 2. Actualiza la UI del botón
+        // 2. Actualiza la UI del botón (y potencialmente otros botones con el mismo ID)
         const isNowFavorite = appState.isFavorite(itemId);
+        // Actualizar el botón clickeado
         button.classList.toggle('active', isNowFavorite);
         button.setAttribute('aria-pressed', isNowFavorite ? 'true' : 'false');
+        // Sincronizar otros botones del mismo producto en la UI (ej. si estoy en modal, actualizar card, y viceversa)
+        const allButtonsForId = document.querySelectorAll(`.favorite-btn[data-id="${itemId}"], .product-card[data-id="${itemId}"] .product-card__favorite-btn`);
+        allButtonsForId.forEach(btn => {
+            if (btn !== button) {
+                btn.classList.toggle('active', isNowFavorite);
+                btn.setAttribute('aria-pressed', isNowFavorite ? 'true' : 'false');
+            }
+        });
         // 3. Refiltra si estamos en modo favoritos
         if (appState.isFavoritesMode)
             filterData();
@@ -1274,7 +1287,44 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!posBadgeText || posBadgeText === 'N/A' || !reRear.test(posBadgeText))
                 posBadgeText = 'Trasera';
         }
-        els.modalPosition.innerHTML = `<span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>`;
+        els.modalPosition.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>
+                <div class="modal-actions" style="display: flex; gap: 10px;">
+                    <button class="compare-btn ${appState.isComparison(item._appId) ? 'active' : ''}" data-id="${item._appId}" aria-label="Comparar">
+                        <svg class="compare-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 10h14l-4-4" />
+                            <path d="M17 14H3l4 4" />
+                        </svg>
+                    </button>
+                    <button class="favorite-btn ${appState.isFavorite(item._appId) ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito">
+                        <svg class="heart-icon" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+        // Attach listeners for modal buttons
+        const modalFavBtn = els.modalPosition.querySelector('.favorite-btn');
+        if (modalFavBtn) {
+            modalFavBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // We use the global toggleFavorite which expects logic to handle button state updates elsewhere, 
+                // but here we need to update THIS button manually or re-check.
+                // Re-using the logic from renderCards:
+                toggleFavorite(e);
+            });
+        }
+        const modalCompBtn = els.modalPosition.querySelector('.compare-btn');
+        if (modalCompBtn) {
+            modalCompBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const targetBtn = e.currentTarget;
+                const isNowComparison = appState.toggleComparison(item._appId);
+                targetBtn.classList.toggle('active', isNowComparison);
+            });
+        }
         let images = [];
         if (item.imagenes && item.imagenes.length > 0) {
             images = item.imagenes;
