@@ -145,6 +145,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        validateFavorites() {
+            if (this.data.length === 0) return;
+            const currentIds = new Set(this.data.map(i => i._appId));
+            let changed = false;
+            this._favorites.forEach(id => {
+                if (!currentIds.has(id)) {
+                    this._favorites.delete(id);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                this._saveFavorites();
+                this.updateFavoriteBadge();
+            }
+        }
+
         // Guarda los favoritos en localStorage
         _saveFavorites() {
             try {
@@ -219,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this._comparisons.delete(itemId);
             } else {
                 if (this._comparisons.size >= 4) {
-                    alert("Máximo 4 productos para comparar"); // Simple validación
+                    showToastNotification("Límite Alcanzado", "Máximo 4 productos para comparar.");
                     return false;
                 }
                 this._comparisons.add(itemId);
@@ -227,6 +243,22 @@ document.addEventListener('DOMContentLoaded', () => {
             this._saveComparisons();
             this.updateComparisonBadge();
             return this._comparisons.has(itemId);
+        }
+
+        validateComparisons() {
+            if (this.data.length === 0) return;
+            const currentIds = new Set(this.data.map(i => i._appId));
+            let changed = false;
+            this._comparisons.forEach(id => {
+                if (!currentIds.has(id)) {
+                    this._comparisons.delete(id);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                this._saveComparisons();
+                this.updateComparisonBadge();
+            }
         }
 
         isComparison(itemId: string): boolean {
@@ -839,7 +871,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         // Filtros de Aplicación (Mejora #8 aplicada)
         marca: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.marca).includes(value)),
-        modelo: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.serie).includes(value)),
+        modelo: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.serie || '').includes(value) || normalizeText(app.modelo || '').includes(value)),
         anio: (item, value) => (item.aplicaciones || []).some(app => normalizeText(app.año).includes(value)),
 
         // Filtros de Referencia (Mejora #8 aplicada)
@@ -972,7 +1004,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.aplicaciones.forEach(app => {
                     if (app.marca) uniqueMarcas.add(app.marca);
                     // Combinamos modelo y serie como se ve en tu interfaz
-                    const mod = app.modelo || app.serie;
+                    const mod = app.serie || app.modelo;
                     if (mod) uniqueModelos.add(mod);
                     if (app.año) uniqueAnios.add(app.año);
                 });
@@ -1882,27 +1914,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const items = appState.data.filter(item => appState.comparisons.has(item._appId));
 
-        container.innerHTML = items.map(item => `
-            <div class="comparison-column" style="min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--material-surface-border); padding-right: 1rem;">
-                <div class="comp-header">
-                    <img src="${item.imagenes && item.imagenes[0] ? item.imagenes[0] : 'https://via.placeholder.com/300'}" style="width: 100%; height: 200px; object-fit: contain;">
-                    <h3 style="margin-top: 1rem;">${item.ref ? item.ref[0] : 'N/A'}</h3>
-                    <span class="position-badge-premium ${item.posicion ? item.posicion.toLowerCase() : ''}">${item.posicion || 'N/A'}</span>
-                </div>
-                <div class="comp-specs">
-                    <div class="spec-row"><strong>Medidas:</strong> ${item.anchoNum} x ${item.altoNum} mm</div>
-                    <div class="spec-row"><strong>Espesor:</strong> ${item.espesor || '-'} mm</div>
-                    <div class="spec-row"><strong>WVA:</strong> ${item.wva || '-'}</div>
-                    <div class="spec-row"><strong>Sistema:</strong> ${item.sistema || '-'}</div>
-                </div>
-                <div class="comp-apps" style="flex: 1; overflow-y: auto;">
-                    <strong>Aplicaciones:</strong>
-                    <ul style="font-size: 0.8rem; padding-left: 1.2rem;">
-                        ${item.aplicaciones.slice(0, 5).map(app => `<li>${app.marca} ${app.modelo} ${app.año}</li>`).join('')}
-                    </ul>
-                </div>
-            </div>
-        `).join('');
+        if (items.length === 0) {
+            container.innerHTML = '<p style="padding: 2rem; text-align: center;">No hay elementos para comparar.</p>';
+            return;
+        }
+
+        // Estructura de Tabla para alineación perfecta
+        let tableHTML = `
+        <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        ${items.map(item => `
+                            <th>
+                                <div style="display:flex; flex-direction:column; align-items:center;">
+                                    <span style="font-size:1.1rem; color:var(--primary-color);">
+                                        ${item.ref && item.ref[0] ? item.ref[0] : 'Ref N/A'}
+                                    </span>
+                                    <button class="comp-remove-btn" onclick="(window as any).toggleComparisonGlobally('${item._appId}'); document.getElementById('compareBtn').click();">
+                                        Quitar
+                                    </button>
+                                </div>
+                            </th>
+                        `).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Imagen</td>
+                        ${items.map(item => `
+                            <td>
+                                <img src="${item.imagenes && item.imagenes[0] ? item.imagenes[0] : (item.imagen || '')}" class="comparison-image" alt="Producto">
+                            </td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td>Posición</td>
+                        ${items.map(item => `
+                            <td>
+                                <span class="position-badge-premium ${item.posicion ? item.posicion.toLowerCase() : ''}">${item.posicion || 'N/A'}</span>
+                            </td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td>Medidas (mm)</td>
+                        ${items.map(item => `
+                            <td><strong>${item.anchoNum || '-'}</strong> x <strong>${item.altoNum || '-'}</strong></td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td>FMSI</td>
+                        ${items.map(item => `
+                            <td>${Array.isArray(item.fmsi) ? item.fmsi.join(', ') : (item.fmsi || '-')}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td>OEM</td>
+                        ${items.map(item => `
+                            <td style="font-size:0.85rem;">${Array.isArray(item.oem) ? item.oem.slice(0, 5).join(', ') + (item.oem.length > 5 ? '...' : '') : '-'}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td>Aplicaciones</td>
+                        ${items.map(item => `
+                            <td>
+                                <ul class="apps-list-compact">
+                                    ${(item.aplicaciones || []).map(app => `<li>${app.marca} ${app.modelo} ${app.año}</li>`).join('')}
+                                </ul>
+                            </td>
+                        `).join('')}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        `;
+
+        container.innerHTML = tableHTML;
     }
 
     // === Inicialización Real-time con Notificaciones ===
@@ -1995,6 +2083,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Si hubo cambios o es carga inicial, re-renderizar
             if (isInitialLoad || changesCount > 0) {
+                // Mejora: Limpiar favoritos huérfanos tras actualizar datos
+                appState.validateFavorites();
+                appState.validateComparisons();
+
                 filterData();
                 renderDynamicBrandTags(appState.data, false);
             }

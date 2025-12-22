@@ -44,7 +44,10 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     opacity: 0.5;
-    pointer-events: none;
+    pointer-events: auto;
+    /* Enable clicking */
+    cursor: pointer;
+    /* Show pointer cursor */
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
