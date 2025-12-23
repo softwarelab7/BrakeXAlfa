@@ -4811,3 +4811,22 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 
 
+
+.product-card__apps { font-size: 0.7rem !important; }
+
+/* Fix for modal action buttons to remove unwanted backgrounds */
+#modalPosition .product-card__favorite-btn, #modalPosition .product-card__compare-btn { background: transparent; border: none; box-shadow: none; padding: 0; width: auto; height: auto; }
+#modalPosition .product-card__favorite-btn.active svg { fill: #ef4444; stroke: #ef4444; }
+#modalPosition .product-card__compare-btn.active svg { stroke: #3b82f6; stroke-width: 2.5; }
+
+/* Override for modal favorite button: No background, Red animation */
+#modalPosition .product-card__favorite-btn { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; width: auto !important; height: auto !important; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+#modalPosition .product-card__favorite-btn:hover { transform: scale(1.2); }
+#modalPosition .product-card__favorite-btn:active { transform: scale(0.9); }
+#modalPosition .product-card__favorite-btn svg { stroke: #9ca3af; fill: none; transition: all 0.3s; width: 24px; height: 24px; }
+#modalPosition .product-card__favorite-btn:hover svg { stroke: #ef4444; }
+#modalPosition .product-card__favorite-btn.active svg { fill: #ef4444; stroke: #ef4444; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); animation: heartBeat 0.3s ease-in-out; }
+@keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* Correction for modal favorite button: Correct Selector */
+.modal-overlay .product-card__favorite-btn, .modal-overlay .product-card__compare-btn { background: transparent !important; background-color: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; width: auto !important; height: auto !important; min-width: 0 !important; padding: 0 !important; }

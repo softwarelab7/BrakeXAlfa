@@ -5,7 +5,10 @@
 .comparison-modal-content {
     /* Centering works best if we don't force width: auto !important here since we restored inline styles */
     /* Just ensure margins handle centering if flex parent allows it */
-    margin: auto;
+    /* Flex item behavior for perfect centering */
+    margin: 0;
+    align-self: center;
+    /* Ensure vertical centering in flex container */
     position: relative;
     padding: 0;
     border-radius: 12px;
@@ -18,7 +21,8 @@
 .modal-header {
     padding: 1.5rem;
     flex-shrink: 0;
-    background: var(--material-surface);
+    background: #f8fafc;
+    /* Solid surface color */
 }
 
 /* Main Container */
@@ -213,18 +217,19 @@
 }
 
 .position-badge-premium.delantera {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #3b82f6;
+    color: #ffffff;
 }
 
 .position-badge-premium.trasera {
-    background: #fce7f3;
-    color: #9d174d;
+    background: #ef4444;
+    color: #ffffff;
 }
 
 .position-badge-premium.ambas {
-    background: linear-gradient(90deg, #dbeafe 50%, #fce7f3 50%);
-    color: #374151;
+    background: linear-gradient(135deg, #3b82f6, #ef4444);
+    /* Smooth blend */
+    color: #ffffff;
 }
 
 .comp-value-bold {
@@ -325,18 +330,19 @@
 }
 
 .lp-dark .position-badge-premium.delantera {
-    background: rgba(30, 64, 175, 0.3);
-    color: #93c5fd;
+    background: #1d4ed8;
+    color: #ffffff;
 }
 
 .lp-dark .position-badge-premium.trasera {
-    background: rgba(157, 23, 77, 0.3);
-    color: #f9a8d4;
+    background: #dc2626;
+    color: #ffffff;
 }
 
 .lp-dark .position-badge-premium.ambas {
-    background: linear-gradient(90deg, rgba(30, 64, 175, 0.3) 50%, rgba(157, 23, 77, 0.3) 50%);
-    color: #e5e5e5;
+    background: linear-gradient(135deg, #1d4ed8, #dc2626);
+    /* Darker smooth blend */
+    color: #ffffff;
 }
 
 .lp-dark #closeComparisonModal {
@@ -366,7 +372,6 @@ body.modo-orbital .comparison-table-wrapper {
 body.modo-orbital .comparison-table thead th {
     background: #10141e;
     /* Solid background for sticky header */
-    /* Dark Glass - fallback solid */
     border-bottom: 1px solid #00d4ff;
     /* Cyan accent */
     color: #e0f2fe;
@@ -397,7 +402,6 @@ body.modo-orbital .comparison-table tbody td {
 body.modo-orbital .comparison-table tbody td:first-child {
     background: #0f172a;
     /* Solid Dark Color matching 0.9 opacity */
-    /* Stickier dark side column */
     color: #94a3b8;
     border-right: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -415,15 +419,28 @@ body.modo-orbital .comparison-image {
 
 /* Orbital Badges */
 body.modo-orbital .position-badge-premium.delantera {
-    background: rgba(0, 212, 255, 0.15);
-    color: #00d4ff;
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    background: #3b82f6;
+    /* Solid Blue even in Orbital for consistency if requested */
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
 body.modo-orbital .position-badge-premium.trasera {
-    background: rgba(236, 72, 153, 0.15);
-    color: #f472b6;
-    border: 1px solid rgba(236, 72, 153, 0.3);
+    background: #ef4444;
+    /* Solid Red */
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* Missing Ambas for Orbital */
+body.modo-orbital .position-badge-premium.ambas {
+    background: linear-gradient(90deg, #3b82f6 50%, #ef4444 50%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+    /* Purple shadow for mixed */
 }
 
 body.modo-orbital .apps-list-compact li {

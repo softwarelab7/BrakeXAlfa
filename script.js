@@ -1117,11 +1117,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     firstImageSrc = item.imagen; // Asumimos que es válida si no es placeholder
                 }
             }
-            // Mostramos un resumen más limpio de aplicaciones
-            const appSummaryItems = safeAplicaciones
+            // Mostramos un resumen más limpio de aplicaciones (Reduced)
+            const uniqueApps = safeAplicaciones
                 .map(app => `${app.marca} ${app.serie}`)
-                .filter((value, index, self) => self.indexOf(value) === index)
-                .slice(0, 3);
+                .filter((value, index, self) => self.indexOf(value) === index);
+            const displayApps = uniqueApps.slice(0, 2);
+            if (uniqueApps.length > 2) {
+                displayApps.push(`+${uniqueApps.length - 2} más`);
+            }
+            const appSummaryItems = displayApps;
             const primaryRefForData = (Array.isArray(item.ref) && item.ref.length > 0) ? String(item.ref[0]).split(' ')[0] : 'N/A';
             const isFavorite = appState.isFavorite(item._appId);
             const isComparison = appState.isComparison(item._appId); // Asumiendo que isComparison existe en AppState
@@ -1291,13 +1295,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span class="position-badge-premium ${posBadgeClass}">${posBadgeText}</span>
                 <div class="modal-actions" style="display: flex; gap: 10px;">
-                    <button class="compare-btn ${appState.isComparison(item._appId) ? 'active' : ''}" data-id="${item._appId}" aria-label="Comparar">
+                    <button class="product-card__compare-btn ${appState.isComparison(item._appId) ? 'active' : ''}" data-id="${item._appId}" aria-label="Comparar">
                         <svg class="compare-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M7 10h14l-4-4" />
                             <path d="M17 14H3l4 4" />
                         </svg>
                     </button>
-                    <button class="favorite-btn ${appState.isFavorite(item._appId) ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito">
+                    <button class="product-card__favorite-btn ${appState.isFavorite(item._appId) ? 'active' : ''}" data-id="${item._appId}" aria-label="Marcar como favorito">
                         <svg class="heart-icon" viewBox="0 0 24 24">
                             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                         </svg>
@@ -1306,7 +1310,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         // Attach listeners for modal buttons
-        const modalFavBtn = els.modalPosition.querySelector('.favorite-btn');
+        const modalFavBtn = els.modalPosition.querySelector('.product-card__favorite-btn');
         if (modalFavBtn) {
             modalFavBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1316,7 +1320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleFavorite(e);
             });
         }
-        const modalCompBtn = els.modalPosition.querySelector('.compare-btn');
+        const modalCompBtn = els.modalPosition.querySelector('.product-card__compare-btn');
         if (modalCompBtn) {
             modalCompBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
