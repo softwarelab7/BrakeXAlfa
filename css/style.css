@@ -4854,3 +4854,23 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 /* Fix Trash Icon Color on Hover */
 .clear-filters-btn:hover svg { stroke: #ffffff !important; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
+
+/* Force Bright Red for All Active Hearts */
+.product-card__favorite-btn.active svg, #modalPosition .product-card__favorite-btn.active svg { fill: #ff0000 !important; stroke: #ff0000 !important; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5)) !important; }
+
+/* Main Favorites Filter Button: Bright Green (Complementary to Red Hearts) */
+.view-btn#filtroFavoritosBtn.active .heart-icon path { fill: #22c55e !important; stroke: #22c55e !important; filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important; }
+.view-btn#filtroFavoritosBtn.active .fav-count-badge { background-color: #22c55e !important; color: white !important; }
+
+/* REVERT Favorites to Red & APPLY Green to Compare */
+.view-btn#filtroFavoritosBtn.active .heart-icon path { fill: #ff0000 !important; stroke: #ff0000 !important; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6)) !important; }
+.view-btn#filtroFavoritosBtn.active .fav-count-badge { background-color: #ff0000 !important; }
+.view-btn#compareBtn.active .compare-icon path { stroke: #22c55e !important; filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important; }
+.view-btn#compareBtn.active .fav-count-badge { background-color: #22c55e !important; color: white !important; }
+
+/* Force Compare Green Override */
+#compareBtn.active, #compareBtn.active svg, #compareBtn.active path { stroke: #22c55e !important; color: #22c55e !important; }
+#compareBtn .fav-count-badge { background-color: #22c55e !important; }
+
+/* Force Green for Active Compare Buttons on Cards */
+.product-card__compare-btn.active svg, .product-card__compare-btn.active path { stroke: #22c55e !important; color: #22c55e !important; filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.5)) !important; }
