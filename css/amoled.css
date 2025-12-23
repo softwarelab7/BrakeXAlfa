@@ -1,0 +1,179 @@
+/* AMOLED Dark Theme Overrides for .lp-dark class */
+
+/* Main Body Background - True Black */
+body.lp-dark {
+    background-color: #000000 !important;
+    color: #e5e7eb !important;
+    /* Light gray text for readability */
+}
+
+/* Header */
+body.lp-dark header {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    border-bottom: 1px solid #333333 !important;
+    backdrop-filter: blur(10px);
+}
+
+body.lp-dark header h1 {
+    color: #ffffff !important;
+}
+
+/* Filters & Glass Containers */
+body.lp-dark .glass {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+    box-shadow: none !important;
+}
+
+body.lp-dark .filter-title {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    /* Increase weight for readability */
+    letter-spacing: 0.5px;
+}
+
+/* Inputs */
+body.lp-dark .form-input {
+    background-color: #121212 !important;
+    border: 1px solid #444444 !important;
+    color: #ffffff !important;
+    transition: border-color 0.3s;
+}
+
+body.lp-dark .form-input:focus {
+    border-color: #2196f3 !important;
+    background-color: #000000 !important;
+}
+
+body.lp-dark .form-input::placeholder {
+    color: #9ca3af !important;
+}
+
+body.lp-dark .search-icon,
+body.lp-dark .chevron-icon {
+    color: #9ca3af !important;
+}
+
+/* Buttons */
+body.lp-dark .position-btn {
+    background-color: #121212 !important;
+    border: 1px solid #444444 !important;
+    color: #e5e7eb !important;
+}
+
+body.lp-dark .position-btn:hover {
+    background-color: #222222 !important;
+}
+
+body.lp-dark .position-btn.active {
+    background-color: #2563eb !important;
+    /* Bright blue for contrast */
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+body.lp-dark .action-btn {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+    border: 1px solid #374151 !important;
+}
+
+/* Product Cards */
+body.lp-dark .product-card {
+    background-color: #000000 !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.05) !important;
+}
+
+body.lp-dark .product-card:hover {
+    border-color: #555555 !important;
+    box-shadow: 0 8px 12px rgba(255, 255, 255, 0.08) !important;
+}
+
+body.lp-dark .product-card h3 {
+    color: #ffffff !important;
+}
+
+body.lp-dark .product-card .ref-code {
+    color: #60a5fa !important;
+    /* Bright blue reference */
+}
+
+body.lp-dark .product-card p {
+    color: #d1d5db !important;
+}
+
+/* Modals */
+body.lp-dark .modal-content {
+    background-color: #000000 !important;
+    border: 1px solid #333333 !important;
+}
+
+body.lp-dark .modal-close-btn {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dropdowns */
+body.lp-dark .custom-dropdown-list {
+    background-color: #000000 !important;
+    border: 1px solid #333333 !important;
+}
+
+body.lp-dark .custom-dropdown-list li {
+    color: #e5e7eb !important;
+    border-bottom: 1px solid #1a1a1a !important;
+}
+
+body.lp-dark .custom-dropdown-list li:hover,
+body.lp-dark .custom-dropdown-list li.selected {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+}
+
+/* Notifications */
+body.lp-dark .notifications-panel {
+    background-color: #000000 !important;
+    border: 1px solid #333333 !important;
+}
+
+body.lp-dark .notif-header {
+    border-bottom: 1px solid #333333 !important;
+    color: #ffffff !important;
+}
+
+body.lp-dark .notif-item {
+    border-bottom: 1px solid #222222 !important;
+    background-color: #000000 !important;
+}
+
+body.lp-dark .notif-item:hover {
+    background-color: #111111 !important;
+}
+
+body.lp-dark .notif-item.unread {
+    background-color: #0f172a !important;
+    /* Very dark blue tint */
+}
+
+body.lp-dark .notif-content h4 {
+    color: #ffffff !important;
+}
+
+body.lp-dark .notif-content p {
+    color: #9ca3af !important;
+}
+
+/* Scrollbars */
+body.lp-dark ::-webkit-scrollbar-track {
+    background: #000000 !important;
+}
+
+body.lp-dark ::-webkit-scrollbar-thumb {
+    background: #444444 !important;
+    border: 1px solid #000000 !important;
+}
+
+body.lp-dark ::-webkit-scrollbar-thumb:hover {
+    background: #666666 !important;
+}
