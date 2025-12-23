@@ -1,0 +1,449 @@
+/* CSS para la Tabla de Comparación - Diseño Compacto v2 */
+
+/* --- MODAL CENTERING & SIZING --- */
+/* Restore positioning context but respect inline sizing now */
+.comparison-modal-content {
+    /* Centering works best if we don't force width: auto !important here since we restored inline styles */
+    /* Just ensure margins handle centering if flex parent allows it */
+    margin: auto;
+    position: relative;
+    padding: 0;
+    border-radius: 12px;
+    background: #ffffff;
+    /* Explicit solid white */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    flex-shrink: 0;
+    background: var(--material-surface);
+}
+
+/* Main Container */
+#comparisonContent {
+    background: var(--bg-card);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    /* Scroll handled by wrapper */
+}
+
+/* Wrapper now centers content inside the large modal */
+.comparison-table-wrapper {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) #f1f1f1;
+
+    /* Center the table content itself within the large fixed modal area */
+    display: flex;
+    align-items: flex-start;
+    /* Align top */
+    justify-content: center;
+    /* Center horizontally */
+}
+
+.comparison-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.comparison-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+/* TABLE STRUCTURE */
+.comparison-table {
+    width: auto;
+    /* Let it be determined by columns */
+    /* Removed min-width 100% to allow centering if content is smaller than 1200px */
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+
+    background: var(--bg-card);
+    /* Ensure background covers centering gaps */
+}
+
+/* Columns */
+.comparison-table col.label-col {
+    width: 140px;
+}
+
+.comparison-table col.data-col {
+    width: 220px;
+}
+
+/* HEADERS */
+.comparison-table thead th {
+    background: #f8fafc;
+    /* Solid surface color */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 2px solid var(--primary-color);
+    padding: 8px;
+    height: 60px;
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Top-Left Empty/Label Header */
+.comparison-table thead th:first-child {
+    left: 0;
+    z-index: 30;
+    border-right: 1px solid #e5e5e5;
+    background: #f1f5f9;
+    /* Solid darker surface */
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: 12px;
+}
+
+/* Product Headers */
+.comp-product-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    gap: 8px;
+}
+
+.comp-ref-title {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 160px;
+}
+
+/* Remove Button - Subtle Icon */
+.comp-remove-btn {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.comp-remove-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* BODY ROWS */
+.comparison-table tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px dashed #f0f0f0;
+    vertical-align: middle;
+    background: #fff;
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+/* Sticky First Column (Labels) */
+.comparison-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    background: #f8fafc;
+    font-weight: 600;
+    color: #64748b;
+    border-right: 2px solid #e2e8f0;
+    z-index: 10;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+/* Image Row */
+.comparison-image-container {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comparison-image {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Applications */
+.apps-list-compact {
+    max-height: 80px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+}
+
+.apps-list-compact li {
+    padding: 2px 0;
+    border-bottom: 1px solid #f8f8f8;
+    white-space: normal;
+    line-height: 1.3;
+}
+
+/* Badges & Values */
+.position-badge-premium {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    border-radius: 12px;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.position-badge-premium.delantera {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.position-badge-premium.trasera {
+    background: #fce7f3;
+    color: #9d174d;
+}
+
+.position-badge-premium.ambas {
+    background: linear-gradient(90deg, #dbeafe 50%, #fce7f3 50%);
+    color: #374151;
+}
+
+.comp-value-bold {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.comp-value-dim {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+/* Modal Close Button Override */
+#closeComparisonModal {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--material-surface-border);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#closeComparisonModal:hover {
+    background: var(--error-color, #ef4444);
+    color: #fff;
+    border-color: var(--error-color, #ef4444);
+    transform: rotate(90deg);
+}
+
+/* --- DARK MODE SUPPORT (lp-dark class on body) --- */
+.lp-dark .comparison-modal-content {
+    background: #1e1e1e;
+}
+
+.lp-dark .modal-header {
+    background: #252525;
+    border-color: #333;
+}
+
+.lp-dark .comparison-table tbody td {
+    background: #1e1e1e;
+    color: #e5e5e5;
+    border-bottom: 1px solid #333;
+    border-right: 1px dashed #333;
+}
+
+.lp-dark .comparison-table tbody td:first-child {
+    background: #252525;
+    color: #a3a3a3;
+    border-right: 2px solid #333;
+}
+
+.lp-dark .comparison-table thead th {
+    background: #252525;
+    border-bottom-color: var(--primary-color);
+}
+
+.lp-dark .comparison-table thead th:first-child {
+    background: #2a2a2a;
+    border-right: 1px solid #333;
+    color: #a3a3a3;
+}
+
+.lp-dark .comparison-table-wrapper {
+    scrollbar-color: var(--primary-color) #333;
+}
+
+.lp-dark .comparison-table tbody tr:hover td {
+    background: #2a2a2a;
+}
+
+.lp-dark .comp-value-dim {
+    color: #888;
+}
+
+.lp-dark .apps-list-compact li {
+    border-bottom: 1px solid #333;
+}
+
+.lp-dark .comp-remove-btn {
+    color: #666;
+}
+
+.lp-dark .comp-remove-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.lp-dark .position-badge-premium.delantera {
+    background: rgba(30, 64, 175, 0.3);
+    color: #93c5fd;
+}
+
+.lp-dark .position-badge-premium.trasera {
+    background: rgba(157, 23, 77, 0.3);
+    color: #f9a8d4;
+}
+
+.lp-dark .position-badge-premium.ambas {
+    background: linear-gradient(90deg, rgba(30, 64, 175, 0.3) 50%, rgba(157, 23, 77, 0.3) 50%);
+    color: #e5e5e5;
+}
+
+.lp-dark #closeComparisonModal {
+    background: #252525;
+    border-color: #333;
+}
+
+/* --- ORBITAL MODE SUPPORT (body.modo-orbital) --- */
+/* Matches the "Glassmorphism" / Space theme of Orbital Mode */
+body.modo-orbital .comparison-modal-content {
+    background: #10141e;
+    /* Solid background matching rgba(16, 20, 30, 0.95) effectively */
+    border: 1px solid #00d4ff;
+    box-shadow: 0 0 50px rgba(0, 212, 255, 0.1);
+}
+
+body.modo-orbital .modal-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+body.modo-orbital .comparison-table-wrapper {
+    scrollbar-color: #00d4ff rgba(255, 255, 255, 0.1);
+    background: transparent;
+}
+
+body.modo-orbital .comparison-table thead th {
+    background: #10141e;
+    /* Solid background for sticky header */
+    /* Dark Glass - fallback solid */
+    border-bottom: 1px solid #00d4ff;
+    /* Cyan accent */
+    color: #e0f2fe;
+}
+
+body.modo-orbital .comparison-table thead th:first-child {
+    background: #0a0f19;
+    /* Solid Dark Color matching 0.9 opacity */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    color: #00d4ff;
+    text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+}
+
+body.modo-orbital .comp-ref-title {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+body.modo-orbital .comparison-table tbody td {
+    background: rgba(20, 30, 50, 0.4);
+    /* Translucent dark blue */
+    color: #cbd5e1;
+    /* Light slate text */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+body.modo-orbital .comparison-table tbody td:first-child {
+    background: #0f172a;
+    /* Solid Dark Color matching 0.9 opacity */
+    /* Stickier dark side column */
+    color: #94a3b8;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+body.modo-orbital .comparison-table tbody tr:hover td {
+    background: rgba(0, 212, 255, 0.1);
+    /* Glow hover */
+}
+
+/* Orbital Images */
+body.modo-orbital .comparison-image {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+    mix-blend-mode: normal;
+}
+
+/* Orbital Badges */
+body.modo-orbital .position-badge-premium.delantera {
+    background: rgba(0, 212, 255, 0.15);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+body.modo-orbital .position-badge-premium.trasera {
+    background: rgba(236, 72, 153, 0.15);
+    color: #f472b6;
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+body.modo-orbital .apps-list-compact li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.modo-orbital .comp-value-bold {
+    color: #fff;
+}
+
+/* Orbital Close Button */
+body.modo-orbital #closeComparisonModal {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+body.modo-orbital #closeComparisonModal:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}

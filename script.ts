@@ -1943,7 +1943,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (compareBtn && comparisonModal) {
             compareBtn.addEventListener('click', () => {
                 if (appState.comparisons.size < 2) {
-                    alert("Selecciona al menos 2 productos para comparar.");
+                    showToastNotification("Información", "Selecciona al menos 2 productos para comparar.");
                     return;
                 }
                 renderComparisonView();
@@ -1976,21 +1976,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Estructura de Tabla para alineación perfecta
+        // Estructura de Tabla Compacta V2
         let tableHTML = `
         <div class="comparison-table-wrapper">
             <table class="comparison-table">
+                <colgroup>
+                    <col class="label-col">
+                    ${items.map(() => '<col class="data-col">').join('')}
+                </colgroup>
                 <thead>
                     <tr>
-                        <th>Producto</th>
+                        <th style="text-align:left;">PRODUCTO</th>
                         ${items.map(item => `
                             <th>
-                                <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <span style="font-size:1.1rem; color:var(--primary-color);">
-                                        ${item.ref && item.ref[0] ? item.ref[0] : 'Ref N/A'}
+                                <div class="comp-product-header">
+                                    <span class="comp-ref-title" title="${item.ref?.[0] || ''}">
+                                        ${item.ref && item.ref[0] ? item.ref[0] : 'N/A'}
                                     </span>
-                                    <button class="comp-remove-btn" onclick="(window as any).toggleComparisonGlobally('${item._appId}'); document.getElementById('compareBtn').click();">
-                                        Quitar
+                                    <button class="comp-remove-btn" onclick="(window as any).toggleComparisonGlobally('${item._appId}'); document.getElementById('compareBtn').click();" title="Quitar">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12"></path>
+                                        </svg>
                                     </button>
                                 </div>
                             </th>
@@ -1999,45 +2005,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Imagen</td>
+                        <td>IMAGEN</td>
                         ${items.map(item => `
                             <td>
-                                <img src="${item.imagenes && item.imagenes[0] ? item.imagenes[0] : (item.imagen || '')}" class="comparison-image" alt="Producto">
+                                <div class="comparison-image-container">
+                                    <img src="${item.imagenes && item.imagenes[0] ? item.imagenes[0] : (item.imagen || '')}" class="comparison-image" alt="Producto">
+                                </div>
                             </td>
                         `).join('')}
                     </tr>
                     <tr>
-                        <td>Posición</td>
-                        ${items.map(item => `
-                            <td>
-                                <span class="position-badge-premium ${item.posicion ? item.posicion.toLowerCase() : ''}">${item.posicion || 'N/A'}</span>
-                            </td>
-                        `).join('')}
+                        <td>POSICIÓN</td>
+                        ${items.map(item => {
+            let posClass = 'default';
+            const posLower = (item.posición || '').toLowerCase();
+            if (posLower.includes('delantera') && posLower.includes('trasera')) posClass = 'ambas';
+            else if (posLower.includes('delantera')) posClass = 'delantera';
+            else if (posLower.includes('trasera')) posClass = 'trasera';
+
+            return `
+                                <td style="text-align:center;">
+                                    <span class="position-badge-premium ${posClass}">
+                                        ${item.posición || 'N/A'}
+                                    </span>
+                                </td>
+                            `;
+        }).join('')}
                     </tr>
                     <tr>
-                        <td>Medidas (mm)</td>
+                        <td>MEDIDAS</td>
                         ${items.map(item => `
-                            <td><strong>${item.anchoNum || '-'}</strong> x <strong>${item.altoNum || '-'}</strong></td>
+                            <td class="comp-value-bold" style="text-align:center;">${item.anchoNum || '-'} x ${item.altoNum || '-'}</td>
                         `).join('')}
                     </tr>
                     <tr>
                         <td>FMSI</td>
                         ${items.map(item => `
-                            <td>${Array.isArray(item.fmsi) ? item.fmsi.join(', ') : (item.fmsi || '-')}</td>
+                            <td class="comp-value-dim" style="text-align:center;">${Array.isArray(item.fmsi) ? item.fmsi[0] : (item.fmsi || '-')}</td>
                         `).join('')}
                     </tr>
                     <tr>
                         <td>OEM</td>
                         ${items.map(item => `
-                            <td style="font-size:0.85rem;">${Array.isArray(item.oem) ? item.oem.slice(0, 5).join(', ') + (item.oem.length > 5 ? '...' : '') : '-'}</td>
+                            <td class="comp-value-dim" style="font-size:0.85rem;">
+                                ${Array.isArray(item.oem) ? item.oem.slice(0, 5).join(', ') + (item.oem.length > 5 ? '...' : '') : '-'}
+                            </td>
                         `).join('')}
                     </tr>
                     <tr>
-                        <td>Aplicaciones</td>
+                        <td>APLICACIONES</td>
                         ${items.map(item => `
                             <td>
                                 <ul class="apps-list-compact">
-                                    ${(item.aplicaciones || []).map(app => `<li>${app.marca} ${app.modelo} ${app.año}</li>`).join('')}
+                                    ${(item.aplicaciones || []).slice(0, 4).map(app => `
+                                        <li><strong>${app.marca}</strong> ${app.modelo} ${app.año}</li>
+                                    `).join('')}
+                                    ${(item.aplicaciones || []).length > 4 ? '<li style="color:#999; font-style:italic;">+ más...</li>' : ''}
                                 </ul>
                             </td>
                         `).join('')}
