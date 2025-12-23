@@ -4830,3 +4830,27 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 /* Correction for modal favorite button: Correct Selector */
 .modal-overlay .product-card__favorite-btn, .modal-overlay .product-card__compare-btn { background: transparent !important; background-color: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; width: auto !important; height: auto !important; min-width: 0 !important; padding: 0 !important; }
+
+/* --- Improved Clear Filters Button (Premium Design) --- */
+.clear-filters-btn { position: relative; width: 100%; margin-top: 1rem; padding: 12px 20px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); letter-spacing: 0.5px; text-transform: uppercase; overflow: hidden; }
+.clear-filters-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); background: linear-gradient(135deg, #f87171, #dc2626); }
+.clear-filters-btn:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3); }
+.clear-filters-btn svg { width: 20px; height: 20px; stroke: #ffffff; fill: none; margin-bottom: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+
+
+/* Remove Gradient from Clear Filters */
+.clear-filters-btn { background: #ef4444 !important; }
+.clear-filters-btn:hover { background: #dc2626 !important; }
+
+
+/* Modern Pulse Effect Animation */
+.btn-pulse-effect { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4); transform: scale(0); animation: pulseExpand 0.6s linear; pointer-events: none; }
+@keyframes pulseExpand { to { transform: scale(2.5); opacity: 0; } }
+
+/* Fix Clear Filters Button: Smaller & Readable */
+.clear-filters-btn { padding: 6px 14px !important; font-size: 0.8rem !important; height: auto !important; min-height: 36px; }
+.clear-filters-btn svg { width: 16px !important; height: 16px !important; }
+.clear-filters-btn:hover { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); background-color: #b91c1c !important; }
+
+/* Fix Trash Icon Color on Hover */
+.clear-filters-btn:hover svg { stroke: #ffffff !important; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }

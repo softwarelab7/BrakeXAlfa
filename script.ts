@@ -1833,6 +1833,19 @@ document.addEventListener('DOMContentLoaded', () => {
             filterData();
         }));
 
+        // Modern Pulse Effect
+        const createPulse = (btn: HTMLElement) => {
+            const ripple = document.createElement('span');
+            ripple.classList.add('btn-pulse-effect');
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${rect.width / 2 - size / 2}px`;
+            ripple.style.top = `${rect.height / 2 - size / 2}px`;
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        };
+
         els.clearBtn.addEventListener('click', () => {
             if (els.clearBtn.disabled) return;
             els.clearBtn.disabled = true;
@@ -1840,7 +1853,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const trashBody = els.clearBtn.querySelector('.trash-body');
             if (trashLid) trashLid.classList.add('animate-lid');
             if (trashBody) trashBody.classList.add('animate-body');
-            createSparks(els.clearBtn);
+
+            // Modern pulse instead of sparks
+            createPulse(els.clearBtn);
+
             clearAllFilters();
             setTimeout(() => {
                 if (trashLid) trashLid.classList.remove('animate-lid');
