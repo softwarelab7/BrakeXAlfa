@@ -455,6 +455,10 @@ document.addEventListener('DOMContentLoaded', () => {
             els.orbitalBtn.classList.remove('active');
             els.orbitalBtn.setAttribute('aria-pressed', 'false');
         }
+        // Sync new toggle
+        const lightRadio = document.getElementById('theme_light') as HTMLInputElement;
+        if (lightRadio) lightRadio.checked = true;
+
         localStorage.setItem('themePreference', 'light');
     };
 
@@ -472,6 +476,10 @@ document.addEventListener('DOMContentLoaded', () => {
             els.orbitalBtn.classList.remove('active');
             els.orbitalBtn.setAttribute('aria-pressed', 'false');
         }
+        // Sync new toggle
+        const darkRadio = document.getElementById('theme_dark') as HTMLInputElement;
+        if (darkRadio) darkRadio.checked = true;
+
         localStorage.setItem('themePreference', 'dark');
     };
 
@@ -489,11 +497,27 @@ document.addEventListener('DOMContentLoaded', () => {
             els.orbitalBtn.classList.add('active');
             els.orbitalBtn.setAttribute('aria-pressed', 'true');
         }
+        // Sync new toggle
+        const orbitalRadio = document.getElementById('theme_orbital') as HTMLInputElement;
+        if (orbitalRadio) orbitalRadio.checked = true;
+
         localStorage.setItem('themePreference', 'orbital');
     };
 
     const initializeTheme = () => {
         console.log("Initializing Theme Logic");
+
+        // Listen for new toggle changes
+        const themeRadios = document.querySelectorAll('input[name="theme_state"]');
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const val = (e.target as HTMLInputElement).value;
+                if (val === 'light') applyLightTheme();
+                else if (val === 'dark') applyAmoledDarkTheme();
+                else if (val === 'orbital') applyOrbitalTheme();
+            });
+        });
+
         if (els.darkBtn) {
             els.darkBtn.addEventListener('click', () => {
                 console.log("Dark button clicked");

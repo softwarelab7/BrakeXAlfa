@@ -347,8 +347,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const els = {
         body: document.body,
         headerX: document.querySelector('.header-x'),
+        darkBtn: document.getElementById('darkBtn'),
         sunIcon: document.querySelector('.lp-icon-sun'),
         moonIcon: document.querySelector('.lp-icon-moon'),
+        orbitalBtn: document.getElementById('orbitalBtn'),
         upBtn: document.getElementById('upBtn'),
         // menuBtn removed
         // sideMenu removed
@@ -1643,73 +1645,110 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         [els.darkBtn, els.upBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', (e) => createRippleEffect(e)));
         // Temas
+        // Temas
         const applyLightTheme = () => {
             els.body.classList.remove('lp-dark', 'modo-orbital');
+            els.darkBtn.setAttribute('aria-pressed', 'false');
+            els.darkBtn.setAttribute('aria-label', 'Activar modo oscuro');
+            // Toggle icons: show sun, hide moon
+            const sunIcon = els.darkBtn.querySelector('.lp-icon-sun');
+            const moonIcon = els.darkBtn.querySelector('.lp-icon-moon');
+            if (sunIcon)
+                sunIcon.style.opacity = '1';
+            if (moonIcon)
+                moonIcon.style.opacity = '0';
+            if (els.orbitalBtn) {
+                els.orbitalBtn.classList.remove('active');
+                els.orbitalBtn.setAttribute('aria-pressed', 'false');
+            }
+            // Sync new toggle
+            const lightRadio = document.getElementById('theme_light');
+            if (lightRadio)
+                lightRadio.checked = true;
             localStorage.setItem('themePreference', 'light');
-            const r = document.getElementById('theme_light'); if (r) r.checked = true;
         };
         const applyAmoledDarkTheme = () => {
             els.body.classList.add('lp-dark');
             els.body.classList.remove('modo-orbital');
+            els.darkBtn.setAttribute('aria-pressed', 'true');
+            els.darkBtn.setAttribute('aria-label', 'Activar modo claro');
+            // Toggle icons: hide sun, show moon
+            const sunIcon = els.darkBtn.querySelector('.lp-icon-sun');
+            const moonIcon = els.darkBtn.querySelector('.lp-icon-moon');
+            if (sunIcon)
+                sunIcon.style.opacity = '0';
+            if (moonIcon)
+                moonIcon.style.opacity = '1';
+            if (els.orbitalBtn) {
+                els.orbitalBtn.classList.remove('active');
+                els.orbitalBtn.setAttribute('aria-pressed', 'false');
+            }
+            // Sync new toggle
+            const darkRadio = document.getElementById('theme_dark');
+            if (darkRadio)
+                darkRadio.checked = true;
             localStorage.setItem('themePreference', 'dark');
-            const r = document.getElementById('theme_dark'); if (r) r.checked = true;
         };
         const applyOrbitalTheme = () => {
             els.body.classList.add('modo-orbital');
             els.body.classList.remove('lp-dark');
+            els.darkBtn.setAttribute('aria-pressed', 'false');
+            els.darkBtn.setAttribute('aria-label', 'Activar modo claro');
+            // Toggle icons: show sun, hide moon (orbital is a dark theme variant)
+            const sunIcon = els.darkBtn.querySelector('.lp-icon-sun');
+            const moonIcon = els.darkBtn.querySelector('.lp-icon-moon');
+            if (sunIcon)
+                sunIcon.style.opacity = '1';
+            if (moonIcon)
+                moonIcon.style.opacity = '0';
+            if (els.orbitalBtn) {
+                els.orbitalBtn.classList.add('active');
+                els.orbitalBtn.setAttribute('aria-pressed', 'true');
+            }
+            // Sync new toggle
+            const orbitalRadio = document.getElementById('theme_orbital');
+            if (orbitalRadio)
+                orbitalRadio.checked = true;
             localStorage.setItem('themePreference', 'orbital');
-            const r = document.getElementById('theme_orbital'); if (r) r.checked = true;
         };
-
-
+        // Listen for new toggle changes
+        const themeRadios = document.querySelectorAll('input[name="theme_state"]');
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (val === 'light')
+                    applyLightTheme();
+                else if (val === 'dark')
+                    applyAmoledDarkTheme();
+                else if (val === 'orbital')
+                    applyOrbitalTheme();
+            });
+        });
+        els.darkBtn.addEventListener('click', () => {
+            els.headerX.style.animation = 'bounceHeader 0.6s cubic-bezier(0.68,-0.55,0.27,1.55)';
+            setTimeout(() => els.headerX.style.animation = '', 600);
+            els.body.classList.contains('modo-orbital') || els.body.classList.contains('lp-dark')
+                ? applyLightTheme()
+                : applyAmoledDarkTheme();
+        });
+        if (els.orbitalBtn) {
+            els.orbitalBtn.addEventListener('click', () => {
+                els.headerX.style.animation = 'bounceHeader 0.6s cubic-bezier(0.68,-0.55,0.27,1.55)';
+                setTimeout(() => els.headerX.style.animation = '', 600);
+                els.body.classList.contains('modo-orbital')
+                    ? applyLightTheme()
+                    : applyOrbitalTheme();
+            });
+        }
         const savedTheme = localStorage.getItem('themePreference');
         switch (savedTheme) {
             case 'orbital':
-                applyOrbitalTheme();
+                els.orbitalBtn ? applyOrbitalTheme() : applyLightTheme();
                 break;
             case 'dark':
                 applyAmoledDarkTheme();
                 break;
             default: applyLightTheme();
-        }
-
-        // --- Dark Mode Switch Listener ---
-        // --- 3-State Toggle Listener ---
-        const themeTriToggle = document.getElementById('themeTriToggle');
-        if (themeTriToggle) {
-            const saved = localStorage.getItem('themePreference') || 'light';
-            const radioToCheck = document.getElementById(`theme_${saved}`);
-            if (radioToCheck) radioToCheck.checked = true;
-
-            themeTriToggle.addEventListener('change', (e) => {
-                if (e.target.name === 'theme_state') {
-                    const val = e.target.value;
-                    if (val === 'light') applyLightTheme();
-                    else if (val === 'dark') applyAmoledDarkTheme();
-                    else if (val === 'orbital') applyOrbitalTheme();
-                }
-            });
-
-            // Allow cycling by clicking the container (if not clicking input)
-            themeTriToggle.addEventListener('click', (e) => {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
-                    const current = localStorage.getItem('themePreference') || 'light';
-                    let next = 'light';
-                    if (current === 'light') next = 'dark';
-                    else if (current === 'dark') next = 'orbital';
-                    else if (current === 'orbital') next = 'light';
-
-                    const nextRadio = document.getElementById(`theme_${next}`);
-                    if (nextRadio) {
-                        nextRadio.checked = true;
-                        // Trigger change manually since programmatic check doesn't fire it? 
-                        // Or just call function directly.
-                        if (next === 'light') applyLightTheme();
-                        else if (next === 'dark') applyAmoledDarkTheme();
-                        else if (next === 'orbital') applyOrbitalTheme();
-                    }
-                }
-            });
         }
         // Botón Subir
         els.upBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -2063,15 +2102,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Modales
         els.modalCloseBtn.addEventListener('click', closeModal);
-        els.modal.addEventListener('click', (e) => {
-            if (e.target === els.modal)
-                closeModal();
-        });
+        els.modal.addEventListener('click', (e) => { if (e.target === els.modal)
+            closeModal(); });
         els.guideModalCloseBtn.addEventListener('click', closeGuideModal);
-        els.guideModal.addEventListener('click', (e) => {
-            if (e.target === els.guideModal)
-                closeGuideModal();
-        });
+        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal)
+            closeGuideModal(); });
     }
     function setupComparisonModal() {
         const compareBtn = document.getElementById('compareBtn');

@@ -1835,6 +1835,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         [els.darkBtn, els.upBtn, els.orbitalBtn, els.clearBtn].forEach(btn => btn?.addEventListener('click', (e) => createRippleEffect(e as MouseEvent)));
         // Temas
+        // Temas
         const applyLightTheme = () => {
             els.body.classList.remove('lp-dark', 'modo-orbital');
             els.darkBtn.setAttribute('aria-pressed', 'false');
@@ -1848,6 +1849,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.orbitalBtn.classList.remove('active');
                 els.orbitalBtn.setAttribute('aria-pressed', 'false');
             }
+            // Sync new toggle
+            const lightRadio = document.getElementById('theme_light') as HTMLInputElement;
+            if (lightRadio) lightRadio.checked = true;
+
             localStorage.setItem('themePreference', 'light');
         };
         const applyAmoledDarkTheme = () => {
@@ -1864,6 +1869,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.orbitalBtn.classList.remove('active');
                 els.orbitalBtn.setAttribute('aria-pressed', 'false');
             }
+            // Sync new toggle
+            const darkRadio = document.getElementById('theme_dark') as HTMLInputElement;
+            if (darkRadio) darkRadio.checked = true;
+
             localStorage.setItem('themePreference', 'dark');
         };
         const applyOrbitalTheme = () => {
@@ -1880,8 +1889,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.orbitalBtn.classList.add('active');
                 els.orbitalBtn.setAttribute('aria-pressed', 'true');
             }
+            // Sync new toggle
+            const orbitalRadio = document.getElementById('theme_orbital') as HTMLInputElement;
+            if (orbitalRadio) orbitalRadio.checked = true;
+
             localStorage.setItem('themePreference', 'orbital');
         };
+
+        // Listen for new toggle changes
+        const themeRadios = document.querySelectorAll('input[name="theme_state"]');
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const val = (e.target as HTMLInputElement).value;
+                if (val === 'light') applyLightTheme();
+                else if (val === 'dark') applyAmoledDarkTheme();
+                else if (val === 'orbital') applyOrbitalTheme();
+            });
+        });
+
         els.darkBtn.addEventListener('click', () => {
             els.headerX.style.animation = 'bounceHeader 0.6s cubic-bezier(0.68,-0.55,0.27,1.55)';
             setTimeout(() => els.headerX.style.animation = '', 600);
