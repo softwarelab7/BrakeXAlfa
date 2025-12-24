@@ -512,7 +512,8 @@ header .header-x path {
     width: 100%;
     height: auto;
     padding: 8px 16px;
-    border-radius: 50px; /* Unified Pill Shape */
+    border-radius: 50px;
+    /* Unified Pill Shape */
     margin-top: 0.8rem;
     background-color: #fee2e2;
     color: #991b1b;
@@ -817,7 +818,8 @@ body.lp-dark #positionTrasera.active {
     width: 100%;
     height: auto;
     padding: 8px 16px;
-    border-radius: 50px; /* Unified Pill Shape */
+    border-radius: 50px;
+    /* Unified Pill Shape */
     margin-top: 0.8rem;
     background-color: #fee2e2;
     color: #991b1b;
@@ -869,18 +871,20 @@ body.lp-dark #positionTrasera.active {
 /* ======================================================= */
 .brand-tag {
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem; /* Match ref-badge size */
+    font-size: 0.75rem;
+    /* Match ref-badge size */
     font-weight: 500;
     padding: 4px 12px;
     border-radius: 50px;
     border: 1px solid var(--tag-brand-color, var(--btn-google-border));
     color: var(--tag-brand-color, var(--text-color));
-    background-color: transparent; /* Default transparent */
+    background-color: transparent;
+    /* Default transparent */
     opacity: 0.9;
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .brand-tag:hover {
@@ -985,7 +989,9 @@ body.lp-dark #positionTrasera.active {
     border: none !important;
     box-shadow: none !important;
     padding: 0;
-    position: relative;`n}
+    position: relative;
+    `n
+}
 
 .view-btn svg {
     width: 20px;
@@ -1211,11 +1217,12 @@ body.lp-dark #positionTrasera.active {
 }
 
 .product-card__footer {
-    border-top: 1px solid rgba(0,0,0,0.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     padding-top: 10px;
     margin-top: auto;
     width: 100%;
-    display: block; /* Ensure it takes full width */
+    display: block;
+    /* Ensure it takes full width */
 }
 
 .product-card__apps {
@@ -1223,9 +1230,11 @@ body.lp-dark #positionTrasera.active {
     font-size: 0.8rem;
     color: var(--text-secondary);
     line-height: 1.4;
-    text-align: left; /* Better readability for lists */
+    text-align: left;
+    /* Better readability for lists */
     display: -webkit-box;
-    -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
@@ -1233,10 +1242,12 @@ body.lp-dark #positionTrasera.active {
 
 /* Badges Premium */
 .position-badge-premium {
-    padding: 3px 8px; /* Slightly smaller padding */
+    padding: 3px 8px;
+    /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.65rem; /* Smaller text size */
+    font-size: 0.65rem;
+    /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -1246,17 +1257,20 @@ body.lp-dark #positionTrasera.active {
 
 .position-badge-premium.delantera {
     background-color: #3b82f6;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .position-badge-premium.trasera {
     background-color: #ef4444;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .position-badge-premium.ambas {
     background: linear-gradient(90deg, #3b82f6, #ef4444);
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .product-card__favorite-btn {
@@ -1296,12 +1310,13 @@ body.lp-dark #positionTrasera.active {
 /* Reusing Ref Badges */
 .ref-badge {
     padding: 3px 10px;
-    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    border-radius: 50px;
+    /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
     font-size: 0.75rem;
     white-space: nowrap;
     border: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2596,10 +2611,12 @@ body.lp-dark .search-result-content {
 
 /* Badge de PosiciÃƒÂ³n Premium */
 .position-badge-premium {
-    padding: 3px 8px; /* Slightly smaller padding */
+    padding: 3px 8px;
+    /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.65rem; /* Smaller text size */
+    font-size: 0.65rem;
+    /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -2609,7 +2626,8 @@ body.lp-dark .search-result-content {
 
 .position-badge-premium.delantera {
     background-color: #3b82f6;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 /* (Deleted redundant position badge block) */
@@ -2623,7 +2641,8 @@ body.lp-dark .search-result-content {
     display: block;
     /* Asegurar bloque para truncado */
     display: -webkit-box;
-    -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -2756,12 +2775,13 @@ body.modo-orbital .favorite-btn.active svg {
 /* --- BADGE COLORS RESTORE --- */
 .ref-badge {
     padding: 3px 10px;
-    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    border-radius: 50px;
+    /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
     font-size: 0.75rem;
     white-space: nowrap;
     border: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2799,7 +2819,8 @@ body.modo-orbital .favorite-btn.active svg {
 /* Position Badge Colors */
 .position-badge-premium.delantera {
     background-color: #3b82f6;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 /* (Deleted redundant position badge block) */
@@ -2879,12 +2900,13 @@ body.modo-orbital .favorite-btn.active svg {
 
 .ref-badge {
     padding: 3px 10px;
-    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    border-radius: 50px;
+    /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
     font-size: 0.75rem;
     white-space: nowrap;
     border: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2902,7 +2924,8 @@ body.modo-orbital .favorite-btn.active svg {
     /* Push to bottom */
     line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -2925,12 +2948,13 @@ body.lp-dark .card-thumbnail {
 /* --- BADGE COLORS RESTORE --- */
 .ref-badge {
     padding: 3px 10px;
-    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    border-radius: 50px;
+    /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
     font-size: 0.75rem;
     white-space: nowrap;
     border: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -3077,10 +3101,12 @@ body.modo-orbital .product-card__image-container {
 
 /* Ensure position badges wrapper takes available space */
 .product-card__position-top>.position-badge-premium {
-    padding: 3px 8px; /* Slightly smaller padding */
+    padding: 3px 8px;
+    /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.65rem; /* Smaller text size */
+    font-size: 0.65rem;
+    /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -3304,10 +3330,12 @@ body.modo-orbital .product-card__image-container {
 
 /* === Premium Position Badges (Solid) === */
 .position-badge-premium {
-    padding: 3px 8px; /* Slightly smaller padding */
+    padding: 3px 8px;
+    /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.65rem; /* Smaller text size */
+    font-size: 0.65rem;
+    /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -3317,17 +3345,20 @@ body.modo-orbital .product-card__image-container {
 
 .position-badge-premium.delantera {
     background-color: #3b82f6;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .position-badge-premium.trasera {
     background-color: #ef4444;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .position-badge-premium.ambas {
     background: linear-gradient(90deg, #3b82f6, #ef4444);
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .badge--ambas {
@@ -3338,11 +3369,12 @@ body.modo-orbital .product-card__image-container {
 
 /* --- 3. Footer / Apps --- */
 .product-card__footer {
-    border-top: 1px solid rgba(0,0,0,0.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     padding-top: 10px;
     margin-top: auto;
     width: 100%;
-    display: block; /* Ensure it takes full width */
+    display: block;
+    /* Ensure it takes full width */
 }
 
 .product-card__apps {
@@ -3350,9 +3382,11 @@ body.modo-orbital .product-card__image-container {
     font-size: 0.8rem;
     color: var(--text-secondary);
     line-height: 1.4;
-    text-align: left; /* Better readability for lists */
+    text-align: left;
+    /* Better readability for lists */
     display: -webkit-box;
-    -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 0;
@@ -3401,12 +3435,13 @@ body.lp-dark .badge--bp {
 /* Base Styles */
 .ref-badge {
     padding: 3px 10px;
-    border-radius: 50px; /* Pill shape enabled again correctly for REFS */
+    border-radius: 50px;
+    /* Pill shape enabled again correctly for REFS */
     font-weight: 500;
     font-size: 0.75rem;
     white-space: nowrap;
     border: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -3486,10 +3521,12 @@ body.lp-dark .badge--bp {
 
 /* Position Badges (Premium - Pastel) */
 .position-badge-premium {
-    padding: 3px 8px; /* Slightly smaller padding */
+    padding: 3px 8px;
+    /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.65rem; /* Smaller text size */
+    font-size: 0.65rem;
+    /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -3499,17 +3536,20 @@ body.lp-dark .badge--bp {
 
 .position-badge-premium.delantera {
     background-color: #3b82f6;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .position-badge-premium.trasera {
     background-color: #ef4444;
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 .position-badge-premium.ambas {
     background: linear-gradient(90deg, #3b82f6, #ef4444);
-    border: none; /* Removed light border */
+    border: none;
+    /* Removed light border */
 }
 
 /* Dark Mode Adjustments */
@@ -3757,7 +3797,9 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     border: none !important;
     box-shadow: none !important;
     padding: 0;
-    position: relative;`n}
+    position: relative;
+    `n
+}
 
 .fav-count-badge {
     position: absolute;
@@ -4444,11 +4486,12 @@ body.modo-orbital .toast-progress {
         max-width: none;
     }
 }
+
 /* === COLORES INDEPENDIENTES PARA CONTADORES (User Request) === */
 
 /* Favorites: Red/Pink to match heart */
 #favCountBadge {
-    background-color: #ef4444; 
+    background-color: #ef4444;
     color: #ffffff;
 }
 
@@ -4465,29 +4508,51 @@ body.modo-orbital .toast-progress {
 }
 
 /* Dark Mode Overrides */
-body.lp-dark #favCountBadge { background-color: #dc2626; }
-body.lp-dark #compareCountBadge { background-color: #2563eb; }
-body.lp-dark #notificationBadge { background-color: #ea580c; }
+body.lp-dark #favCountBadge {
+    background-color: #dc2626;
+}
+
+body.lp-dark #compareCountBadge {
+    background-color: #2563eb;
+}
+
+body.lp-dark #notificationBadge {
+    background-color: #ea580c;
+}
 
 /* Orbital Mode Overrides */
-body.modo-orbital #favCountBadge { background-color: #ec4899; box-shadow: 0 0 10px rgba(236, 72, 153, 0.5); }
-body.modo-orbital #compareCountBadge { background-color: #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
-body.modo-orbital #notificationBadge { background-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+body.modo-orbital #favCountBadge {
+    background-color: #ec4899;
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+}
+
+body.modo-orbital #compareCountBadge {
+    background-color: #06b6d4;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+body.modo-orbital #notificationBadge {
+    background-color: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
 
 
 /* Ensure dropdown is always on top */
 .custom-dropdown-list {
     z-index: 1000 !important;
-    background-color: var(--material-surface-light); /* Asegurar fondo opaco */
+    background-color: var(--material-surface-light);
+    /* Asegurar fondo opaco */
 }
 
 
 /* === FIX: FULL WIDTH CARD IMAGES === */
 .product-card {
-    padding: 0 !important; /* Ensure card has no internal padding */
+    padding: 0 !important;
+    /* Ensure card has no internal padding */
     display: flex !important;
     flex-direction: column !important;
-    overflow: hidden !important; /* Ensure content stays inside border radius */
+    overflow: hidden !important;
+    /* Ensure content stays inside border radius */
 }
 
 /* Force image container to be full width block */
@@ -4496,9 +4561,12 @@ body.modo-orbital #notificationBadge { background-color: #f59e0b; box-shadow: 0 
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    flex: none !important; /* Stop flex resizing */
-    aspect-ratio: 4/3 !important; /* Maintain consistent height */
-    background-color: #fff !important; /* Clean background */
+    flex: none !important;
+    /* Stop flex resizing */
+    aspect-ratio: 4/3 !important;
+    /* Maintain consistent height */
+    background-color: #fff !important;
+    /* Clean background */
     border-bottom: 1px solid var(--material-surface-border);
     position: relative !important;
 }
@@ -4507,11 +4575,13 @@ body.modo-orbital #notificationBadge { background-color: #f59e0b; box-shadow: 0 
 .product-card__image {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important; /* Ensure full product is visible */
+    object-fit: contain !important;
+    /* Ensure full product is visible */
     object-position: center !important;
     border: none !important;
     margin: 0 !important;
-    padding: 10px !important; /* Slight breathing room for 'contain' so it doesn't hit edges */
+    padding: 10px !important;
+    /* Slight breathing room for 'contain' so it doesn't hit edges */
     display: block !important;
 }
 
@@ -4541,14 +4611,15 @@ body.lp-dark .product-card__image {
 .product-card__overlay-header .product-card__compare-btn {
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(4px);
-    border-radius: 50%; /* Make them circular */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 50%;
+    /* Make them circular */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .product-card__overlay-header .product-card__favorite-btn:hover,
@@ -4559,10 +4630,12 @@ body.lp-dark .product-card__image {
 
 /* Ensure position badges don't look weird without a bar */
 .product-card__position-wrapper .position-badge-premium {
-    padding: 3px 8px; /* Slightly smaller padding */
+    padding: 3px 8px;
+    /* Slightly smaller padding */
     border-radius: 50px;
     font-weight: 500;
-    font-size: 0.65rem; /* Smaller text size */
+    font-size: 0.65rem;
+    /* Smaller text size */
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
@@ -4581,20 +4654,23 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
 
 /* === FIX: REMOVE IMAGE PADDING FOR REAL FULL WIDTH === */
 .product-card__image {
-    padding: 0 !important; /* Remove the breathing room */
-    object-fit: cover !important; /* Force fill the box so it touches edges */
+    padding: 0 !important;
+    /* Remove the breathing room */
+    object-fit: cover !important;
+    /* Force fill the box so it touches edges */
 }
 
 /* Ensure the wrapper is truly edge-to-edge */
 .product-card__image-wrapper {
-    border-radius: 0 !important; /* No rounded corners that might look like padding */
+    border-radius: 0 !important;
+    /* No rounded corners that might look like padding */
     border: none !important;
 }
 
 /* Ensure card doesn't have overflow hiding that clips shadows if we use them, 
    but for full width image usually we want overflow hidden on card to round corners */
 .product-card {
-    overflow: hidden !important; 
+    overflow: hidden !important;
 }
 
 
@@ -4614,7 +4690,8 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
 
 /* Ensure header bar sits nicely at the top */
 .product-card__header-bar {
-    background-color: transparent !important; /* Or white if preferred, but transparent matches card bg */
+    background-color: transparent !important;
+    /* Or white if preferred, but transparent matches card bg */
     z-index: 2;
     position: relative;
 }
@@ -4627,9 +4704,11 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
     box-shadow: none;
     border: none;
 }
+
 .product-card__header-bar .product-card__favorite-btn:hover,
 .product-card__header-bar .product-card__compare-btn:hover {
-    background: rgba(0,0,0,0.05); /* Subtle hover */
+    background: rgba(0, 0, 0, 0.05);
+    /* Subtle hover */
     transform: scale(1.1);
 }
 
@@ -4646,7 +4725,8 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
 .comparison-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Ensure it scrolls on mobile */
+    min-width: 600px;
+    /* Ensure it scrolls on mobile */
     table-layout: fixed;
 }
 
@@ -4669,7 +4749,7 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
 /* Primera columna (etiquetas) opcional si quisieramos etiquetas a la izquierda */
 /* Pero en este diseÃo pondremos la etiqueta dentro de la celda o en una fila propia? 
    Mejor: La tabla serÃ¡: Columna 1: Label, Columna 2..N: Productos */
-   
+
 .comparison-table td:first-child,
 .comparison-table th:first-child {
     font-weight: 700;
@@ -4701,6 +4781,7 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
     font-size: 0.75rem;
     cursor: pointer;
 }
+
 .comp-remove-btn:hover {
     background: #ef4444;
     color: #fff;
@@ -4715,9 +4796,10 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
     max-height: 150px;
     overflow-y: auto;
 }
+
 .apps-list-compact li {
     padding: 2px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 
@@ -4732,37 +4814,42 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
     padding: 8px;
     border-radius: 50%;
     transition: background-color 0.2s, transform 0.2s;
-    display: flex; /* Ensure SVG is visible */
+    display: flex;
+    /* Ensure SVG is visible */
     align-items: center;
     justify-content: center;
 }
 
 .modal-actions .compare-btn:hover,
 .modal-actions .favorite-btn:hover {
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .modal-actions .compare-btn svg,
 .modal-actions .favorite-btn svg {
     width: 24px;
     height: 24px;
-    stroke: var(--text-color); /* Default color */
+    stroke: var(--text-color);
+    /* Default color */
     fill: none;
 }
 
 .modal-actions .favorite-btn svg {
-    fill: transparent; 
+    fill: transparent;
     stroke: var(--text-color);
 }
 
 /* Active States */
 .modal-actions .compare-btn.active svg {
-    stroke: #3b82f6; /* Blue for compare */
+    stroke: #3b82f6;
+    /* Blue for compare */
 }
 
 .modal-actions .favorite-btn.active svg {
-    fill: #ef4444; /* Red fill */
-    stroke: #ef4444; /* Red stroke */
+    fill: #ef4444;
+    /* Red fill */
+    stroke: #ef4444;
+    /* Red stroke */
 }
 
 /* Dark Mode Support */
@@ -4788,11 +4875,12 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 
 .product-card__footer {
-    border-top: 1px solid rgba(0,0,0,0.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     padding-top: 10px;
     margin-top: auto;
     width: 100%;
-    display: block; /* Ensure it takes full width */
+    display: block;
+    /* Ensure it takes full width */
 }
 
 /* New Brands Container in Card */
@@ -4813,109 +4901,241 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 
 
-.product-card__apps { font-size: 0.7rem !important; }
+.product-card__apps {
+    font-size: 0.7rem !important;
+}
 
 /* Fix for modal action buttons to remove unwanted backgrounds */
-#modalPosition .product-card__favorite-btn, #modalPosition .product-card__compare-btn { background: transparent; border: none; box-shadow: none; padding: 0; width: auto; height: auto; }
-#modalPosition .product-card__favorite-btn.active svg { fill: #ef4444; stroke: #ef4444; }
-#modalPosition .product-card__compare-btn.active svg { stroke: #3b82f6; stroke-width: 2.5; }
+#modalPosition .product-card__favorite-btn,
+#modalPosition .product-card__compare-btn {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    width: auto;
+    height: auto;
+}
+
+#modalPosition .product-card__favorite-btn.active svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
+
+#modalPosition .product-card__compare-btn.active svg {
+    stroke: #3b82f6;
+    stroke-width: 2.5;
+}
 
 /* Override for modal favorite button: No background, Red animation */
-#modalPosition .product-card__favorite-btn { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; width: auto !important; height: auto !important; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-#modalPosition .product-card__favorite-btn:hover { transform: scale(1.2); }
-#modalPosition .product-card__favorite-btn:active { transform: scale(0.9); }
-#modalPosition .product-card__favorite-btn svg { stroke: #9ca3af; fill: none; transition: all 0.3s; width: 24px; height: 24px; }
-#modalPosition .product-card__favorite-btn:hover svg { stroke: #ef4444; }
-#modalPosition .product-card__favorite-btn.active svg { fill: #ef4444; stroke: #ef4444; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); animation: heartBeat 0.3s ease-in-out; }
-@keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+#modalPosition .product-card__favorite-btn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#modalPosition .product-card__favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+#modalPosition .product-card__favorite-btn:active {
+    transform: scale(0.9);
+}
+
+#modalPosition .product-card__favorite-btn svg {
+    stroke: #9ca3af;
+    fill: none;
+    transition: all 0.3s;
+    width: 24px;
+    height: 24px;
+}
+
+#modalPosition .product-card__favorite-btn:hover svg {
+    stroke: #ef4444;
+}
+
+#modalPosition .product-card__favorite-btn.active svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
+    animation: heartBeat 0.3s ease-in-out;
+}
+
+@keyframes heartBeat {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
 
 /* Correction for modal favorite button: Correct Selector */
-.modal-overlay .product-card__favorite-btn, .modal-overlay .product-card__compare-btn { background: transparent !important; background-color: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; width: auto !important; height: auto !important; min-width: 0 !important; padding: 0 !important; }
+.modal-overlay .product-card__favorite-btn,
+.modal-overlay .product-card__compare-btn {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+}
 
 /* --- Improved Clear Filters Button (Premium Design) --- */
-.clear-filters-btn { position: relative; width: 100%; margin-top: 1rem; padding: 12px 20px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); letter-spacing: 0.5px; text-transform: uppercase; overflow: hidden; }
-.clear-filters-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); background: linear-gradient(135deg, #f87171, #dc2626); }
-.clear-filters-btn:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3); }
-.clear-filters-btn svg { width: 20px; height: 20px; stroke: #ffffff; fill: none; margin-bottom: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+.clear-filters-btn {
+    position: relative;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    overflow: hidden;
+}
+
+.clear-filters-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    background: linear-gradient(135deg, #f87171, #dc2626);
+}
+
+.clear-filters-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);
+}
+
+.clear-filters-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #ffffff;
+    fill: none;
+    margin-bottom: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
 
 
 /* Remove Gradient from Clear Filters */
-.clear-filters-btn { background: #ef4444 !important; }
-.clear-filters-btn:hover { background: #dc2626 !important; }
+.clear-filters-btn {
+    background: #ef4444 !important;
+}
+
+.clear-filters-btn:hover {
+    background: #dc2626 !important;
+}
 
 
 /* Modern Pulse Effect Animation */
-.btn-pulse-effect { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4); transform: scale(0); animation: pulseExpand 0.6s linear; pointer-events: none; }
-@keyframes pulseExpand { to { transform: scale(2.5); opacity: 0; } }
+.btn-pulse-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: pulseExpand 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes pulseExpand {
+    to {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
 
 /* Fix Clear Filters Button: Smaller & Readable */
-.clear-filters-btn { padding: 6px 14px !important; font-size: 0.8rem !important; height: auto !important; min-height: 36px; }
-.clear-filters-btn svg { width: 16px !important; height: 16px !important; }
-.clear-filters-btn:hover { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); background-color: #b91c1c !important; }
+.clear-filters-btn {
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    height: auto !important;
+    min-height: 36px;
+}
+
+.clear-filters-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.clear-filters-btn:hover {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    background-color: #b91c1c !important;
+}
 
 /* Fix Trash Icon Color on Hover */
-.clear-filters-btn:hover svg { stroke: #ffffff !important; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
+.clear-filters-btn:hover svg {
+    stroke: #ffffff !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
 
 /* Force Bright Red for All Active Hearts */
-.product-card__favorite-btn.active svg, #modalPosition .product-card__favorite-btn.active svg { fill: #ff0000 !important; stroke: #ff0000 !important; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5)) !important; }
-
-/* Main Favorites Filter Button: Bright Green (Complementary to Red Hearts) */
-.view-btn#filtroFavoritosBtn.active .heart-icon path { fill: #22c55e !important; stroke: #22c55e !important; filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important; }
-    position: absolute;
-    top: 0px;
-    right: -2px;
-    background: #dc3545;
-    color: #fff;
-    border-radius: 50px;
-    font-weight: 500;
-    font-size: 0.65rem;
-    padding: 0 4px;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
+.product-card__favorite-btn.active svg,
+#modalPosition .product-card__favorite-btn.active svg {
+    fill: #ff0000 !important;
+    stroke: #ff0000 !important;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5)) !important;
 }
 
-/* REVERT Favorites to Red & APPLY Green to Compare */
-.view-btn#filtroFavoritosBtn.active .heart-icon path { fill: #ff0000 !important; stroke: #ff0000 !important; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6)) !important; }
-    position: absolute;
-    top: 0px;
-    right: -2px;
-    background: #dc3545;
-    color: #fff;
-    border-radius: 50px;
-    font-weight: 500;
-    font-size: 0.65rem;
-    padding: 0 4px;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
+/* Main Favorites Filter Button: Bright Red - NUCLEAR FIX */
+.view-btn#filtroFavoritosBtn,
+.view-btn#filtroFavoritosBtn:hover,
+.view-btn#filtroFavoritosBtn:active,
+.view-btn#filtroFavoritosBtn:focus,
+.view-btn#filtroFavoritosBtn.active,
+.view-btn#filtroFavoritosBtn .heart-icon,
+.view-btn#filtroFavoritosBtn:hover .heart-icon,
+.view-btn#filtroFavoritosBtn.active .heart-icon {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
 }
-.view-btn#compareBtn.active .compare-icon path { stroke: #22c55e !important; filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important; }
-    position: absolute;
-    top: 0px;
-    right: -2px;
-    background: #dc3545;
-    color: #fff;
-    border-radius: 50px;
-    font-weight: 500;
-    font-size: 0.65rem;
-    padding: 0 4px;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
+
+.view-btn#filtroFavoritosBtn.active .heart-icon path {
+    fill: #ff0000 !important;
+    stroke: #ff0000 !important;
+    filter: none !important;
 }
+
+
+
+.view-btn#compareBtn.active .compare-icon path {
+    stroke: #22c55e !important;
+    filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important;
+}
+
+
 
 /* Force Compare Green Override */
-#compareBtn.active, #compareBtn.active svg, #compareBtn.active path { stroke: #22c55e !important; color: #22c55e !important; }
+#compareBtn.active,
+#compareBtn.active svg,
+#compareBtn.active path {
+    stroke: #22c55e !important;
+    color: #22c55e !important;
+}
+
 #compareBtn .fav-count-badge {
     position: absolute;
     top: 0px;
@@ -4935,95 +5155,348 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 }
 
 /* Force Green for Active Compare Buttons on Cards */
-.product-card__compare-btn.active svg, .product-card__compare-btn.active path { stroke: #22c55e !important; color: #22c55e !important; filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.5)) !important; }
+.product-card__compare-btn.active svg,
+.product-card__compare-btn.active path {
+    stroke: #22c55e !important;
+    color: #22c55e !important;
+    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.5)) !important;
+}
 
 /* History Button Animation */
-@keyframes historySpin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-#historialBtn .history-icon { transition: transform 0.5s ease; }
-#historialBtn:hover .history-icon { transform: rotate(-180deg); }
-#historialBtn.active .history-icon { animation: historySpin 2s linear infinite; stroke: #fbbf24 !important; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.6)); }
+@keyframes historySpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+#historialBtn .history-icon {
+    transition: transform 0.5s ease;
+}
+
+#historialBtn:hover .history-icon {
+    transform: rotate(-180deg);
+}
+
+#historialBtn.active .history-icon {
+    animation: historySpin 2s linear infinite;
+    stroke: #fbbf24 !important;
+    filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.6));
+}
 
 
 /* === SMART HISTORY PILLS === */
-.smart-history-pill { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.05); padding: 6px 12px; border-radius: 50px; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-primary); transition: all 0.2s ease; cursor: pointer; user-select: none; }
-.lp-dark .smart-history-pill { background: rgba(30, 30, 30, 0.8); border-color: rgba(255,255,255,0.1); color: #e5e5e5; }
+.smart-history-pill {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 6px 12px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+}
 
-.smart-history-pill:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.lp-dark .smart-history-pill:hover { background: #2a2a2a; }
+.lp-dark .smart-history-pill {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e5e5e5;
+}
+
+.smart-history-pill:hover {
+    background: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.lp-dark .smart-history-pill:hover {
+    background: #2a2a2a;
+}
 
 /* Type Specific Colors (Left Border or Icon) */
-.smart-history-pill.general { border-left: 3px solid #3b82f6; }
-.smart-history-pill.marca { border-left: 3px solid #f97316; }
-.smart-history-pill.modelo { border-left: 3px solid #10b981; }
-.smart-history-pill.oem { border-left: 3px solid #8b5cf6; }
-.smart-history-pill.fmsi { border-left: 3px solid #ec4899; }
+.smart-history-pill.general {
+    border-left: 3px solid #3b82f6;
+}
 
-.history-icon-wrapper { display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
-.smart-history-pill.general .history-icon-wrapper { color: #3b82f6; }
-.smart-history-pill.marca .history-icon-wrapper { color: #f97316; }
-.smart-history-pill.modelo .history-icon-wrapper { color: #10b981; }
-.smart-history-pill.oem .history-icon-wrapper { color: #8b5cf6; }
-.smart-history-pill.fmsi .history-icon-wrapper { color: #ec4899; }
+.smart-history-pill.marca {
+    border-left: 3px solid #f97316;
+}
 
-.history-query { font-weight: 500; }
+.smart-history-pill.modelo {
+    border-left: 3px solid #10b981;
+}
 
-.history-type-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-secondary); background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; }
-.lp-dark .history-type-label { background: rgba(255,255,255,0.1); color: #aaa; }
+.smart-history-pill.oem {
+    border-left: 3px solid #8b5cf6;
+}
+
+.smart-history-pill.fmsi {
+    border-left: 3px solid #ec4899;
+}
+
+.history-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.smart-history-pill.general .history-icon-wrapper {
+    color: #3b82f6;
+}
+
+.smart-history-pill.marca .history-icon-wrapper {
+    color: #f97316;
+}
+
+.smart-history-pill.modelo .history-icon-wrapper {
+    color: #10b981;
+}
+
+.smart-history-pill.oem .history-icon-wrapper {
+    color: #8b5cf6;
+}
+
+.smart-history-pill.fmsi .history-icon-wrapper {
+    color: #ec4899;
+}
+
+.history-query {
+    font-weight: 500;
+}
+
+.history-type-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.lp-dark .history-type-label {
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaa;
+}
 
 /* Delete Icon adjustment */
-.smart-history-pill .delete-history-item { margin-left: 4px; opacity: 0.4; font-size: 1.1em; line-height: 1; }
-.smart-history-pill:hover .delete-history-item { opacity: 0.8; }
-.smart-history-pill .delete-history-item:hover { color: #ef4444; opacity: 1; }
+.smart-history-pill .delete-history-item {
+    margin-left: 4px;
+    opacity: 0.4;
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.smart-history-pill:hover .delete-history-item {
+    opacity: 0.8;
+}
+
+.smart-history-pill .delete-history-item:hover {
+    color: #ef4444;
+    opacity: 1;
+}
 
 /* Fix Smart History Visuals */
-.smart-history-pill { border-left: none !important; border: 1px solid rgba(0,0,0,0.1) !important; padding: 6px 14px !important; gap: 8px !important; background: #fff !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.history-icon-wrapper { margin-right: 2px; }
-.smart-history-pill.general { border-color: #3b82f6 !important; color: #3b82f6; }
-.smart-history-pill.marca { border-color: #f97316 !important; color: #f97316; }
-.smart-history-pill.modelo { border-color: #10b981 !important; color: #10b981; }
-.smart-history-pill.oem { border-color: #8b5cf6 !important; color: #8b5cf6; }
-.smart-history-pill.fmsi { border-color: #ec4899 !important; color: #ec4899; }
-.smart-history-pill .history-query { color: var(--text-primary); font-weight: 600; }
-.smart-history-pill:hover { background: #f8fafc !important; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.smart-history-pill {
+    border-left: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    padding: 6px 14px !important;
+    gap: 8px !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.history-icon-wrapper {
+    margin-right: 2px;
+}
+
+.smart-history-pill.general {
+    border-color: #3b82f6 !important;
+    color: #3b82f6;
+}
+
+.smart-history-pill.marca {
+    border-color: #f97316 !important;
+    color: #f97316;
+}
+
+.smart-history-pill.modelo {
+    border-color: #10b981 !important;
+    color: #10b981;
+}
+
+.smart-history-pill.oem {
+    border-color: #8b5cf6 !important;
+    color: #8b5cf6;
+}
+
+.smart-history-pill.fmsi {
+    border-color: #ec4899 !important;
+    color: #ec4899;
+}
+
+.smart-history-pill .history-query {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.smart-history-pill:hover {
+    background: #f8fafc !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
 
 /* === SMART HISTORY CARDS (Premium Design) === */
-.smart-history-card { background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(249,250,251,0.95)); border: 1px solid rgba(0,0,0,0.06); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative; overflow: hidden; }
-.lp-dark .smart-history-card { background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(20,20,20,0.95)); border-color: rgba(255,255,255,0.08); }
+.smart-history-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(249, 250, 251, 0.95));
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+}
 
-.smart-history-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(180deg, #3b82f6, #8b5cf6); opacity: 0; transition: opacity 0.3s ease; }
-.smart-history-card:hover::before { opacity: 1; }
+.lp-dark .smart-history-card {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+    border-color: rgba(255, 255, 255, 0.08);
+}
 
-.smart-history-card:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: rgba(59, 130, 246, 0.3); }
-.lp-dark .smart-history-card:hover { box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+.smart-history-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
-.history-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.smart-history-card:hover::before {
+    opacity: 1;
+}
 
-.history-card-summary { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; flex: 1; }
+.smart-history-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+}
 
-.history-delete-btn { background: transparent; border: none; padding: 4px; cursor: pointer; opacity: 0; transition: all 0.2s ease; color: #94a3b8; border-radius: 4px; }
-.smart-history-card:hover .history-delete-btn { opacity: 0.6; }
-.history-delete-btn:hover { opacity: 1 !important; background: rgba(239, 68, 68, 0.1); color: #ef4444; transform: scale(1.1); }
+.lp-dark .smart-history-card:hover {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
 
-.history-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.history-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
 
-.history-meta-item { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--text-secondary); }
-.history-meta-item svg { opacity: 0.6; }
+.history-card-summary {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    flex: 1;
+}
 
-.history-meta-item.frequency { color: #f97316; font-weight: 600; }
-.history-meta-item.frequency svg { color: #f97316; }
+.history-delete-btn {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease;
+    color: #94a3b8;
+    border-radius: 4px;
+}
 
-.history-meta-item.results { color: #3b82f6; font-weight: 500; }
-.history-meta-item.results svg { color: #3b82f6; }
+.smart-history-card:hover .history-delete-btn {
+    opacity: 0.6;
+}
+
+.history-delete-btn:hover {
+    opacity: 1 !important;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    transform: scale(1.1);
+}
+
+.history-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.history-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.history-meta-item svg {
+    opacity: 0.6;
+}
+
+.history-meta-item.frequency {
+    color: #f97316;
+    font-weight: 600;
+}
+
+.history-meta-item.frequency svg {
+    color: #f97316;
+}
+
+.history-meta-item.results {
+    color: #3b82f6;
+    font-weight: 500;
+}
+
+.history-meta-item.results svg {
+    color: #3b82f6;
+}
 
 /* Animation for Compare SVG */
 @keyframes slide-right {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(3px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(3px);
+    }
 }
 
 @keyframes slide-left {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(-3px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-3px);
+    }
 }
 
 #compareBtn:hover .compare-icon path:nth-child(1) {
@@ -5045,53 +5518,27 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 }
 
 
-
-
-
-
-
-/* Restored Badge Styles */
-.view-btn {
-    position: relative;
+.clear-filters-btn svg {
+    width: 16px !important;
+    height: 16px !important;
 }
 
-.fav-count-badge {
-    position: absolute;
-    top: 0px; 
-    right: -2px;
-    background: #dc3545;
-    color: #fff;
-    font-size: 0.7rem;
-    padding: 2px 5px;
-    border-radius: 50px;
-    min-width: 15px;
-    text-align: center;
-    line-height: 1;
-    border: 1px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 10;
+.clear-filters-btn:hover {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    background-color: #b91c1c !important;
 }
 
-
-/* Restored Badge Styles */
-.view-btn {
-    position: relative;
+/* Fix Trash Icon Color on Hover */
+.clear-filters-btn:hover svg {
+    stroke: #ffffff !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-.fav-count-badge {
-    position: absolute;
-    top: 0px; 
-    right: -2px;
-    background: #dc3545;
-    color: #fff;
-    font-size: 0.7rem;
-    padding: 2px 5px;
-    border-radius: 50px;
-    min-width: 15px;
-    text-align: center;
-    line-height: 1;
-    border: 1px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 10;
+/* Force Bright Red for All Active Hearts */
+.product-card__favorite-btn.active svg,
+#modalPosition .product-card__favorite-btn.active svg {
+    fill: #ff0000 !important;
+    stroke: #ff0000 !important;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5)) !important;
 }
-

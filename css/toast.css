@@ -132,9 +132,10 @@
 }
 
 body.lp-dark .toast {
-    background: var(--material-surface-dark);
+    background: #000000 !important;
     border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: none !important;
 }
 
 body.modo-orbital .toast-icon {
