@@ -1,4 +1,4 @@
-/* ================== VARIABLES DE TEMA ================== */
+﻿/* ================== VARIABLES DE TEMA ================== */
 :root {
     --bg-color: #f8f9fa;
     --text-color: #000;
@@ -484,7 +484,7 @@ header .header-x path {
     /* Compact */
 }
 
-/* Espaciado para inputs de Detalles del Vehículo (y otros customs) */
+/* Espaciado para inputs de Detalles del VehÃ­culo (y otros customs) */
 .custom-select-container {
     margin-bottom: 0.4rem;
     /* Compact */
@@ -499,7 +499,7 @@ header .header-x path {
     /* Reduced */
 }
 
-/* El último no necesita margen extra si es el final del grupo */
+/* El Ãºltimo no necesita margen extra si es el final del grupo */
 .filter-group .custom-select-container:last-child {
     margin-bottom: 0;
 }
@@ -532,7 +532,7 @@ header .header-x path {
 
 .clear-filters-btn:hover {
     background-color: #b91c1c;
-    /* Más oscuro al hover */
+    /* MÃ¡s oscuro al hover */
     transform: translateY(-1px);
     box-shadow: 0 6px 15px rgba(220, 38, 38, 0.5);
 }
@@ -557,7 +557,7 @@ body.modo-orbital .filter-title {
     opacity: 0.9;
 }
 
-/* --- ðŸ”´ REGLA ELIMINADA (ESTABA VACÃA) --- */
+/* --- Ã°Å¸â€Â´ REGLA ELIMINADA (ESTABA VACÃƒÂA) --- */
 /* .filter-title svg { ... } */
 
 .form-input {
@@ -861,11 +861,11 @@ body.lp-dark #positionTrasera.active {
     gap: 0.5rem;
     padding: 0.5rem 0;
     justify-content: center;
-    /* <-- CORRECCIÃ“N DE CENTRADO */
+    /* <-- CORRECCIÃƒâ€œN DE CENTRADO */
 }
 
 /* ======================================================= */
-/* ðŸŸ¢ INICIO BLOQUE ETIQUETAS (MODIFICADO) ðŸŸ¢               */
+/* Ã°Å¸Å¸Â¢ INICIO BLOQUE ETIQUETAS (MODIFICADO) Ã°Å¸Å¸Â¢               */
 /* ======================================================= */
 .brand-tag {
     font-family: 'Inter', sans-serif;
@@ -892,7 +892,7 @@ body.lp-dark #positionTrasera.active {
 .brand-tag.active {
     opacity: 1;
     filter: none;
-    /* AÃ±adimos un color gris (#6c757d) por defecto como 'fallback' */
+    /* AÃƒÂ±adimos un color gris (#6c757d) por defecto como 'fallback' */
     background-color: var(--tag-brand-color, #6c757d);
     color: #ffffff;
     border-color: var(--tag-brand-color, #6c757d);
@@ -900,7 +900,7 @@ body.lp-dark #positionTrasera.active {
 }
 
 /* ======================================================= */
-/* ðŸ”´ FIN BLOQUE ETIQUETAS                                 */
+/* Ã°Å¸â€Â´ FIN BLOQUE ETIQUETAS                                 */
 /* ======================================================= */
 
 @keyframes skeleton-pulse {
@@ -970,7 +970,7 @@ body.lp-dark #positionTrasera.active {
     gap: 0.5rem;
 }
 
-/* === ðŸ”´ INICIO CORRECCIÃ“N BOTONES HEADER === */
+/* === Ã°Å¸â€Â´ INICIO CORRECCIÃƒâ€œN BOTONES HEADER === */
 .view-btn {
     width: 36px;
     height: 36px;
@@ -985,11 +985,18 @@ body.lp-dark #positionTrasera.active {
     border: none !important;
     box-shadow: none !important;
     padding: 0;
-    position: relative;
-    margin: 0;
+    position: relative;`n}
+
+.view-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-color);
+    opacity: 0.8;
+    /* <-- MÃƒÂS OSCURO (de 0.6 a 0.8) */
+    transition: opacity 0.2s ease, stroke 0.5s ease;
 }
 
-/* === � FIN CORRECCI�N BOTONES HEADER === */
+/* === Ã°Å¸â€Â´ FIN CORRECCIÃƒâ€œN BOTONES HEADER === */
 
 .view-btn:hover {
     background-color: var(--btn-google-hover-bg);
@@ -1005,7 +1012,7 @@ body.lp-dark #positionTrasera.active {
     opacity: 1;
 }
 
-/* === ðŸ”´ INICIO CORRECCIÃ“N BOTÃ“N HISTORIAL === */
+/* === Ã°Å¸â€Â´ INICIO CORRECCIÃƒâ€œN BOTÃƒâ€œN HISTORIAL === */
 #historialBtn {
     width: auto;
     display: flex;
@@ -1016,7 +1023,7 @@ body.lp-dark #positionTrasera.active {
     font-weight: 500;
     color: var(--text-color);
     opacity: 0.8;
-    /* <-- MÃS OSCURO (de 0.6 a 0.8) */
+    /* <-- MÃƒÂS OSCURO (de 0.6 a 0.8) */
     transition: all 0.2s ease;
 }
 
@@ -1029,7 +1036,7 @@ body.lp-dark #positionTrasera.active {
     transition: stroke 0.2s ease, opacity 0.2s ease;
 }
 
-/* === ðŸ”´ FIN CORRECCIÃ“N BOTÃ“N HISTORIAL === */
+/* === Ã°Å¸â€Â´ FIN CORRECCIÃƒâ€œN BOTÃƒâ€œN HISTORIAL === */
 
 #historialBtn:hover {
     background-color: var(--btn-google-hover-bg);
@@ -1087,7 +1094,7 @@ body.lp-dark #positionTrasera.active {
     display: flex;
     flex-direction: column;
     background-color: var(--material-surface-light);
-    /* Fondo Sólido */
+    /* Fondo SÃ³lido */
     border: 1px solid var(--material-surface-border);
     border-radius: 0.75rem;
     overflow: hidden;
@@ -1108,7 +1115,7 @@ body.lp-dark #positionTrasera.active {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Bordes Dinámicos con :has - Azul (Del), Rojo (Tras), Violeta (Ambas) */
+/* Bordes DinÃ¡micos con :has - Azul (Del), Rojo (Tras), Violeta (Ambas) */
 .product-card:has(.position-badge-premium.delantera):hover {
     border-color: #3b82f6;
 }
@@ -1151,7 +1158,7 @@ body.lp-dark #positionTrasera.active {
     align-items: flex-start;
 }
 
-/* Barra de cabecera: Posición izq, botones der */
+/* Barra de cabecera: PosiciÃ³n izq, botones der */
 .product-card__header-bar {
     display: flex;
     justify-content: space-between;
@@ -1196,7 +1203,7 @@ body.lp-dark #positionTrasera.active {
     gap: 0.3rem;
     padding: 0;
     margin-bottom: 0.5rem;
-    /* Sin border-bottom para evitar doble línea */
+    /* Sin border-bottom para evitar doble lÃ­nea */
     justify-content: flex-start !important;
     align-items: center;
     width: 100%;
@@ -1418,7 +1425,7 @@ body.lp-dark .product-card {
 
 .applications-list-container .app-detail-row {
     display: grid;
-    /* Adjusted for 4 columns: Serie, Litros, AÃ±o, PosiciÃ³n */
+    /* Adjusted for 4 columns: Serie, Litros, AÃƒÂ±o, PosiciÃƒÂ³n */
     grid-template-columns: 2fr 1fr 0.8fr 1.2fr;
     align-items: center;
     gap: 0.2rem 0.5rem;
@@ -1803,7 +1810,7 @@ body.modo-orbital .modal-apps-specs .app-brand-header {
 }
 
 #guide-modal .usage-guide-content li::before {
-    content: 'âœ…';
+    content: 'Ã¢Å“â€¦';
     position: absolute;
     left: 0;
     top: 1px;
@@ -2072,7 +2079,7 @@ body.lp-dark {
         margin-top: 1rem;
     }
 
-    /* Esta regla asegura que las etiquetas de fabricante tambiÃ©n se centren */
+    /* Esta regla asegura que las etiquetas de fabricante tambiÃƒÂ©n se centren */
     .manufacturer-tags-container {
         justify-content: center;
     }
@@ -2221,7 +2228,7 @@ body:not(.lp-dark):not(.modo-orbital) #orbitalBtn.active .lp-icon-palette {
     height: 60%;
     background: var(--watermark-mask-color);
 
-    /* SVG externo - archivo separado mÃ¡s limpio y mantenible */
+    /* SVG externo - archivo separado mÃƒÂ¡s limpio y mantenible */
     -webkit-mask-image: url('watermark.svg');
     mask-image: url('watermark.svg');
 
@@ -2294,24 +2301,24 @@ body.modo-orbital .favorite-btn:not(.active) {
     opacity: 0.7;
 }
 
-/* === ðŸ”´ INICIO BLOQUE CORREGIDO CORAZONES === */
+/* === Ã°Å¸â€Â´ INICIO BLOQUE CORREGIDO CORAZONES === */
 
-/* --- 1. CorazÃ³n en la TARJETA de producto --- */
+/* --- 1. CorazÃƒÂ³n en la TARJETA de producto --- */
 body:not(.lp-dark):not(.modo-orbital) .favorite-btn:not(.active) .heart-icon {
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
 }
 
-/* CORRECTO: Forzar a negro en dark/orbital para que contraste con imÃ¡genes claras */
+/* CORRECTO: Forzar a negro en dark/orbital para que contraste con imÃƒÂ¡genes claras */
 body.lp-dark .favorite-btn:not(.active) .heart-icon,
 body.modo-orbital .favorite-btn:not(.active) .heart-icon {
     stroke: #000;
-    /* Forzado a negro para visibilidad en imÃ¡genes claras */
+    /* Forzado a negro para visibilidad en imÃƒÂ¡genes claras */
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
     /* Sombra oscura */
 }
 
 
-/* --- 2. CorazÃ³n en el BOTÃ“N DE FILTRO (header) --- */
+/* --- 2. CorazÃƒÂ³n en el BOTÃƒâ€œN DE FILTRO (header) --- */
 .view-btn .heart-icon {
     width: 20px;
     height: 20px;
@@ -2336,11 +2343,11 @@ body:not(.lp-dark):not(.modo-orbital) .view-btn#filtroFavoritosBtn:not(.active) 
 /* CORREGIDO: Sombra para modo oscuro/orbital */
 body.lp-dark .view-btn#filtroFavoritosBtn:not(.active) .heart-icon,
 body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
-    /* Mantenemos la sombra, pero ahora usarÃ¡ el color de texto (claro) del tema */
+    /* Mantenemos la sombra, pero ahora usarÃƒÂ¡ el color de texto (claro) del tema */
     filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.3));
 }
 
-/* --- FIN CORRECCIÃ“N 2 --- */
+/* --- FIN CORRECCIÃƒâ€œN 2 --- */
 
 .view-btn#filtroFavoritosBtn:not(.active):hover .heart-icon {
     transform: scale(1.15);
@@ -2350,7 +2357,7 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     opacity: 1;
 }
 
-/* Estilos del botÃ³n activo */
+/* Estilos del botÃƒÂ³n activo */
 .view-btn#filtroFavoritosBtn.active {
     background-color: var(--input-bg);
     border-color: var(--material-surface-border);
@@ -2361,7 +2368,7 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     transform: scale(1.05);
 }
 
-/* CORRECCIÃ“N DE TYPO: Se eliminÃ³ "Filtro" extra */
+/* CORRECCIÃƒâ€œN DE TYPO: Se eliminÃƒÂ³ "Filtro" extra */
 .view-btn#filtroFavoritosBtn.active .heart-icon path {
     fill: #ff0000;
     stroke: #ff0000;
@@ -2369,10 +2376,10 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     filter: drop-shadow(0 1px 2px rgba(255, 0, 0, 0.5));
 }
 
-/* === ðŸ”´ FIN BLOQUE CORREGIDO CORAZONES === */
+/* === Ã°Å¸â€Â´ FIN BLOQUE CORREGIDO CORAZONES === */
 
 
-/* === Estilos para Historial de BÃºsqueda (Tarjeta) === */
+/* === Estilos para Historial de BÃƒÂºsqueda (Tarjeta) === */
 .search-history-item {
     position: relative;
     padding-right: 28px;
@@ -2409,7 +2416,7 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     padding: 0.5rem 0;
     margin-top: -0.5rem;
     justify-content: center;
-    /* <-- CORRECCIÓN DE CENTRADO */
+    /* <-- CORRECCIÃ“N DE CENTRADO */
 }
 
 /* Asignar colores basados en las clases de badges existentes (SUAVIZADOS & CUADRADOS & PERMANENTES) */
@@ -2466,25 +2473,25 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     background-color: rgba(100, 181, 246, 0.15) !important;
 }
 
-/* Fallback general para tags activos si no tienen data-manufacturer específico o limpio */
+/* Fallback general para tags activos si no tienen data-manufacturer especÃ­fico o limpio */
 .brand-tag.active {
     opacity: 1;
     filter: none;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* Sombra mucho más sutil */
+    /* Sombra mucho mÃ¡s sutil */
 }
 
 @media (max-width: 767px) {
 
-    /* Esta regla asegura que las etiquetas de fabricante tambiÃ©n se centren */
+    /* Esta regla asegura que las etiquetas de fabricante tambiÃƒÂ©n se centren */
     .manufacturer-tags-container {
         justify-content: center;
     }
 }
 
-/* --- ðŸ”´ ESTILOS DE QR ELIMINADOS ðŸ”´ --- */
+/* --- Ã°Å¸â€Â´ ESTILOS DE QR ELIMINADOS Ã°Å¸â€Â´ --- */
 
-/* === NUEVO DISEÃ‘O PREMIUM DE RESULTADOS === */
+/* === NUEVO DISEÃƒâ€˜O PREMIUM DE RESULTADOS === */
 
 .search-result-item {
     background-color: var(--material-surface-light);
@@ -2555,7 +2562,7 @@ body.lp-dark .search-result-content {
     gap: 12px;
 }
 
-/* Icono circular del vehÃ­culo */
+/* Icono circular del vehÃƒÂ­culo */
 .search-result-icon {
     flex-shrink: 0;
     width: 36px;
@@ -2570,12 +2577,12 @@ body.lp-dark .search-result-content {
     border: 1px solid var(--material-surface-border);
 }
 
-/* Info Principal: Referencias y Badge de PosiciÃ³n */
+/* Info Principal: Referencias y Badge de PosiciÃƒÂ³n */
 .search-result-main-info {
     flex: 1;
     display: flex;
     flex-flow: row wrap;
-    /* Cambiado para permitir que refs y posiciÃ³n fluyan juntos */
+    /* Cambiado para permitir que refs y posiciÃƒÂ³n fluyan juntos */
     gap: 6px;
     align-items: center;
     align-content: flex-start;
@@ -2587,7 +2594,7 @@ body.lp-dark .search-result-content {
     /* Truco: hace que los hijos sean parte del flex padre directo */
 }
 
-/* Badge de PosiciÃ³n Premium */
+/* Badge de PosiciÃƒÂ³n Premium */
 .position-badge-premium {
     padding: 3px 8px; /* Slightly smaller padding */
     border-radius: 50px;
@@ -2626,7 +2633,7 @@ body.lp-dark .search-result-content {
     border-top: 1px dashed var(--material-surface-border);
 }
 
-/* Ajustes para el botÃ³n de favorito dentro de la nueva estructura */
+/* Ajustes para el botÃƒÂ³n de favorito dentro de la nueva estructura */
 .search-result-item .favorite-btn {
     top: 10px;
     right: 10px;
@@ -2945,7 +2952,7 @@ body.lp-dark .card-thumbnail {
 /* (Deleted redundant block) */
 
 /* =========================================
-   ðŸš€ SENIOR LEVEL CARD DESIGN SYSTEM (BEM)
+   Ã°Å¸Å¡â‚¬ SENIOR LEVEL CARD DESIGN SYSTEM (BEM)
    ========================================= */
 
 .product-card {
@@ -3556,7 +3563,7 @@ body.lp-dark .badge--primary {
 }
 
 /* ======================================================= */
-/* ðŸŸ¢ CUSTOM DROPDOWNS (PREMIUM UI - BRAND MATCH)          */
+/* Ã°Å¸Å¸Â¢ CUSTOM DROPDOWNS (PREMIUM UI - BRAND MATCH)          */
 /* ======================================================= */
 
 .custom-select-container {
@@ -3750,12 +3757,27 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     border: none !important;
     box-shadow: none !important;
     padding: 0;
-    position: relative;
-    margin: 0;
+    position: relative;`n}
+
+.fav-count-badge {
+    position: absolute;
+    top: 0px;
+    right: -2px;
+    background: #dc3545;
+    color: #fff;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.65rem;
+    padding: 0 4px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
 }
 
-/* === � FIN CORRECCI�N BOTONES HEADER === */
-
+/* Hover simple */
 .view-btn:hover .fav-count-badge {
     position: absolute;
     top: 0px;
@@ -3850,7 +3872,7 @@ body.modo-orbital .fav-count-badge {
     color: var(--text-color);
 }
 
-/* === Panel de Notificaciones - Diseño Minimalista === */
+/* === Panel de Notificaciones - DiseÃ±o Minimalista === */
 .notifications-panel {
     position: absolute;
     top: calc(100% + 12px);
@@ -4138,7 +4160,7 @@ body.modo-orbital .notif-item.unread::before {
     }
 }
 
-/* === Vista Comparación (Modal) === */
+/* === Vista ComparaciÃ³n (Modal) === */
 .comparison-content {
     display: flex;
     overflow-x: auto;
@@ -4645,8 +4667,8 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
 }
 
 /* Primera columna (etiquetas) opcional si quisieramos etiquetas a la izquierda */
-/* Pero en este dise�o pondremos la etiqueta dentro de la celda o en una fila propia? 
-   Mejor: La tabla será: Columna 1: Label, Columna 2..N: Productos */
+/* Pero en este diseÃo pondremos la etiqueta dentro de la celda o en una fila propia? 
+   Mejor: La tabla serÃ¡: Columna 1: Label, Columna 2..N: Productos */
    
 .comparison-table td:first-child,
 .comparison-table th:first-child {
@@ -4839,7 +4861,6 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 /* Main Favorites Filter Button: Bright Green (Complementary to Red Hearts) */
 .view-btn#filtroFavoritosBtn.active .heart-icon path { fill: #22c55e !important; stroke: #22c55e !important; filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important; }
-.view-btn#filtroFavoritosBtn.active .fav-count-badge {
     position: absolute;
     top: 0px;
     right: -2px;
@@ -4859,7 +4880,6 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 /* REVERT Favorites to Red & APPLY Green to Compare */
 .view-btn#filtroFavoritosBtn.active .heart-icon path { fill: #ff0000 !important; stroke: #ff0000 !important; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6)) !important; }
-.view-btn#filtroFavoritosBtn.active .fav-count-badge {
     position: absolute;
     top: 0px;
     right: -2px;
@@ -4877,7 +4897,6 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
     pointer-events: none;
 }
 .view-btn#compareBtn.active .compare-icon path { stroke: #22c55e !important; filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important; }
-.view-btn#compareBtn.active .fav-count-badge {
     position: absolute;
     top: 0px;
     right: -2px;
@@ -5019,13 +5038,10 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 /* iOS Icon Style */
 .ios-icon {
-    width: 20px;
-    height: 20px;
     stroke-width: 2.2px;
     stroke-linecap: round;
     stroke-linejoin: round;
     fill: none;
-    transition: all 0.2s ease;
 }
 
 
@@ -5034,8 +5050,48 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 
 
+/* Restored Badge Styles */
+.view-btn {
+    position: relative;
+}
+
+.fav-count-badge {
+    position: absolute;
+    top: 0px; 
+    right: -2px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    border-radius: 50px;
+    min-width: 15px;
+    text-align: center;
+    line-height: 1;
+    border: 1px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+}
 
 
+/* Restored Badge Styles */
+.view-btn {
+    position: relative;
+}
 
-
+.fav-count-badge {
+    position: absolute;
+    top: 0px; 
+    right: -2px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    border-radius: 50px;
+    min-width: 15px;
+    text-align: center;
+    line-height: 1;
+    border: 1px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+}
 
