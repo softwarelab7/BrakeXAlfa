@@ -1,0 +1,318 @@
+/* Mobile First Responsive Styles for Brake X */
+
+/* --- GENERAL RESET & BASE --- */
+@media screen and (max-width: 1024px) {
+
+    /* Adjustment for tablet and mobile main layout */
+    .main-layout {
+        padding: 10px;
+        gap: 15px;
+    }
+
+    header {
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+/* --- MOBILE DEVICES (Max-width: 768px) --- */
+@media screen and (max-width: 768px) {
+
+    /* HEADER */
+    header {
+        flex-direction: row;
+        /* Horizontal layout */
+        align-items: center;
+        justify-content: space-between;
+        /* Spread title and actions */
+        gap: 0.5rem;
+        padding: 0.8rem 10px 0.8rem 0;
+        /* 0 left padding for Title, 10px right for buttons */
+    }
+
+    header h1 {
+        font-size: 1.4rem;
+        /* Compact font size */
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        /* Align to left */
+        text-align: left;
+        width: auto;
+        /* Auto width */
+        flex: 0 1 auto;
+        /* Allow shrinking if needed, but dont grow indefinitely */
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .header-x {
+        height: 18px;
+        margin-left: 6px;
+        margin-right: 0;
+    }
+
+    .header-subtitle {
+        display: none;
+    }
+
+    .header-actions {
+        width: auto;
+        /* Fit content */
+        justify-content: flex-end;
+        /* Align right */
+        gap: 8px;
+        /* Tighter gap */
+        margin-top: 0;
+        flex: 0 0 auto;
+        /* Don't shrink buttons */
+        padding-right: 0;
+    }
+
+    /* Scaling the theme toggle to fit properly */
+    .theme-switch-wrapper {
+        transform: scale(0.9);
+        transform-origin: center;
+    }
+
+    /* MAIN LAYOUT STACKING */
+    .main-layout {
+        flex-direction: column;
+        overflow-x: hidden;
+        padding: 10px 10px;
+        /* Match header padding (10px) */
+    }
+
+    /* FILTERS COLUMN */
+    /* FILTERS COLUMN */
+    .filters-column {
+        width: 100%;
+        min-width: unset;
+        max-width: 100%;
+        margin: 0 auto 1.5rem auto;
+        /* Center horizontally and add bottom space */
+        position: relative;
+        top: 0;
+        height: auto;
+        max-height: unset;
+        box-sizing: border-box;
+        /* Ensure padding doesn't affect width */
+    }
+
+    /* FILTERS CONTENT */
+    .filters-column>.glass {
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    .input-group-horizontal {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .custom-select-container,
+    .input-group-horizontal input,
+    .filter-group input {
+        width: 100% !important;
+        max-width: 100%;
+        height: 48px;
+        /* Better touch target */
+    }
+
+    .form-input {
+        height: 48px;
+        /* Explicit height for touch */
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
+
+    .position-btn {
+        height: 48px;
+        font-size: 1rem;
+    }
+
+    /* RESULTS PANEL */
+    .results-panel {
+        width: 100%;
+        padding-left: 0;
+    }
+
+    #results-header-card {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        align-items: stretch;
+    }
+
+    .results-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .result-count-container {
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .view-toggle-buttons {
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* GRID / CARD SYSTEM */
+    #results-container {
+        display: grid;
+        /* Single column on mobile, forced */
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .results-wrapper {
+        /* Ensure specificty override */
+        grid-template-columns: 1fr !important;
+    }
+
+    .product-card {
+        /* Reset any fixed width */
+        width: 100% !important;
+        min-width: unset !important;
+        max-width: 100% !important;
+        margin: 0 auto;
+    }
+
+    .product-card__image-container {
+        height: 220px;
+        /* Reduce height slightly */
+    }
+
+    /* MODAL IMPROVEMENTS */
+    .modal-content {
+        width: 95% !important;
+        margin: 10px;
+        padding: 15px;
+        max-height: 95vh;
+        border-radius: 12px;
+    }
+
+    .modal-layout-wrapper {
+        flex-direction: column;
+        display: flex;
+    }
+
+    .modal-image-carousel {
+        width: 100%;
+        height: 250px;
+        margin-bottom: 15px;
+    }
+
+    .modal-details-content-wrapper {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+        border-left: none;
+        padding-left: 0;
+        margin-top: 10px;
+    }
+
+    .applications-list-container {
+        max-height: none;
+        /* Let it flow */
+    }
+
+    .modal-header-ref-container {
+        font-size: 1.2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .modal-position {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* COMPARISON MODAL */
+    .comparison-modal-content {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0;
+        max-width: 100% !important;
+    }
+
+    .comparison-content {
+        /* Allow horizontal scroll on mobile */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* TOASTS */
+    .toast-container {
+        width: auto;
+        left: 20px;
+        right: 20px;
+        bottom: 80px;
+        /* Above bottom nav/buttons */
+    }
+
+    .toast {
+        width: 100%;
+    }
+
+    /* MANUFACTURE TAGS */
+    .manufacturer-tags-container {
+        display: none;
+        /* Often too cluttered on mobile, or stack it */
+        /* Alternatively: */
+        /* flex-wrap: wrap; */
+    }
+
+    .floating-buttons-container {
+        bottom: 15px;
+        right: 15px;
+        gap: 8px;
+    }
+
+    .material-btn {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+/* --- TABLETS (769px - 1024px) --- */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .main-layout {
+        flex-direction: row;
+        /* Keep side-by-side but tighter */
+    }
+
+    .filters-column {
+        width: 260px;
+        /* Narrower filters */
+        min-width: 260px;
+    }
+
+    #results-container {
+        /* Two columns reasonable for tablets */
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    .product-card {
+        width: 100% !important;
+        /* Fill grid cell */
+        max-width: unset;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+}
+
+/* --- DESKTOP (Min-width: 1025px) --- */
+@media screen and (min-width: 1025px) {
+    .main-layout {
+        max-width: 98%;
+        /* Reduced margins (1% each side) */
+        margin: 0 auto;
+        padding-top: 1rem;
+    }
+}
