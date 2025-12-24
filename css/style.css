@@ -4952,3 +4952,23 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 .history-meta-item.results { color: #3b82f6; font-weight: 500; }
 .history-meta-item.results svg { color: #3b82f6; }
+
+/* Animation for Compare SVG */
+@keyframes slide-right {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+}
+
+@keyframes slide-left {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-3px); }
+}
+
+#compareBtn:hover .compare-icon path:nth-child(1) {
+    animation: slide-right 1s infinite ease-in-out;
+}
+
+#compareBtn:hover .compare-icon path:nth-child(2) {
+    animation: slide-left 1s infinite ease-in-out;
+}
+
