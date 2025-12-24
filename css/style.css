@@ -985,18 +985,11 @@ body.lp-dark #positionTrasera.active {
     border: none !important;
     box-shadow: none !important;
     padding: 0;
-    position: relative;`n}
-
-.view-btn svg {
-    width: 20px;
-    height: 20px;
-    stroke: var(--text-color);
-    opacity: 0.8;
-    /* <-- MÃS OSCURO (de 0.6 a 0.8) */
-    transition: opacity 0.2s ease, stroke 0.5s ease;
+    position: relative;
+    margin: 0;
 }
 
-/* === ðŸ”´ FIN CORRECCIÃ“N BOTONES HEADER === */
+/* === � FIN CORRECCI�N BOTONES HEADER === */
 
 .view-btn:hover {
     background-color: var(--btn-google-hover-bg);
@@ -3757,27 +3750,12 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     border: none !important;
     box-shadow: none !important;
     padding: 0;
-    position: relative;`n}
-
-.fav-count-badge {
-    position: absolute;
-    top: 0px;
-    right: -2px;
-    background: #dc3545;
-    color: #fff;
-    border-radius: 50px;
-    font-weight: 500;
-    font-size: 0.65rem;
-    padding: 0 4px;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
+    position: relative;
+    margin: 0;
 }
 
-/* Hover simple */
+/* === � FIN CORRECCI�N BOTONES HEADER === */
+
 .view-btn:hover .fav-count-badge {
     position: absolute;
     top: 0px;
@@ -5041,11 +5019,20 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 
 /* iOS Icon Style */
 .ios-icon {
+    width: 20px;
+    height: 20px;
     stroke-width: 2.2px;
     stroke-linecap: round;
     stroke-linejoin: round;
     fill: none;
+    transition: all 0.2s ease;
 }
+
+
+
+
+
+
 
 
 
