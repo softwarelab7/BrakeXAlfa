@@ -40,6 +40,8 @@
     --brand-color-1: #2563eb;
     --brand-color-2: #ef4444;
     --brand-color-3: #8b5cf6;
+    --material-on-surface: #1f1f1f;
+    /* Added for icon visibility */
 }
 
 /* === MODO OSCURO AMOLED === */
@@ -74,6 +76,8 @@ body.lp-dark {
     --btn-google-hover-bg: rgba(255, 255, 255, 0.08);
     --material-surface-light-rgb: 17, 17, 17;
     --watermark-mask-color: rgba(255, 255, 255, 0.06);
+    --material-on-surface: #ffffff;
+    /* Added for icon visibility */
 }
 
 /* === MODO ORBITAL === */
@@ -111,6 +115,8 @@ body.modo-orbital {
     --arrow-glow-animation: arrow-glow;
     --material-surface-light-rgb: 30, 41, 59;
     --watermark-mask-color: rgba(203, 213, 225, 0.05);
+    --material-on-surface: #ffffff;
+    /* Added for icon visibility */
 }
 
 .lp-icon-palette {
