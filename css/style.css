@@ -990,7 +990,6 @@ body.lp-dark #positionTrasera.active {
     box-shadow: none !important;
     padding: 0;
     position: relative;
-    `n
 }
 
 .view-btn svg {
@@ -3798,7 +3797,6 @@ body.lp-dark .custom-dropdown-list::-webkit-scrollbar-thumb {
     box-shadow: none !important;
     padding: 0;
     position: relative;
-    `n
 }
 
 .fav-count-badge {
@@ -4614,8 +4612,8 @@ body.lp-dark .product-card__image {
     border-radius: 50%;
     /* Make them circular */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4703,11 +4701,19 @@ body.lp-dark .product-card__overlay-header .product-card__compare-btn {
     backdrop-filter: none;
     box-shadow: none;
     border: none;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 !important;
+    /* Removed circular container */
 }
 
 .product-card__header-bar .product-card__favorite-btn:hover,
 .product-card__header-bar .product-card__compare-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: transparent !important;
+    /* Removed square background */
     /* Subtle hover */
     transform: scale(1.1);
 }
@@ -5119,6 +5125,58 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
     filter: none !important;
 }
 
+/* === ICON UNIFICATION FIX === */
+/* Force all heart/compare icons to match header thickness/style */
+/* Force all heart/compare icons to match header thickness/style */
+.heart-icon,
+.compare-icon,
+.history-icon,
+.notification-icon {
+    stroke-width: 1.5px !important;
+}
+
+.heart-icon path,
+.compare-icon path,
+.history-icon path,
+.history-icon circle,
+.history-icon polyline,
+.notification-icon path {
+    stroke-width: 1.5px !important;
+}
+
+/* Card Buttons Normal State - MATCH HEADER */
+.product-card__favorite-btn svg,
+.product-card__compare-btn svg {
+    color: var(--material-on-surface) !important;
+    /* MATCH HEADER COLOR */
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+    width: 20px !important;
+    height: 20px !important;
+    opacity: 0.8 !important;
+    /* MATCH HEADER OPACITY */
+    filter: none !important;
+    transition: opacity 0.2s ease, stroke 0.5s ease;
+}
+
+/* Card Buttons Active State */
+.product-card__favorite-btn.active svg {
+    fill: #ff0000 !important;
+    stroke: #ff0000 !important;
+    opacity: 1 !important;
+    /* MATCH HEADER ACTIVE OPACITY */
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5)) !important;
+}
+
+.product-card__compare-btn.active svg {
+    stroke: #22c55e !important;
+    color: #22c55e !important;
+    opacity: 1 !important;
+    /* MATCH HEADER ACTIVE OPACITY */
+    filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.6)) !important;
+}
+
+
 
 
 .view-btn#compareBtn.active .compare-icon path {
@@ -5499,11 +5557,16 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
     }
 }
 
-#compareBtn:hover .compare-icon path:nth-child(1) {
+/* Updated Animation Selectors to include Card Buttons */
+#compareBtn:hover .compare-icon path:nth-child(1),
+.product-card__compare-btn:hover .compare-icon path:nth-child(1),
+.product-card__header-bar .product-card__compare-btn:hover .compare-icon path:nth-child(1) {
     animation: slide-right 1s infinite ease-in-out;
 }
 
-#compareBtn:hover .compare-icon path:nth-child(2) {
+#compareBtn:hover .compare-icon path:nth-child(2),
+.product-card__compare-btn:hover .compare-icon path:nth-child(2),
+.product-card__header-bar .product-card__compare-btn:hover .compare-icon path:nth-child(2) {
     animation: slide-left 1s infinite ease-in-out;
 }
 
