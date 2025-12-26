@@ -5663,10 +5663,105 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* Force Bright Red for All Active Hearts */
-.product-card__favorite-btn.active svg,
-#modalPosition .product-card__favorite-btn.active svg {
-    fill: #ff0000 !important;
-    stroke: #ff0000 !important;
-    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5)) !important;
+/* Animated Heart Styles - Thread & Bounce */
+.like {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    z-index: 50;
+    /* Ensure high priority */
+}
+
+/* Ensure SVG and ALL children ignore clicks so ONLY button triggers */
+.like svg,
+.like svg * {
+    pointer-events: none;
+    transform: translate3d(0, 0, 0);
+}
+
+.like svg {
+    width: 24px;
+    height: 22px;
+}
+
+.like .heart {
+    fill: transparent;
+    stroke: var(--text-color-secondary, #64748b);
+    /* Fallback to slate if var missing */
+    stroke-width: 2;
+    opacity: 1;
+    transition: all .3s ease;
+    transform-origin: center;
+}
+
+.like .thread {
+    stroke-dashoffset: 87;
+    stroke-dasharray: 87;
+    transform: scale(.5);
+    transform-origin: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Active State (Mapping .active to animation) */
+.like.active svg {
+    animation: bounce .8s ease;
+}
+
+.like.active .heart {
+    opacity: 0;
+    /* Fade out outline heart */
+    transform: scale(.5);
+}
+
+.like.active .thread {
+    opacity: 1;
+    animation: threadheart .6s ease-in forwards;
+}
+
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+    }
+
+    60% {
+        transform: scale(1);
+    }
+
+    80% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes threadheart {
+    0% {
+        fill: rgba(255, 48, 64, 0);
+        transform: scale(.5);
+        stroke-dashoffset: 87;
+    }
+
+    95% {
+        fill: rgba(255, 48, 64, 0);
+        transform: scale(1);
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        fill: #FF3040;
+        transform: scale(1);
+        stroke-dashoffset: 0;
+    }
 }
