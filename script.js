@@ -1260,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             const compareBtnHTML = `
                 <button class="compare-btn ${isComparison ? 'active' : ''}" data-id="${item._appId}" aria-label="Comparar" aria-pressed="${isComparison}">
-                     <svg class="compare-icon ios-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="compare-icon ios-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 8h16M16 4l4 4-4 4"></path>
                         <path d="M20 16H4M8 12l-4 4 4 4"></path>
                     </svg>
@@ -2102,15 +2102,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Modales
         els.modalCloseBtn.addEventListener('click', closeModal);
-        els.modal.addEventListener('click', (e) => {
-            if (e.target === els.modal)
-                closeModal();
-        });
+        els.modal.addEventListener('click', (e) => { if (e.target === els.modal)
+            closeModal(); });
         els.guideModalCloseBtn.addEventListener('click', closeGuideModal);
-        els.guideModal.addEventListener('click', (e) => {
-            if (e.target === els.guideModal)
-                closeGuideModal();
-        });
+        els.guideModal.addEventListener('click', (e) => { if (e.target === els.guideModal)
+            closeGuideModal(); });
     }
     function setupComparisonModal() {
         const compareBtn = document.getElementById('compareBtn');
