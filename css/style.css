@@ -157,7 +157,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
 }
 
 header {
@@ -2440,58 +2441,70 @@ body.modo-orbital .view-btn#filtroFavoritosBtn:not(.active) .heart-icon {
     /* <-- CORRECCIÃ“N DE CENTRADO */
 }
 
+.brand-tag {
+    letter-spacing: 0.5px !important;
+}
+
 /* Asignar colores basados en las clases de badges existentes (SUAVIZADOS & CUADRADOS & PERMANENTES) */
 
 /* INC (Incolbest) */
 .brand-tag[data-manufacturer="INC"] {
-    color: #0d47a1 !important;
-    border: 1px solid #0d47a1 !important;
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
+    border: none !important;
     border-radius: 50px !important;
-    background-color: transparent;
+    font-weight: 400 !important;
 }
 
 .brand-tag[data-manufacturer="INC"]:hover,
 .brand-tag[data-manufacturer="INC"].active {
-    background-color: rgba(13, 71, 161, 0.15) !important;
+    background-color: #1e40af !important;
+    color: #ffffff !important;
 }
 
 /* K (KTC) */
 .brand-tag[data-manufacturer="K"] {
-    color: #ef4444 !important;
-    border: 1px solid #ef4444 !important;
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+    border: none !important;
     border-radius: 50px !important;
-    background-color: transparent;
+    font-weight: 400 !important;
 }
 
 .brand-tag[data-manufacturer="K"]:hover,
 .brand-tag[data-manufacturer="K"].active {
-    background-color: rgba(239, 68, 68, 0.15) !important;
+    background-color: #991b1b !important;
+    color: #ffffff !important;
 }
 
 /* BP (Break Pak) */
 .brand-tag[data-manufacturer="BP"] {
-    color: #6c757d !important;
-    border: 1px solid #6c757d !important;
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border: none !important;
     border-radius: 50px !important;
-    background-color: transparent;
+    font-weight: 400 !important;
 }
 
 .brand-tag[data-manufacturer="BP"]:hover,
 .brand-tag[data-manufacturer="BP"].active {
-    background-color: rgba(108, 117, 125, 0.15) !important;
+    background-color: #1e293b !important;
+    color: #ffffff !important;
 }
 
 /* B (Bex) */
 .brand-tag[data-manufacturer="B"] {
-    color: #0277bd !important;
-    border: 1px solid #0277bd !important;
+    background-color: #0277bd !important;
+    color: #ffffff !important;
+    border: none !important;
     border-radius: 50px !important;
-    background-color: transparent;
+    font-weight: 400 !important;
 }
 
 .brand-tag[data-manufacturer="B"]:hover,
 .brand-tag[data-manufacturer="B"].active {
-    background-color: rgba(100, 181, 246, 0.15) !important;
+    background-color: #01579b !important;
+    color: #ffffff !important;
 }
 
 /* Fallback general para tags activos si no tienen data-manufacturer especÃ­fico o limpio */
@@ -2800,20 +2813,20 @@ body.modo-orbital .favorite-btn.active svg {
 }
 
 .ref-inc {
-    background-color: #2563eb !important;
-    /* Blue */
+    background-color: #1d4ed8 !important;
+    /* Blue-700 */
     color: white !important;
 }
 
 .ref-bp {
-    background-color: #475569 !important;
-    /* Slate */
+    background-color: #334155 !important;
+    /* Slate-700 */
     color: white !important;
 }
 
 .ref-bex {
-    background-color: #059669 !important;
-    /* Emerald */
+    background-color: #0277bd !important;
+    /* Blue (Bex) */
     color: white !important;
 }
 
@@ -2827,38 +2840,37 @@ body.modo-orbital .favorite-btn.active svg {
 
 body.lp-dark .ref-k,
 body.modo-orbital .ref-k {
-    background-color: #ef4444 !important;
-    /* Red remains bright */
+    background-color: #b91c1c !important;
+    /* Red-700 for better contrast */
     color: #ffffff !important;
-    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
-    /* Subtle glow */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.lp-dark .ref-inc,
 body.modo-orbital .ref-inc {
-    background-color: #3b82f6 !important;
-    /* Lighter Blue (vs #2563eb) */
+    background-color: #1d4ed8 !important;
+    /* Blue-700 for better contrast */
     color: #ffffff !important;
-    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.lp-dark .ref-bp,
 body.modo-orbital .ref-bp {
-    background-color: #64748b !important;
-    /* Lighter Slate (vs #475569) */
+    background-color: #334155 !important;
+    /* Slate-700 for better contrast */
     color: #ffffff !important;
-    box-shadow: 0 0 4px rgba(100, 116, 139, 0.4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 body.lp-dark .ref-bex,
 body.modo-orbital .ref-bex {
-    background-color: #10b981 !important;
-    /* Brighter Emerald (vs #059669) */
+    background-color: #0277bd !important;
+    /* Blue (Bex) */
     color: #ffffff !important;
-    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -3013,8 +3025,8 @@ body.lp-dark .card-thumbnail {
 }
 
 .ref-k {
-    background-color: #ef4444 !important;
-    /* Red */
+    background-color: #b91c1c !important;
+    /* Red-700 */
     color: white !important;
 }
 
@@ -3489,8 +3501,9 @@ body.lp-dark .badge--bp {
     padding: 3px 10px;
     border-radius: 50px;
     /* Pill shape enabled again correctly for REFS */
-    font-weight: 500;
+    font-weight: 400;
     font-size: 0.75rem;
+    letter-spacing: 0.5px;
     white-space: nowrap;
     border: none;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -3517,58 +3530,57 @@ body.lp-dark .badge--bp {
 /* K (KTC) - Red (Brand Soft) */
 .ref-k,
 .badge--k {
-    background-color: rgba(239, 68, 68, 0.15) !important;
-    color: #ef4444 !important;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* INC (Incolbest) - Dark Blue (Brand Soft) */
 .ref-inc,
 .badge--inc {
-    background-color: rgba(13, 71, 161, 0.15) !important;
-    color: #0d47a1 !important;
-    border: 1px solid rgba(13, 71, 161, 0.3);
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* BP (Break Pak) - Gray (Brand Soft) */
 .ref-bp,
 .badge--bp {
-    background-color: rgba(108, 117, 125, 0.15) !important;
-    color: #6c757d !important;
-    border: 1px solid rgba(108, 117, 125, 0.3);
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* BEX (Bex-Usa) - Light Blue (Brand Soft) */
 .ref-bex,
 .badge--bex {
-    background-color: rgba(100, 181, 246, 0.15) !important;
-    color: #0277bd !important;
-    /* Darker blue for readable text */
-    border: 1px solid rgba(100, 181, 246, 0.3);
+    background-color: #0277bd !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* SP - Mint Green (Pastel) */
 .ref-sp,
 .badge--sp {
-    background-color: #d1fae5 !important;
-    color: #065f46 !important;
-    border: 1px solid #6ee7b7;
+    background-color: #047857 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* Numeric Only - Orange (Pastel) */
 .ref-num,
 .badge--num {
-    background-color: #ffedd5 !important;
-    color: #9a3412 !important;
-    border: 1px solid #fed7aa;
+    background-color: #c2410c !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* Default - Gray (Pastel) */
 .ref-default,
 .badge--primary {
-    background-color: #f1f5f9 !important;
-    color: #64748b !important;
-    border: 1px solid #e2e8f0;
+    background-color: #475569 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 /* Position Badges (Premium - Pastel) */
@@ -3607,44 +3619,44 @@ body.lp-dark .badge--bp {
 /* Dark Mode Adjustments */
 body.lp-dark .ref-k,
 body.lp-dark .badge--k {
-    background-color: rgba(220, 38, 38, 0.2) !important;
-    color: #f87171 !important;
-    border-color: rgba(220, 38, 38, 0.3);
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 body.lp-dark .ref-inc,
 body.lp-dark .badge--inc {
-    background-color: rgba(29, 78, 216, 0.2) !important;
-    color: #60a5fa !important;
-    border-color: rgba(29, 78, 216, 0.3);
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 body.lp-dark .ref-bp,
 body.lp-dark .badge--bp {
-    background-color: rgba(71, 85, 105, 0.3) !important;
-    color: #cbd5e1 !important;
-    border-color: rgba(71, 85, 105, 0.4);
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 body.lp-dark .ref-bex,
 body.lp-dark .badge--bex {
-    background-color: rgba(8, 145, 178, 0.2) !important;
-    color: #67e8f9 !important;
-    border-color: rgba(8, 145, 178, 0.3);
+    background-color: #0277bd !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 body.lp-dark .ref-sp,
 body.lp-dark .badge--sp {
-    background-color: rgba(5, 150, 105, 0.2) !important;
-    color: #6ee7b7 !important;
-    border-color: rgba(5, 150, 105, 0.3);
+    background-color: #047857 !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 body.lp-dark .ref-num,
 body.lp-dark .badge--num {
-    background-color: rgba(194, 65, 12, 0.2) !important;
-    color: #fdba74 !important;
-    border-color: rgba(194, 65, 12, 0.3);
+    background-color: #c2410c !important;
+    color: #ffffff !important;
+    border: none;
 }
 
 body.lp-dark .ref-default,
