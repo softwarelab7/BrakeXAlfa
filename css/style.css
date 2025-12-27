@@ -5713,17 +5713,20 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
 }
 
 /* Active State (Mapping .active to animation) */
-.like.active svg {
+.like.active svg,
+.view-btn.active .like svg {
     animation: bounce .8s ease;
 }
 
-.like.active .heart {
+.like.active .heart,
+.view-btn.active .like .heart {
     opacity: 0;
     /* Fade out outline heart */
     transform: scale(.5);
 }
 
-.like.active .thread {
+.like.active .thread,
+.view-btn.active .like .thread {
     opacity: 1;
     animation: threadheart .6s ease-in forwards;
 }
@@ -5765,3 +5768,62 @@ body.lp-dark .modal-actions .favorite-btn.active svg {
         stroke-dashoffset: 0;
     }
 }
+
+/* === Global Heart Refinement (User Request) === */
+
+/* Remove Glow/Shadow from Favorites Button specifically */
+#filtroFavoritosBtn.active,
+#filtroFavoritosBtn:focus,
+#filtroFavoritosBtn:hover {
+    box-shadow: none !important;
+    filter: none !important;
+    background: transparent !important;
+    /* Optional: Keep bg clean */
+}
+
+/* Resize & Align Global Heart within View Button */
+.view-btn .like {
+    width: 20px;
+    /* Reduced from 32px */
+    height: 20px;
+    margin: 0 auto;
+    /* Center alignment */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    /* Ensure clicks pass to button */
+}
+
+.view-btn .like svg {
+    width: 20px;
+    height: 18px;
+    /* Proportional */
+    pointer-events: none;
+}
+
+/* Color Logic: Inactive State */
+
+/* Light Mode: Black - Use ID for specificity */
+#filtroFavoritosBtn .like .heart {
+    stroke: #000000 !important;
+    opacity: 1 !important;
+    /* Force full visibility */
+    stroke-width: 2px !important;
+}
+
+/* Dark Mode & Orbital Mode: White */
+body.lp-dark #filtroFavoritosBtn .like .heart,
+body.modo-orbital #filtroFavoritosBtn .like .heart {
+    stroke: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Fix Active State Conflict: Ensure outline disappears when active */
+#filtroFavoritosBtn.active .like .heart,
+.view-btn.active .like .heart {
+    opacity: 0 !important;
+    transform: scale(0.5);
+}
+
+/* Active State (Red is handled by animation fill #FF3040, but outlined heart fades out) */
