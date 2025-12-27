@@ -5826,4 +5826,55 @@ body.modo-orbital #filtroFavoritosBtn .like .heart {
     transform: scale(0.5);
 }
 
+/* === Redesigned Counters (Notification Badge Style) === */
+.fav-count-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: #FF3040 !important;
+    /* Badge Red - Forced */
+    color: #fff !important;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px !important;
+    /* Pill shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 100 !important;
+    pointer-events: none;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid #fff;
+    /* Contrast border against button */
+}
+
+/* Dark mode border adjustment for badges */
+body.lp-dark .fav-count-badge,
+body.modo-orbital .fav-count-badge {
+    border-color: #1e293b;
+    /* Match dark header/button bg */
+}
+
+/* Animation on update (optional class you can toggle in JS if desired) */
+.fav-count-badge.bump {
+    transform: scale(1.2);
+}
+
+/* Hide when 0 or empty */
+.fav-count-badge.hidden {
+    display: none;
+    transform: scale(0);
+}
+
+/* Ensure parent button allows absolute positioning */
+.view-btn {
+    position: relative;
+    overflow: visible !important;
+    /* Allow badge to spill out */
+}
+
 /* Active State (Red is handled by animation fill #FF3040, but outlined heart fades out) */
