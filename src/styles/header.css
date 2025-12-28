@@ -1,83 +1,76 @@
 .header {
     position: sticky;
     top: 0;
-    z-index: var(--z-sticky);
-    background: var(--bg-glass);
+    z-index: 1020;
+    background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-md);
-    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    padding: 12px 0;
 }
 
 .header-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 32px;
 }
 
 .logo-section {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.8rem;
+    gap: 12.8px;
 }
 
 .logo {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.75rem;
+    font-size: 28px;
     font-weight: 700;
-    /* Remove text background clip for mixed content */
-    color: var(--text-primary);
+    color: #f1f5f9;
     display: flex;
     align-items: center;
-    gap: 0.1rem;
+    gap: 1.6px;
     letter-spacing: 0.05em;
     user-select: none;
     line-height: 1;
 }
 
-/* .header-x style is below, leaving it as is or ensuring it flows well */
 .header-x {
-    height: 0.8em;
-    /* Scale relative to font size */
+    height: 22.4px;
     width: auto;
     margin-left: 8px;
-    /* Increased from 2px */
 }
 
 .logo .header-x path {
-    fill: var(--text-primary);
+    fill: #f1f5f9;
 }
 
 .header-separator {
     width: 2px;
-    height: 1.8rem;
-    /* Explicit height slightly larger than text x-height to look balanced */
-    background-color: var(--border-primary);
+    height: 28.8px;
+    background-color: rgba(71, 85, 105, 0.5);
 }
 
 .tagline {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+    font-size: 14px;
+    color: #cbd5e1;
     font-style: italic;
     padding-left: 0;
     margin: 0;
     font-weight: 400;
     letter-spacing: normal;
     display: block;
-    /* Visual adjustment: Flexbox centers bounding boxes, but text has ascenders/descenders. 
-       Usually no margin is best start. unique font metrics might need 1px adjustment */
 }
 
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 16px;
 }
 
 .icon-button {
@@ -85,21 +78,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     background: transparent;
-    /* Removed background */
-    color: var(--text-primary);
+    color: #f1f5f9;
     border: none;
-    /* Removed border */
     transition: all 0.2s ease;
 }
 
 .icon-button:hover {
-    background: var(--bg-primary);
+    background: #0f172a;
     transform: translateY(-2px);
-    /* Stronger shadow for better visibility */
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -109,30 +99,30 @@
 
 .notification-badge {
     position: absolute;
-    top: -0.25rem;
-    right: -0.25rem;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    background: var(--badge-notification);
+    top: -4px;
+    right: -4px;
+    min-width: 20px;
+    height: 20px;
+    background: #f97316;
     color: white;
     border-radius: 9999px;
-    font-size: 0.625rem;
+    font-size: 10px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 0.25rem;
+    padding: 0 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
     .header-container {
-        padding: 0 1rem;
-        gap: 1rem;
+        padding: 0 16px;
+        gap: 16px;
     }
 
     .logo {
-        font-size: 1.5rem;
+        font-size: 24px;
     }
 
     .tagline {
@@ -140,11 +130,11 @@
     }
 
     .header-actions {
-        gap: 0.5rem;
+        gap: 8px;
     }
 
     .icon-button {
-        width: 2rem;
-        height: 2rem;
+        width: 32px;
+        height: 32px;
     }
 }
