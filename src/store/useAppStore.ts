@@ -202,7 +202,7 @@ export const useAppStore = create<AppState>()(
             favorites: [],
             comparisons: [],
             searchHistory: [],
-            theme: 'light',
+            theme: 'dark',
             ui: initialUIState,
             isNotificationPanelOpen: false,
             toggleNotificationPanel: () => set((state) => ({ isNotificationPanelOpen: !state.isNotificationPanelOpen })),
