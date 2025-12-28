@@ -10,10 +10,12 @@ export default defineConfig(({ command }) => ({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'inline',
       workbox: {
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,
+        sourcemap: true
       },
       devOptions: {
         enabled: true
