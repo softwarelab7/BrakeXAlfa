@@ -2,10 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_dispatch:  # Manual trigger - you decide when to deploy
-  # Uncomment below to enable automatic deployment on push to main
-  # push:
-  #   branches:
-  #     - main
+  # Enable automatic deployment on push to main
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read

@@ -1,24 +1,7 @@
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Orbit } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { useEffect } from 'react';
 import '../../styles/theme-toggle.css';
-
-// Custom Planet/Saturn Icon for Orbital Mode
-const PlanetIcon = () => (
-    <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <circle cx="12" cy="12" r="6" />
-        <ellipse cx="12" cy="12" rx="15" ry="3" opacity="0.5" />
-    </svg>
-);
 
 const ThemeToggle = () => {
     const { theme, setTheme } = useAppStore();
@@ -43,13 +26,13 @@ const ThemeToggle = () => {
             aria-label="Cambiar tema"
         >
             <span className="theme-icon theme-icon-light">
-                <Sun />
+                <Sun size={20} />
             </span>
             <span className="theme-icon theme-icon-dark">
-                <Moon />
+                <Moon size={20} />
             </span>
             <span className="theme-icon theme-icon-orbital">
-                <PlanetIcon />
+                <Orbit size={20} />
             </span>
         </button>
     );
