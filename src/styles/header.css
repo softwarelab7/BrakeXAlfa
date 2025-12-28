@@ -5,10 +5,10 @@
     position: sticky;
     top: 0;
     z-index: 1020;
-    background: var(--bg-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-glass);
+    background: var(--bg-primary);
+    /* Changed from var(--bg-glass) to be solid */
+    border-bottom: 1px solid var(--border-primary);
+    /* Changed to be more consistent with solid background */
     box-shadow: var(--shadow-md);
     padding: 0.75rem 0;
 }
