@@ -10,20 +10,18 @@ const BRANDS = [
 ];
 
 const Sidebar = () => {
-    const {
-        filters,
-        setSearchQuery,
-        setSelectedBrand,
-        setSelectedModel,
-        setSelectedYear,
-        setSelectedPosition,
-        toggleBrandTag,
-        setOemReference,
-        setFmsiReference,
-        setWidth,
-        setHeight,
-        clearFilters,
-    } = useAppStore();
+    const filters = useAppStore(state => state.filters);
+    const setSearchQuery = useAppStore(state => state.setSearchQuery);
+    const setSelectedBrand = useAppStore(state => state.setSelectedBrand);
+    const setSelectedModel = useAppStore(state => state.setSelectedModel);
+    const setSelectedYear = useAppStore(state => state.setSelectedYear);
+    const setSelectedPosition = useAppStore(state => state.setSelectedPosition);
+    const toggleBrandTag = useAppStore(state => state.toggleBrandTag);
+    const setOemReference = useAppStore(state => state.setOemReference);
+    const setFmsiReference = useAppStore(state => state.setFmsiReference);
+    const setWidth = useAppStore(state => state.setWidth);
+    const setHeight = useAppStore(state => state.setHeight);
+    const clearFilters = useAppStore(state => state.clearFilters);
 
     return (
         <aside className="sidebar">

@@ -5,13 +5,16 @@ import ProductCard from '../products/ProductCard';
 import '../../styles/product-grid.css';
 
 const FavoritesModal = () => {
-    const { ui, favorites, products, closeFavoritesModal } = useAppStore();
+    const isFavoritesModalOpen = useAppStore(state => state.ui.isFavoritesModalOpen);
+    const favorites = useAppStore(state => state.favorites);
+    const products = useAppStore(state => state.products);
+    const closeFavoritesModal = useAppStore(state => state.closeFavoritesModal);
 
     const favoriteProducts = products.filter(product => favorites.includes(product.id));
 
     return (
         <Modal
-            isOpen={ui.isFavoritesModalOpen}
+            isOpen={isFavoritesModalOpen}
             onClose={closeFavoritesModal}
             title={`Mis Favoritos (${favorites.length})`}
             size="xl"

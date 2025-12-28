@@ -7,42 +7,118 @@
 
 .ReloadPrompt-toast {
     position: fixed;
-    right: 0;
-    bottom: 0;
-    margin: 16px;
-    padding: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 440px;
+    max-width: 90vw;
+    background: var(--bg-secondary);
     border: 1px solid var(--border-primary);
-    border-radius: 4px;
+    border-radius: 20px;
+    padding: 32px;
     z-index: 10000;
-    text-align: left;
-    box-shadow: var(--shadow-lg);
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    animation: slideIn 0.3s ease forwards;
+    align-items: center;
+    text-align: center;
+    animation: fluentScaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.ReloadPrompt-message {
+.ReloadPrompt-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    background: #3563E920;
+    color: #3563E9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.ReloadPrompt-message h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 8px;
-    font-size: 0.9rem;
-}
-
-.ReloadPrompt-toast-button {
-    border: 1px solid var(--border-primary);
-    outline: none;
-    margin-right: 5px;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
-    background-color: var(--bg-primary);
     color: var(--text-primary);
-    transition: all 0.2s;
-    font-size: 0.85rem;
 }
 
-.ReloadPrompt-toast-button:hover {
-    background-color: var(--text-primary);
-    color: var(--bg-primary);
+.ReloadPrompt-message p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    line-height: 1.5;
+}
+
+.ReloadPrompt-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+}
+
+.ReloadPrompt-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.ReloadPrompt-btn-primary {
+    background: #3563E9;
+    color: white;
+}
+
+.ReloadPrompt-btn-primary:hover {
+    background: #2b52cc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(53, 99, 233, 0.3);
+}
+
+.ReloadPrompt-btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-primary);
+}
+
+.ReloadPrompt-btn-secondary:hover {
+    background: var(--bg-primary);
+}
+
+@keyframes fluentScaleIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Background Overlay */
+.ReloadPrompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }

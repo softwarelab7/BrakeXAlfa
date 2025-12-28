@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where, orderBy, limit, writeBatch, doc, onSnapshot, type DocumentChange } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, limit, writeBatch, doc, onSnapshot, type DocumentChange } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import type { Product } from '../types';
 

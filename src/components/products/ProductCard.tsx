@@ -1,3 +1,4 @@
+import React from 'react';
 import { Scale, Heart } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { Product } from '../../types';
@@ -7,17 +8,13 @@ interface ProductCardProps {
     product: Product;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
-    const {
-        favorites,
-        comparisons,
-        toggleFavorite,
-        toggleComparison,
-        openProductDetailModal,
-    } = useAppStore();
+const ProductCard = React.memo(({ product }: ProductCardProps) => {
+    const isFavorite = useAppStore(state => state.favorites.includes(product.id));
+    const isInComparison = useAppStore(state => state.comparisons.includes(product.id));
 
-    const isFavorite = favorites.includes(product.id);
-    const isInComparison = comparisons.includes(product.id);
+    const toggleFavorite = useAppStore(state => state.toggleFavorite);
+    const toggleComparison = useAppStore(state => state.toggleComparison);
+    const openProductDetailModal = useAppStore(state => state.openProductDetailModal);
 
     const getPositionClass = (position: string) => {
         if (position === 'DELANTERA') return 'position-badge-delantera';
@@ -26,7 +23,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     };
 
     const formatApplications = () => {
-        if (product.aplicaciones.length === 0) return 'Sin aplicaciones';
+        if (!product.aplicaciones || product.aplicaciones.length === 0) return 'Sin aplicaciones';
 
         const first = product.aplicaciones[0];
         const remaining = product.aplicaciones.length - 1;
@@ -71,7 +68,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {/* Image */}
             <div className="image-container" onClick={() => openProductDetailModal(product.id)}>
                 <img
-                    src={product.imagenes[0] || 'https://via.placeholder.com/200x150?text=Brake+Pad'}
+                    src={product.imagenes?.[0] || 'https://via.placeholder.com/200x150?text=Brake+Pad'}
                     alt={`Pastilla de freno ${product.referencia}`}
                     className="product-image"
                     loading="lazy"
@@ -80,7 +77,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
             {/* Reference Badges */}
             <div className="ref-badges">
-                {product.ref.map((ref, index) => (
+                {(product.ref || []).map((ref, index) => (
                     <span
                         key={ref}
                         className={`ref-badge ${index % 2 === 0 ? 'ref-badge-blue' : 'ref-badge-red'}`}
@@ -115,6 +112,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </div>
         </div>
     );
-};
+});
 
 export default ProductCard;

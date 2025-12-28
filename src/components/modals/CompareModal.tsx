@@ -4,13 +4,17 @@ import Modal from './Modal';
 import '../../styles/compare-modal.css';
 
 const CompareModal = () => {
-    const { ui, comparisons, products, closeCompareModal, toggleComparison } = useAppStore();
+    const isCompareModalOpen = useAppStore(state => state.ui.isCompareModalOpen);
+    const comparisons = useAppStore(state => state.comparisons);
+    const products = useAppStore(state => state.products);
+    const closeCompareModal = useAppStore(state => state.closeCompareModal);
+    const toggleComparison = useAppStore(state => state.toggleComparison);
 
     const comparisonProducts = products.filter(product => comparisons.includes(product.id));
 
     return (
         <Modal
-            isOpen={ui.isCompareModalOpen}
+            isOpen={isCompareModalOpen}
             onClose={closeCompareModal}
             title="Comparar Productos"
             size="xl"
@@ -51,7 +55,7 @@ const CompareModal = () => {
                                 {comparisonProducts.map(product => (
                                     <td key={product.id} className="compare-product-col">
                                         <span className={`position-badge ${product.posicion === 'DELANTERA' ? 'position-badge-delantera' :
-                                                product.posicion === 'TRASERA' ? 'position-badge-trasera' : 'position-badge-ambas'
+                                            product.posicion === 'TRASERA' ? 'position-badge-trasera' : 'position-badge-ambas'
                                             }`}>
                                             {product.posicion}
                                         </span>

@@ -4,10 +4,8 @@ import ThemeToggle from './ThemeToggle';
 import '../../styles/header.css';
 
 const Header = () => {
-    const { ui, toggleNotificationPanel } = useAppStore();
-
-    // Calculate total active notifications: Standard list + Critical message + PWA update
-    const notificationCount = ui.notifications.length;
+    const notificationCount = useAppStore(state => state.ui.notifications.length);
+    const toggleNotificationPanel = useAppStore(state => state.toggleNotificationPanel);
 
     return (
         <header className="header">

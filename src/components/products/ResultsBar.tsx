@@ -9,13 +9,11 @@ interface ResultsBarProps {
 }
 
 const ResultsBar = ({ totalResults, currentStart, currentEnd }: ResultsBarProps) => {
-    const {
-        comparisons,
-        favorites,
-        openCompareModal,
-        openFavoritesModal,
-        openHistoryModal,
-    } = useAppStore();
+    const comparisonsCount = useAppStore(state => state.comparisons.length);
+    const favoritesCount = useAppStore(state => state.favorites.length);
+    const openCompareModal = useAppStore(state => state.openCompareModal);
+    const openFavoritesModal = useAppStore(state => state.openFavoritesModal);
+    const openHistoryModal = useAppStore(state => state.openHistoryModal);
 
     return (
         <div className="results-bar">
@@ -31,29 +29,29 @@ const ResultsBar = ({ totalResults, currentStart, currentEnd }: ResultsBarProps)
 
             <div className="results-actions">
                 <button
-                    className={`results-action-btn ${comparisons.length > 0 ? 'active' : ''}`}
+                    className={`results-action-btn ${comparisonsCount > 0 ? 'active' : ''}`}
                     onClick={openCompareModal}
                     title="Comparar productos"
                 >
                     <Scale size={18} />
                     <span>Comparar</span>
-                    {comparisons.length > 0 && (
+                    {comparisonsCount > 0 && (
                         <span className="action-badge action-badge-compare">
-                            {comparisons.length}
+                            {comparisonsCount}
                         </span>
                     )}
                 </button>
 
                 <button
-                    className={`results-action-btn ${favorites.length > 0 ? 'active' : ''}`}
+                    className={`results-action-btn ${favoritesCount > 0 ? 'active' : ''}`}
                     onClick={openFavoritesModal}
                     title="Ver favoritos"
                 >
                     <Heart size={18} />
                     <span>Favoritos</span>
-                    {favorites.length > 0 && (
+                    {favoritesCount > 0 && (
                         <span className="action-badge action-badge-favorite">
-                            {favorites.length}
+                            {favoritesCount}
                         </span>
                     )}
                 </button>

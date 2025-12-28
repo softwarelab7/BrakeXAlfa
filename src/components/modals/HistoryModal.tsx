@@ -4,7 +4,14 @@ import Modal from './Modal';
 import type { Filters } from '../../types';
 
 const HistoryModal = () => {
-    const { ui, searchHistory, closeHistoryModal, setSearchQuery, clearFilters, setSelectedBrand, setSelectedModel, setSelectedYear } = useAppStore();
+    const isHistoryModalOpen = useAppStore(state => state.ui.isHistoryModalOpen);
+    const searchHistory = useAppStore(state => state.searchHistory);
+    const closeHistoryModal = useAppStore(state => state.closeHistoryModal);
+    const setSearchQuery = useAppStore(state => state.setSearchQuery);
+    const clearFilters = useAppStore(state => state.clearFilters);
+    const setSelectedBrand = useAppStore(state => state.setSelectedBrand);
+    const setSelectedModel = useAppStore(state => state.setSelectedModel);
+    const setSelectedYear = useAppStore(state => state.setSelectedYear);
 
     const restoreSearch = (filtersToRestore: Partial<Filters>) => {
         clearFilters();
@@ -26,7 +33,7 @@ const HistoryModal = () => {
 
     return (
         <Modal
-            isOpen={ui.isHistoryModalOpen}
+            isOpen={isHistoryModalOpen}
             onClose={closeHistoryModal}
             title="Historial de Búsqueda"
             size="default"

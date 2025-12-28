@@ -4,17 +4,16 @@ import Modal from './Modal';
 import '../../styles/modals.css';
 
 const ProductDetailModal = () => {
-    const {
-        ui,
-        products,
-        closeProductDetailModal,
-        toggleFavorite,
-        toggleComparison,
-        favorites,
-        comparisons
-    } = useAppStore();
+    const isProductDetailModalOpen = useAppStore(state => state.ui.isProductDetailModalOpen);
+    const selectedProductId = useAppStore(state => state.ui.selectedProductId);
+    const products = useAppStore(state => state.products);
+    const closeProductDetailModal = useAppStore(state => state.closeProductDetailModal);
+    const toggleFavorite = useAppStore(state => state.toggleFavorite);
+    const toggleComparison = useAppStore(state => state.toggleComparison);
+    const favorites = useAppStore(state => state.favorites);
+    const comparisons = useAppStore(state => state.comparisons);
 
-    const product = products.find(p => p.id === ui.selectedProductId);
+    const product = products.find(p => p.id === selectedProductId);
 
     if (!product) return null;
 
@@ -23,7 +22,7 @@ const ProductDetailModal = () => {
 
     return (
         <Modal
-            isOpen={ui.isProductDetailModalOpen}
+            isOpen={isProductDetailModalOpen}
             onClose={closeProductDetailModal}
             title={`Detalles del Producto - ${product.referencia}`}
             size="large"
@@ -60,7 +59,7 @@ const ProductDetailModal = () => {
                     {/* Main position badge */}
                     <div>
                         <span className={`position-badge ${product.posicion === 'DELANTERA' ? 'position-badge-delantera' :
-                                product.posicion === 'TRASERA' ? 'position-badge-trasera' : 'position-badge-ambas'
+                            product.posicion === 'TRASERA' ? 'position-badge-trasera' : 'position-badge-ambas'
                             }`}>
                             {product.posicion}
                         </span>
