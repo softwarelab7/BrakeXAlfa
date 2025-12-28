@@ -6,19 +6,17 @@ import type { Product } from '../types';
 // Firebase configuration
 // TODO: Replace with your actual Firebase config
 const firebaseConfig = {
-    // Opción 1: Variables de entorno (Recomendado)
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCha4S_wLxI_CZY1Tc9FOJNA3cUTggISpU",
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "brakexadmin.firebaseapp.com",
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "brakexadmin",
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "brakexadmin.firebasestorage.app",
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "799264562947",
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:799264562947:web:52d860ae41a5c4b8f75336"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 export const isFirebaseConfigured = Boolean(
     firebaseConfig.apiKey &&
-    firebaseConfig.apiKey !== "YOUR_API_KEY" &&
-    firebaseConfig.apiKey !== "PEGAR_API_KEY_AQUI"
+    firebaseConfig.projectId
 );
 
 // Initialize Firebase

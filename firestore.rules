@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- FUNCIONES DE AYUDA (EL GUARDIA) ---
+
+    // 1. Verifica si el usuario está logueado
+    function isAutenticado() {
+      return request.auth != null;
+    }
+
+    // 2. Verifica que los datos de la pastilla sean correctos (NO BASURA)
+    function datosPastillaSonValidos(docId) {
+      let datos = request.resource.data;
+      
+      return 
+        // Debe tener el campo 'ref' y debe ser una lista
+        ('ref' in datos && datos.ref is list) &&
+        
+        // El ID del documento debe coincidir con la primera referencia (Integridad)
+        (datos.ref.size() > 0 && datos.ref[0] == docId) &&
+        
+        // Los campos clave deben ser del tipo correcto (Listas)
+        ('oem' in datos && datos.oem is list) &&
+        ('fmsi' in datos && datos.fmsi is list) &&
+        ('aplicaciones' in datos && datos.aplicaciones is list) &&
+        ('medidas' in datos && datos.medidas is list) &&
+        ('imagenes' in datos && datos.imagenes is list);
+    }
+
+    // --- REGLAS PARA PASTILLAS ---
+    match /pastillas/{docId} {
+      // Cualquiera puede leer (Público)
+      allow read: if true;
+      
+      // Para escribir (Crear/Editar/Borrar):
+      // 1. Debe estar autenticado Y
+      // 2. Los datos deben ser válidos (solo en create/update, delete no envía datos)
+      allow create, update: if isAutenticado() && datosPastillaSonValidos(docId);
+      allow delete: if isAutenticado();
+    }
+
+    // --- REGLAS PARA HISTORIAL (Tus reglas originales, muy bien hechas) ---
+    match /historial/{logId} {
+      allow read: if isAutenticado();
+      allow create: if isAutenticado();
+      allow update, delete: if false; // Inmutable
+    }
+
+    // --- BLOQUEO POR DEFECTO ---
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
