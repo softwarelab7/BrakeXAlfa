@@ -1,4 +1,5 @@
-import { ArrowLeftRight, Heart, History } from 'lucide-react';
+import { ArrowLeftRight, History } from 'lucide-react';
+import Bookmark from '../common/Bookmark';
 import { useAppStore } from '../../store/useAppStore';
 import '../../styles/results-bar.css';
 
@@ -46,7 +47,7 @@ const ResultsBar = ({ totalResults, currentStart, currentEnd }: ResultsBarProps)
                     onClick={openFavoritesModal}
                     title="Ver favoritos"
                 >
-                    <Heart size={20} fill={favoritesCount > 0 ? 'currentColor' : 'none'} />
+                    <Bookmark checked={favoritesCount > 0} onChange={() => { }} size={20} />
                     {favoritesCount > 0 && (
                         <span className="action-badge">
                             {favoritesCount}

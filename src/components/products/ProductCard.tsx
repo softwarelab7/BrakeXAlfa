@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowLeftRight, Heart } from 'lucide-react';
+import { ArrowLeftRight } from 'lucide-react';
+import Bookmark from '../common/Bookmark';
 import { useAppStore } from '../../store/useAppStore';
 import type { Product } from '../../types';
 import '../../styles/product-card.css';
@@ -50,7 +51,7 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
                     >
                         <ArrowLeftRight size={18} />
                     </button>
-                    <button
+                    <div
                         className={`action-icon action-icon-favorite ${isFavorite ? 'active' : ''}`}
                         onClick={(e) => {
                             e.stopPropagation();
@@ -58,8 +59,12 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
                         }}
                         title="Favorito"
                     >
-                        <Heart size={18} fill={isFavorite ? 'var(--accent-primary)' : 'none'} />
-                    </button>
+                        <Bookmark
+                            checked={isFavorite}
+                            onChange={() => { }} // State handled by parent div's onClick for better hit area
+                            size={18}
+                        />
+                    </div>
                 </div>
             </div>
 
