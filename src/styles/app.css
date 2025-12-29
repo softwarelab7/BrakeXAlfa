@@ -14,7 +14,7 @@
 .main-content {
     flex: 1;
     padding: 1.5rem;
-    max-width: calc(100% - 320px);
+    max-width: calc(100% - 280px);
     margin-left: 0;
 }
 
