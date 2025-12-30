@@ -203,8 +203,7 @@ body {
 
 /* Container */
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   padding: 0 var(--space-lg);
 }
 
@@ -583,6 +582,111 @@ input::placeholder {
 
 .slide-in {
   animation: slideIn var(--transition-slow) ease forwards;
+}
+
+@keyframes anim-ring {
+
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  25% {
+    transform: rotate(15deg);
+  }
+
+  75% {
+    transform: rotate(-15deg);
+  }
+}
+
+@keyframes anim-pulse-small {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes anim-compare-rubber {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.25, 0.75);
+  }
+
+  40% {
+    transform: scale(0.75, 1.25);
+  }
+
+  50% {
+    transform: scale(1.15, 0.85);
+  }
+
+  65% {
+    transform: scale(0.95, 1.05);
+  }
+
+  75% {
+    transform: scale(1.05, 0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes anim-history {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes anim-favorite-wobble {
+
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  25% {
+    transform: rotate(-15deg);
+  }
+
+  75% {
+    transform: rotate(15deg);
+  }
+}
+
+.animate-hover-ring:hover svg {
+  animation: anim-ring 0.4s ease-in-out;
+}
+
+.animate-hover-pulse:hover svg {
+  animation: anim-pulse-small 0.4s ease-in-out;
+}
+
+.animate-hover-swap:hover svg {
+  animation: anim-compare-rubber 0.7s ease-in-out;
+}
+
+.animate-hover-history:hover svg {
+  animation: anim-history 0.6s ease-in-out;
+}
+
+.animate-hover-beat:hover .like,
+.animate-hover-beat:hover svg {
+  animation: anim-favorite-wobble 0.4s ease-in-out;
 }
 
 .scale-in {

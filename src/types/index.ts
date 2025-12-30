@@ -33,6 +33,7 @@ export interface Filters {
   fmsiReference: string;
   width: string;
   height: string;
+  showFavoritesOnly: boolean;
 }
 
 // Theme Types
@@ -52,7 +53,6 @@ export interface UIState {
   currentPage: number;
   itemsPerPage: number;
   isCompareModalOpen: boolean;
-  isFavoritesModalOpen: boolean;
   isHistoryModalOpen: boolean;
   isProductDetailModalOpen: boolean;
   isGuideModalOpen: boolean;

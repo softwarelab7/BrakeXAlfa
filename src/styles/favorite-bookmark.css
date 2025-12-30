@@ -1,122 +1,93 @@
-.ui-bookmark {
-    --icon-size: 24px;
-    --icon-secondary-color: #71717a;
-    --icon-hover-color: #52525b;
-    --icon-primary-color: #ef4444;
-    --icon-circle-border: 1px solid var(--icon-primary-color);
-    --icon-circle-size: 35px;
-    --icon-anmt-duration: 0.3s;
-    display: inline-block;
-}
-
-.ui-bookmark input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    display: none;
-    pointer-events: none;
-}
-
-.ui-bookmark .bookmark {
-    width: var(--icon-size);
-    height: var(--icon-size);
-    fill: var(--icon-secondary-color);
-    cursor: pointer;
-    transition: 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Heart Animation CSS */
+.like {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
     position: relative;
-    transform-origin: top;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    display: inline-block;
+    /* Ensure it takes dimensions */
 }
 
-.bookmark::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    box-shadow: 0 30px 0 -4px var(--icon-primary-color),
-        30px 0 0 -4px var(--icon-primary-color),
-        0 -30px 0 -4px var(--icon-primary-color),
-        -30px 0 0 -4px var(--icon-primary-color),
-        -22px 22px 0 -4px var(--icon-primary-color),
-        -22px -22px 0 -4px var(--icon-primary-color),
-        22px -22px 0 -4px var(--icon-primary-color),
-        22px 22px 0 -4px var(--icon-primary-color);
-    border-radius: 50%;
-    transform: scale(0);
-    padding: 1px;
+.like svg {
+    margin: 11px 9px 7px 9px;
+    transform: translate3d(0, 0, 0);
 }
 
-.bookmark::before {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    border: var(--icon-circle-border);
+.like svg .heart {
+    opacity: 1;
+    transition: all .3s ease;
+    transform-origin: center;
+    stroke: var(--text-primary);
+}
+
+.like svg .thread {
+    stroke-dashoffset: 87;
+    stroke-dasharray: 87;
+    transform: scale(.5);
+    transform-origin: center;
+}
+
+.like.liked svg {
+    animation: bounce .8s ease;
+}
+
+.like.liked svg .heart {
     opacity: 0;
+    transform: scale(.5);
 }
 
-/* actions */
-
-.ui-bookmark:hover .bookmark {
-    fill: var(--icon-hover-color);
+.like.liked svg .thread {
+    animation: threadheart .6s ease-in forwards;
 }
 
-.ui-bookmark input:checked+.bookmark::after {
-    animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    animation-delay: var(--icon-anmt-duration);
+/* Static checked state without animation */
+.like.is-checked svg .heart {
+    opacity: 0;
+    transform: scale(.5);
 }
 
-.ui-bookmark input:checked+.bookmark {
-    fill: var(--icon-primary-color);
-    animation: bookmark var(--icon-anmt-duration) forwards;
-    transition-delay: 0.3s;
+.like.is-checked svg .thread {
+    fill: #FF3040;
+    transform: scale(1);
+    stroke-dashoffset: 0;
 }
 
-.ui-bookmark input:checked+.bookmark::before {
-    animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    animation-delay: var(--icon-anmt-duration);
-}
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+    }
 
-@keyframes bookmark {
-    50% {
-        transform: scaleY(0.6);
+    60% {
+        transform: scale(1);
+    }
+
+    80% {
+        transform: scale(1.2);
     }
 
     100% {
-        transform: scaleY(1);
+        transform: scale(1);
     }
 }
 
-@keyframes circle {
-    from {
-        width: 0;
-        height: 0;
-        opacity: 0;
+@keyframes threadheart {
+    0% {
+        fill: rgba(255, 48, 64, 0);
+        transform: scale(.5);
+        stroke-dashoffset: 87;
     }
 
-    90% {
-        width: var(--icon-circle-size);
-        height: var(--icon-circle-size);
-        opacity: 1;
+    95% {
+        fill: rgba(255, 48, 64, 0);
+        transform: scale(1);
+        stroke-dashoffset: 0;
     }
 
-    to {
-        opacity: 0;
-    }
-}
-
-@keyframes circles {
-    from {
-        transform: scale(0);
-    }
-
-    40% {
-        opacity: 1;
-    }
-
-    to {
-        transform: scale(0.8);
-        opacity: 0;
+    100% {
+        fill: #FF3040;
+        transform: scale(1);
+        stroke-dashoffset: 0;
     }
 }

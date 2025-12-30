@@ -38,6 +38,7 @@ interface AppState {
     setFmsiReference: (ref: string) => void;
     setWidth: (width: string) => void;
     setHeight: (height: string) => void;
+    toggleShowFavoritesOnly: () => void;
     clearFilters: () => void;
 
     // Collection Actions
@@ -53,8 +54,6 @@ interface AppState {
     setCurrentPage: (page: number) => void;
     openCompareModal: () => void;
     closeCompareModal: () => void;
-    openFavoritesModal: () => void;
-    closeFavoritesModal: () => void;
     openHistoryModal: () => void;
     closeHistoryModal: () => void;
     openProductDetailModal: (productId: string) => void;
@@ -72,10 +71,15 @@ interface AppState {
     clearAllNotifications: () => void;
 }
 
-const applyFilters = (products: Product[], filters: Filters): Product[] => {
+const applyFilters = (products: Product[], filters: Filters, favorites: string[]): Product[] => {
     if (!products.length) return [];
 
     return products.filter((product) => {
+        // Show favorites only filter
+        if (filters.showFavoritesOnly && !favorites.includes(product.id)) {
+            return false;
+        }
+
         // Search query filter
         if (filters.searchQuery) {
             const query = filters.searchQuery.toLowerCase();
@@ -89,8 +93,13 @@ const applyFilters = (products: Product[], filters: Filters): Product[] => {
             const matchesFmsi = (product.fmsi || []).some((fmsi) =>
                 (fmsi || '').toLowerCase().includes(query)
             );
+            const matchesFabricante = (product.fabricante || '').toLowerCase().includes(query);
+            const matchesApplications = (product.aplicaciones || []).some((app) =>
+                (app.marca || '').toLowerCase().includes(query) ||
+                (app.modelo || '').toLowerCase().includes(query)
+            );
 
-            if (!matchesRef && !matchesRefs && !matchesOem && !matchesFmsi) {
+            if (!matchesRef && !matchesRefs && !matchesOem && !matchesFmsi && !matchesFabricante && !matchesApplications) {
                 return false;
             }
         }
@@ -181,13 +190,13 @@ const initialFilters: Filters = {
     fmsiReference: '',
     width: '',
     height: '',
+    showFavoritesOnly: false,
 };
 
 const initialUIState: UIState = {
     currentPage: 1,
     itemsPerPage: 24,
     isCompareModalOpen: false,
-    isFavoritesModalOpen: false,
     isHistoryModalOpen: false,
     isProductDetailModalOpen: false,
     isGuideModalOpen: false,
@@ -217,7 +226,7 @@ export const useAppStore = create<AppState>()(
             // Product Actions
             setProducts: (products) => set({
                 products,
-                filteredProducts: applyFilters(products, get().filters)
+                filteredProducts: applyFilters(products, get().filters, get().favorites)
             }),
             setFilteredProducts: (filteredProducts) => set({ filteredProducts }),
             setNotificationMessage: (message) => set({ notificationMessage: message }),
@@ -229,7 +238,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, searchQuery: query };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -239,7 +248,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, selectedBrand: brand, selectedModel: '', selectedYear: '' };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -249,7 +258,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, selectedModel: model, selectedYear: '' };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -259,7 +268,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, selectedYear: year };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -269,7 +278,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, selectedPosition: position };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -283,7 +292,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, selectedBrandTags: newTags };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -293,7 +302,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, oemReference: ref };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -303,7 +312,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, fmsiReference: ref };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -313,7 +322,7 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, width };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -323,7 +332,17 @@ export const useAppStore = create<AppState>()(
                     const newFilters = { ...state.filters, height };
                     return {
                         filters: newFilters,
-                        filteredProducts: applyFilters(state.products, newFilters),
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
+                        ui: { ...state.ui, currentPage: 1 }
+                    };
+                }),
+
+            toggleShowFavoritesOnly: () =>
+                set((state) => {
+                    const newFilters = { ...state.filters, showFavoritesOnly: !state.filters.showFavoritesOnly };
+                    return {
+                        filters: newFilters,
+                        filteredProducts: applyFilters(state.products, newFilters, state.favorites),
                         ui: { ...state.ui, currentPage: 1 }
                     };
                 }),
@@ -341,7 +360,13 @@ export const useAppStore = create<AppState>()(
                     const favorites = state.favorites.includes(id)
                         ? state.favorites.filter((fav) => fav !== id)
                         : [...state.favorites, id];
-                    return { favorites };
+
+                    // If we're filtering by favorites, we need to re-apply the filter
+                    const filteredProducts = state.filters.showFavoritesOnly
+                        ? applyFilters(state.products, state.filters, favorites)
+                        : state.filteredProducts;
+
+                    return { favorites, filteredProducts };
                 }),
 
             toggleComparison: (id) =>
@@ -399,16 +424,6 @@ export const useAppStore = create<AppState>()(
             closeCompareModal: () =>
                 set((state) => ({
                     ui: { ...state.ui, isCompareModalOpen: false },
-                })),
-
-            openFavoritesModal: () =>
-                set((state) => ({
-                    ui: { ...state.ui, isFavoritesModalOpen: true },
-                })),
-
-            closeFavoritesModal: () =>
-                set((state) => ({
-                    ui: { ...state.ui, isFavoritesModalOpen: false },
                 })),
 
             openHistoryModal: () =>

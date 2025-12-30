@@ -16,6 +16,38 @@ const Sidebar = () => {
     const setHeight = useAppStore(state => state.setHeight);
     const clearFilters = useAppStore(state => state.clearFilters);
 
+    const products = useAppStore(state => state.products);
+
+    // Dynamically get brands from products
+    const brands = Array.from(new Set(
+        products.flatMap(p => p.aplicaciones.map(app => app.marca))
+    )).sort();
+
+    // Dynamically get models based on selected brand
+    const models = filters.selectedBrand
+        ? Array.from(new Set(
+            products.flatMap(p =>
+                p.aplicaciones
+                    .filter(app => app.marca.toLowerCase() === filters.selectedBrand.toLowerCase())
+                    .map(app => app.modelo)
+            )
+        )).sort()
+        : [];
+
+    // Dynamically get years based on selected model
+    const years = (filters.selectedBrand && filters.selectedModel)
+        ? Array.from(new Set(
+            products.flatMap(p =>
+                p.aplicaciones
+                    .filter(app =>
+                        app.marca.toLowerCase() === filters.selectedBrand.toLowerCase() &&
+                        app.modelo.toLowerCase() === filters.selectedModel.toLowerCase()
+                    )
+                    .map(app => app.año)
+            )
+        )).filter(Boolean).sort((a, b) => parseInt(b || '0') - parseInt(a || '0'))
+        : [];
+
     return (
         <aside className="sidebar">
             {/* Quick Search */}
@@ -45,16 +77,9 @@ const Sidebar = () => {
                         onChange={(e) => setSelectedBrand(e.target.value)}
                     >
                         <option value="">Marca</option>
-                        <option value="chevrolet">Chevrolet</option>
-                        <option value="nissan">Nissan</option>
-                        <option value="hyundai">Hyundai</option>
-                        <option value="kia">Kia</option>
-                        <option value="ford">Ford</option>
-                        <option value="toyota">Toyota</option>
-                        <option value="honda">Honda</option>
-                        <option value="mazda">Mazda</option>
-                        <option value="volkswagen">Volkswagen</option>
-                        <option value="renault">Renault</option>
+                        {brands.map(brand => (
+                            <option key={brand} value={brand.toLowerCase()}>{brand}</option>
+                        ))}
                     </select>
 
                     <select
@@ -64,11 +89,9 @@ const Sidebar = () => {
                         disabled={!filters.selectedBrand}
                     >
                         <option value="">Modelo/Serie</option>
-                        <option value="spark">Spark</option>
-                        <option value="aveo">Aveo</option>
-                        <option value="cruze">Cruze</option>
-                        <option value="malibu">Malibu</option>
-                        <option value="silverado">Silverado</option>
+                        {models.map(model => (
+                            <option key={model} value={model.toLowerCase()}>{model}</option>
+                        ))}
                     </select>
 
                     <select
@@ -78,10 +101,8 @@ const Sidebar = () => {
                         disabled={!filters.selectedModel}
                     >
                         <option value="">Año</option>
-                        {Array.from({ length: 15 }, (_, i) => 2025 - i).map((year) => (
-                            <option key={year} value={year.toString()}>
-                                {year}
-                            </option>
+                        {years.map(year => (
+                            <option key={year} value={year}>{year}</option>
                         ))}
                     </select>
                 </div>

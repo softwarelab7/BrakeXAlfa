@@ -1,6 +1,7 @@
-import { Scale, Heart, Search } from 'lucide-react';
+import { Scale, Search } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import Modal from './Modal';
+import Bookmark from '../common/Bookmark';
 import '../../styles/modals.css';
 
 const ProductDetailModal = () => {
@@ -44,13 +45,17 @@ const ProductDetailModal = () => {
                         >
                             <Scale size={20} />
                         </button>
-                        <button
+                        <div
                             className={`action-icon action-icon-favorite ${isFavorite ? 'active' : ''}`}
                             onClick={() => toggleFavorite(product.id)}
                             title="Favorito"
                         >
-                            <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
-                        </button>
+                            <Bookmark
+                                checked={isFavorite}
+                                onChange={() => { }}
+                                size={20}
+                            />
+                        </div>
                     </div>
                 </div>
 

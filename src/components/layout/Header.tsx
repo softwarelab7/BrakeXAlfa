@@ -1,4 +1,4 @@
-import { Bell, HelpCircle, Menu } from 'lucide-react';
+import { Bell, HelpCircle } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import ThemeToggle from './ThemeToggle';
 import '../../styles/header.css';
@@ -7,23 +7,11 @@ const Header = () => {
     const notificationCount = useAppStore(state => state.ui.notifications.length);
     const toggleNotificationPanel = useAppStore(state => state.toggleNotificationPanel);
     const openGuideModal = useAppStore(state => state.openGuideModal);
-    const toggleSidebar = () => {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) sidebar.classList.toggle('open');
-    };
 
     return (
         <header className="header">
             <div className="header-container">
                 <div className="logo-section">
-                    <button
-                        className="icon-button mobile-menu-btn"
-                        onClick={toggleSidebar}
-                        style={{ display: 'none' }}
-                        aria-label="Menú"
-                    >
-                        <Menu size={24} />
-                    </button>
                     <h1 className="logo">
                         BRAKE
                         <svg className="header-x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" width="30" height="20">
@@ -36,7 +24,7 @@ const Header = () => {
 
                 <div className="header-actions">
                     <button
-                        className="icon-button"
+                        className="icon-button animate-hover-pulse"
                         title="Guía de uso"
                         aria-label="Guía de uso"
                         onClick={openGuideModal}
@@ -47,7 +35,7 @@ const Header = () => {
                     <ThemeToggle />
 
                     <button
-                        className="icon-button"
+                        className="icon-button animate-hover-ring"
                         title="Notificaciones"
                         aria-label="Notificaciones"
                         onClick={toggleNotificationPanel}

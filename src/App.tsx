@@ -10,7 +10,6 @@ import ResultsBar from './components/products/ResultsBar';
 import ProductGrid from './components/products/ProductGrid';
 import Pagination from './components/products/Pagination';
 import ProductDetailModal from './components/modals/ProductDetailModal';
-import FavoritesModal from './components/modals/FavoritesModal';
 import CompareModal from './components/modals/CompareModal';
 import HistoryModal from './components/modals/HistoryModal';
 import GuideModal from './components/modals/GuideModal';
@@ -152,7 +151,6 @@ function App() {
 
       {/* Modals */}
       <ProductDetailModal />
-      <FavoritesModal />
       <CompareModal />
       <HistoryModal />
       <GuideModal />

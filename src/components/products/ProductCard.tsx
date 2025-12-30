@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftRight } from 'lucide-react';
+import { ArrowRightLeft } from 'lucide-react';
 import Bookmark from '../common/Bookmark';
 import { useAppStore } from '../../store/useAppStore';
 import type { Product } from '../../types';
@@ -23,8 +23,14 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
         const first = product.aplicaciones[0];
         const remaining = product.aplicaciones.length - 1;
 
-        let text = `${first.marca} ${first.modelo}`;
-        // if (first.año) text += ` (${first.año})`; // In the image years are not always shown in the summary
+        const brand = first.marca || '';
+        const model = first.modelo && first.modelo !== 'undefined' ? first.modelo : '';
+
+        let text = `${brand} ${model}`.trim();
+
+        if (!text) {
+            text = first.año ? `Año: ${first.año}` : 'Sin detalles';
+        }
 
         if (remaining > 0) {
             text += `, +${remaining} más`;
@@ -42,26 +48,19 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
                 </span>
                 <div className="action-icons">
                     <button
-                        className={`action-icon action-icon-compare ${isInComparison ? 'active' : ''}`}
+                        className={`action-icon action-icon-compare animate-hover-swap ${isInComparison ? 'active' : ''}`}
                         onClick={(e) => {
                             e.stopPropagation();
                             toggleComparison(product.id);
                         }}
                         title="Comparar"
                     >
-                        <ArrowLeftRight size={18} />
+                        <ArrowRightLeft size={18} />
                     </button>
-                    <div
-                        className={`action-icon action-icon-favorite ${isFavorite ? 'active' : ''}`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(product.id);
-                        }}
-                        title="Favorito"
-                    >
+                    <div className={`action-icon action-icon-favorite animate-hover-beat ${isFavorite ? 'active' : ''}`}>
                         <Bookmark
                             checked={isFavorite}
-                            onChange={() => { }} // State handled by parent div's onClick for better hit area
+                            onChange={() => toggleFavorite(product.id)}
                             size={18}
                         />
                     </div>
