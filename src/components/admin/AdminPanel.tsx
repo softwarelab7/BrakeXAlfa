@@ -273,9 +273,9 @@ const AdminPanel: React.FC = () => {
                                 <tbody>
                                     {filteredProducts.map(p => (
                                         <tr key={p.id}>
-                                            <td><strong>{p.referencia || p.ref[0]}</strong></td>
-                                            <td>{p.aplicaciones.length} vehículos</td>
-                                            <td style={{ textAlign: 'right' }}>
+                                            <td data-label="Referencia"><strong>{p.referencia || p.ref[0]}</strong></td>
+                                            <td data-label="Aplicaciones">{p.aplicaciones.length} vehículos</td>
+                                            <td data-label="Acciones" style={{ textAlign: 'right' }}>
                                                 <button onClick={() => handleEdit(p)} className="edit-action-btn">
                                                     <Edit3 size={16} /> Editar
                                                 </button>
@@ -321,11 +321,11 @@ const AdminPanel: React.FC = () => {
                                         });
                                     }).map(p => (
                                         <tr key={p.id}>
-                                            <td><strong>{p.referencia || p.ref[0]}</strong></td>
-                                            <td style={{ color: 'var(--admin-danger)' }}>
+                                            <td data-label="Referencia"><strong>{p.referencia || p.ref[0]}</strong></td>
+                                            <td data-label="Problema" style={{ color: 'var(--admin-danger)' }}>
                                                 {p.posicion === 'DELANTERA' ? 'Tiene apps TRASERAS' : 'Tiene apps DELANTERAS'}
                                             </td>
-                                            <td style={{ textAlign: 'right' }}>
+                                            <td data-label="Acción" style={{ textAlign: 'right' }}>
                                                 <button onClick={() => handleEdit(p)} className="edit-action-btn" style={{ borderColor: 'var(--admin-danger)', color: 'var(--admin-text)' }}>
                                                     <Edit3 size={16} /> Corregir
                                                 </button>
@@ -361,18 +361,18 @@ const AdminPanel: React.FC = () => {
                                         <tr><td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#9ca3af' }}>No hay cambios registrados aún.</td></tr>
                                     ) : historyLogs.map(log => (
                                         <tr key={log.id}>
-                                            <td style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
+                                            <td data-label="Fecha" style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
                                                 {new Date(log.timestamp).toLocaleString()}
                                             </td>
-                                            <td>{log.user}</td>
-                                            <td>
+                                            <td data-label="Usuario">{log.user}</td>
+                                            <td data-label="Acción">
                                                 <span className={`pos-badge ${log.action === 'CREATE' ? 'success' : 'delantera'}`}
                                                     style={{ background: log.action === 'CREATE' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.2)', color: log.action === 'CREATE' ? '#34d399' : '#60a5fa' }}>
                                                     {log.action === 'CREATE' ? 'CREACIÓN' : 'EDICIÓN'}
                                                 </span>
                                             </td>
-                                            <td><strong>{log.productRef || 'Sin Ref'}</strong></td>
-                                            <td style={{ fontSize: '0.85rem', maxWidth: '300px' }}>
+                                            <td data-label="Producto"><strong>{log.productRef || 'Sin Ref'}</strong></td>
+                                            <td data-label="Detalles" style={{ fontSize: '0.85rem', maxWidth: '300px' }}>
                                                 {log.changes?.length ? (
                                                     <ul style={{ margin: 0, paddingLeft: '1rem' }}>
                                                         {log.changes.map((c, i) => {
