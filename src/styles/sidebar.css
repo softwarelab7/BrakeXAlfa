@@ -213,32 +213,36 @@
 }
 
 .btn-text-content {
-    z-index: 10;
-    transition: transform 0.3s ease;
+    z-index: 20;
+    /* Keep text above the expanding icon */
+    transition: all 0.5s ease;
 }
 
 .btn-icon-svg {
+    position: relative;
+    z-index: 10;
     width: 1.25rem;
     height: 1.25rem;
-    transition: all 0.5s duration;
+    fill: none;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .borrar-filtros-btn:hover:not(.btn-disabled) {
-    background-color: #ef4444;
     color: #fff;
-    box-shadow: 0px 8px 20px rgba(239, 68, 68, 0.3);
 }
 
 .borrar-filtros-btn:hover:not(.btn-disabled) .btn-text-content {
-    transform: scale(1.02);
+    transform: translateX(0.8rem);
 }
 
 .borrar-filtros-btn:hover:not(.btn-disabled) .btn-icon-svg {
-    transform: scale(1.1) rotate(10deg);
+    transform: scale(20) translateX(-1.2rem);
+    fill: #ef4444;
+    color: #ef4444;
 }
 
 .borrar-filtros-btn:active:not(.btn-disabled) {
-    transform: scale(0.95);
+    transform: scale(0.92);
 }
 
 .borrar-filtros-btn.btn-disabled {
