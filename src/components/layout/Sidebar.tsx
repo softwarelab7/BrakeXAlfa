@@ -227,7 +227,9 @@ const Sidebar = () => {
                 </div>
                 <div className="position-grid">
                     <button
-                        className={`position-pill ${filters.selectedPositions.includes('delantera') ? 'active' : ''}`}
+                        className={`position-pill pill-blue ${filters.selectedPositions.includes('delantera') ? 'active' : ''
+                            } ${filters.selectedPositions.includes('delantera') && filters.selectedPositions.includes('trasera') ? 'both-active' : ''
+                            }`}
                         onClick={() => {
                             store.togglePosition('delantera');
                             setLocalQuery('');
@@ -236,7 +238,9 @@ const Sidebar = () => {
                         <span>Delantera</span>
                     </button>
                     <button
-                        className={`position-pill ${filters.selectedPositions.includes('trasera') ? 'active' : ''}`}
+                        className={`position-pill pill-red ${filters.selectedPositions.includes('trasera') ? 'active' : ''
+                            } ${filters.selectedPositions.includes('delantera') && filters.selectedPositions.includes('trasera') ? 'both-active' : ''
+                            }`}
                         onClick={() => {
                             store.togglePosition('trasera');
                             setLocalQuery('');

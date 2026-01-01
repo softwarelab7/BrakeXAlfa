@@ -28,11 +28,9 @@
     gap: 0.4rem;
     margin-top: 0.4rem;
     padding-top: 0.4rem;
-    border-top: 1px solid var(--border-secondary);
-    margin-left: -0.8rem;
-    margin-right: -0.8rem;
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* Lighter divider */
+    /* Removed negative margins to stay within padding */
 }
 
 .filter-section:first-child {
@@ -117,38 +115,61 @@
     background-size: 0.8rem;
 }
 
-/* Position Pills (Filtros de Posición) */
+/* Position Pills (Filtros de Posición) - New Premium Style */
 .position-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: 0.8rem;
+    margin-top: 0.2rem;
 }
 
 .position-pill {
-    height: 34px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-primary);
-    border-radius: 0.75rem;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    background-color: #fff;
+    border: none;
+    border-radius: 45px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    /* Adjusted from 2.5px for sidebar width */
+    font-weight: 600;
+    color: #000;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
     cursor: pointer;
-    transition: all 0.2s ease;
+    outline: none;
+    padding: 0 1rem;
 }
 
-.position-pill:hover {
-    background: var(--bg-hover);
-    color: var(--text-primary);
+.position-pill:active {
+    transform: translateY(-1px);
 }
 
-.position-pill.active {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: white;
-    box-shadow: 0 4px 12px rgba(64, 112, 244, 0.3);
+/* Specific Colors: Blue for Delantera */
+.position-pill.pill-blue.active {
+    background-color: #3b82f6;
+    box-shadow: 0px 15px 20px rgba(59, 130, 246, 0.4);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Specific Colors: Red for Trasera */
+.position-pill.pill-red.active {
+    background-color: #ef4444;
+    box-shadow: 0px 15px 20px rgba(239, 68, 68, 0.4);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mixed Colors: Purple when both are active */
+.position-pill.both-active {
+    background-color: #9333ea !important;
+    /* Purple (Blend of Blue and Red) */
+    box-shadow: 0px 15px 20px rgba(147, 51, 234, 0.4) !important;
+    color: #fff !important;
 }
 
 /* Grid Layouts for Refs & Measurements */
