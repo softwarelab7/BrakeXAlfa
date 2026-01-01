@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.3rem 1rem;
+    padding: 0.6rem 1rem;
     margin-bottom: 1rem;
     background: var(--bg-secondary);
     border: 1px solid var(--border-primary);
@@ -127,20 +127,90 @@
 
 .action-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    background: var(--accent-primary);
+    top: -5px;
+    right: -5px;
     color: white;
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: 500;
     min-width: 16px;
     height: 16px;
     border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--bg-secondary);
-    padding: 0 3px;
+    padding: 0;
+    z-index: 10;
+    line-height: 1;
+}
+
+/* Minimalist Badge Colors */
+.badge-compare {
+    background-color: #f97316;
+    /* Orange 500 */
+}
+
+.badge-favorite {
+    background-color: #3b82f6;
+    /* Blue 500 */
+}
+
+/* Animations from original file */
+@keyframes hover-swap {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-2px);
+    }
+
+    50% {
+        transform: translateX(2px);
+    }
+
+    75% {
+        transform: translateX(-1px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.animate-hover-swap:hover svg {
+    animation: hover-swap 0.4s ease-in-out;
+}
+
+@keyframes hover-beat {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-hover-beat:hover svg {
+    animation: hover-beat 0.4s ease-in-out infinite;
+}
+
+@keyframes hover-history {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+.animate-hover-history:hover svg {
+    animation: hover-history 0.8s ease-in-out;
 }
 
 /* Custom Select Styles */
@@ -236,7 +306,6 @@
     background: var(--bg-hover);
     color: var(--text-primary);
     padding-left: 0.8rem;
-    /* Subtle slide effect */
 }
 
 .custom-option.selected {
@@ -248,74 +317,6 @@
 .custom-option .check-icon {
     color: var(--accent-primary);
     opacity: 1;
-}
-
-/* Badge specific colors */
-.badge-compare {
-    background: var(--badge-compare, #e11d48);
-}
-
-.badge-favorite {
-    background: var(--badge-favorite, #f59e0b);
-}
-
-/* Animations from original file */
-@keyframes hover-swap {
-    0% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-2px);
-    }
-
-    50% {
-        transform: translateX(2px);
-    }
-
-    75% {
-        transform: translateX(-1px);
-    }
-
-    100% {
-        transform: translateX(0);
-    }
-}
-
-.animate-hover-swap:hover svg {
-    animation: hover-swap 0.4s ease-in-out;
-}
-
-@keyframes hover-beat {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.15);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-.animate-hover-beat:hover svg {
-    animation: hover-beat 0.4s ease-in-out infinite;
-}
-
-@keyframes hover-history {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(-360deg);
-    }
-}
-
-.animate-hover-history:hover svg {
-    animation: hover-history 0.8s ease-in-out;
 }
 
 /* Responsive */
