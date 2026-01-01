@@ -1,8 +1,32 @@
 import { Zap, Mail, ArrowUpRight } from 'lucide-react';
+import { useAppStore } from '../../store/useAppStore';
 import '../../styles/footer.css';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
+    const clearFilters = useAppStore(state => state.clearFilters);
+    const openCompareModal = useAppStore(state => state.openCompareModal);
+    const openHistoryModal = useAppStore(state => state.openHistoryModal);
+
+    const handleCatalogClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        clearFilters();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCompareClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        openCompareModal();
+    };
+
+    const handleHistoryClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        openHistoryModal();
+    };
+
+    const handleContactClick = () => {
+        window.location.href = 'mailto:contacto@brakex.com';
+    };
 
     return (
         <footer className="footer-wrapper">
@@ -20,7 +44,7 @@ const Footer = () => {
                         Redefiniendo la búsqueda de autopartes.
                         Precisión técnica y velocidad para profesionales.
                     </p>
-                    <button className="contact-btn">
+                    <button className="contact-btn" onClick={handleContactClick}>
                         <Mail size={14} />
                         <span>Contáctanos</span>
                     </button>
@@ -30,9 +54,9 @@ const Footer = () => {
                 <div className="footer-links-column">
                     <h4 className="column-title">Explorar</h4>
                     <nav className="footer-nav">
-                        <a href="#" className="nav-item">Catálogo</a>
-                        <a href="#" className="nav-item">Comparador</a>
-                        <a href="#" className="nav-item">Historial</a>
+                        <a href="#" className="nav-item" onClick={handleCatalogClick}>Catálogo</a>
+                        <a href="#" className="nav-item" onClick={handleCompareClick}>Comparador</a>
+                        <a href="#" className="nav-item" onClick={handleHistoryClick}>Historial</a>
                     </nav>
                 </div>
 
@@ -40,7 +64,7 @@ const Footer = () => {
                 <div className="footer-social-column">
                     <h4 className="column-title">Powered By</h4>
                     <div className="social-cards">
-                        <a href="#" className="social-card">
+                        <a href="https://antigravity.google/" target="_blank" rel="noopener noreferrer" className="social-card">
                             <div className="icon-box"><Zap size={18} /></div>
                             <div className="social-info">
                                 <span className="social-name">Antigravity</span>
