@@ -42,10 +42,43 @@ const AdminPanel: React.FC = () => {
         }
     }, [activeTab]);
 
-    const handleLogout = async () => {
+    const handleLogout = React.useCallback(async () => {
         await signOut(auth);
         window.location.hash = '#search';
-    };
+    }, []);
+
+    // Session Timeout (20 minutes)
+    useEffect(() => {
+        const TIMEOUT_DURATION = 20 * 60 * 1000; // 20 minutes
+        let timeoutId: ReturnType<typeof setTimeout>;
+
+        const resetTimer = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                handleLogout();
+                alert('Sesión cerrada por inactividad (20 min).');
+            }, TIMEOUT_DURATION);
+        };
+
+        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+
+        // Initialize
+        resetTimer();
+
+        // Listeners for user activity
+        const handleActivity = () => resetTimer();
+
+        events.forEach(event => {
+            window.addEventListener(event, handleActivity);
+        });
+
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            events.forEach(event => {
+                window.removeEventListener(event, handleActivity);
+            });
+        };
+    }, [handleLogout]);
 
     const products = useAppStore(state => state.products);
 

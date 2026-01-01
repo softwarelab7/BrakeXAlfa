@@ -1,4 +1,4 @@
-import { Bell, HelpCircle } from 'lucide-react';
+import { Bell, HelpCircle, Shield } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import ThemeToggle from './ThemeToggle';
 import '../../styles/header.css';
@@ -33,6 +33,15 @@ const Header = () => {
                     </button>
 
                     <ThemeToggle />
+
+                    <button
+                        className="icon-button animate-hover-pulse"
+                        title="Modo Administrador"
+                        aria-label="Modo Administrador"
+                        onClick={() => window.location.hash = '#admin'}
+                    >
+                        <Shield size={20} />
+                    </button>
 
                     <button
                         className="icon-button animate-hover-ring"
