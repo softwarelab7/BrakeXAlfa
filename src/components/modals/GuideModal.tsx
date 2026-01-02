@@ -33,7 +33,7 @@ const GuideModal = () => {
         <Modal
             isOpen={isGuideModalOpen}
             onClose={closeGuideModal}
-            title="Guía de Uso - Brake X"
+            title="Guía de Uso - Brake Hub X"
             size="large"
         >
             <div className="guide-content" style={{ padding: '0.5rem 0' }}>

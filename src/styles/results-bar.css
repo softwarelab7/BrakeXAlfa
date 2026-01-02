@@ -122,7 +122,13 @@
 }
 
 .results-action-btn.active {
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.results-action-btn-compare.active {
+    color: #32cd32;
+    background: rgba(0, 255, 0, 0.15);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
 }
 
 .action-badge {
@@ -149,8 +155,9 @@
 
 /* Minimalist Badge Colors */
 .badge-compare {
-    background-color: #f97316;
-    /* Orange 500 */
+    background-color: #32cd32;
+    color: #1a1a1a;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
 }
 
 .badge-favorite {

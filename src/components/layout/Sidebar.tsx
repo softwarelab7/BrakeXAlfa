@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Trash2, Sparkles } from 'lucide-react';
+import styled from 'styled-components';
 import { useAppStore } from '../../store/useAppStore';
 import type { Product } from '../../types';
 import AnimatedSearch from '../common/AnimatedSearch';
@@ -146,6 +146,15 @@ const Sidebar = () => {
     }, [products]);
 
     const hasActiveFilters = filteredProducts.length !== products.length;
+
+    const clearFilters = () => {
+        store.clearFilters();
+        setLocalQuery('');
+        setLocalOem('');
+        setLocalFmsi('');
+        setLocalWidth('');
+        setLocalHeight('');
+    };
 
     return (
         <aside className="sidebar">
@@ -305,40 +314,86 @@ const Sidebar = () => {
                 </div>
             </div>
 
-            <div className="action-buttons-container">
+            <StyledWrapper>
                 <button
-                    className={`borrar-filtros-btn ${hasActiveFilters ? 'btn-active' : 'btn-disabled'}`}
-                    onClick={() => {
-                        store.clearFilters();
-                        setLocalQuery('');
-                        setLocalOem('');
-                        setLocalFmsi('');
-                        setLocalWidth('');
-                        setLocalHeight('');
-                    }}
+                    onClick={clearFilters}
                     disabled={!hasActiveFilters}
+                    className={!hasActiveFilters ? 'disabled' : ''}
                 >
-                    <div className="btn-text-content">
-                        {hasActiveFilters ? `LIMPIAR (${filteredProducts.length})` : 'SIN FILTROS'}
-                    </div>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="btn-icon-svg"
-                        fill="none"
-                    >
-                        <path
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                            strokeLinejoin="round"
-                            strokeLinecap="round"
-                        />
-                    </svg>
+                    BORRAR FILTROS
+                    <span />
                 </button>
-            </div>
+            </StyledWrapper>
         </aside>
     );
 };
 
 export default Sidebar;
+
+const StyledWrapper = styled.div`
+  margin-top: 1rem; /* Lower the button */
+
+  button {
+    border: none;
+    display: block;
+    position: relative;
+    padding: 0.65em 2em; /* Slightly taller */
+    font-size: 13px;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    overflow: hidden;
+    color: var(--color-danger);
+    z-index: 1;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 50px;
+    width: 100%;
+  }
+
+  button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    pointer-events: none;
+  }
+
+  button span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: -1;
+    border: 3px solid var(--color-danger);
+    border-radius: 50px;
+  }
+
+  button span::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 20%; /* Increased from 8% for a bolder diagonal/better coverage start */
+    height: 2000%; /* Increased drastically from 500% to ensure it covers the entire button width when rotated */
+    background: var(--bg-primary);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-60deg);
+    transition: transform 0.6s cubic-bezier(0.3, 1, 0.2, 1), background 0.6s ease; /* Added bezier for smoother feel */
+  }
+
+  button:hover:not(.disabled) span::before {
+    transform: translate(-50%, -50%) rotate(-90deg);
+    width: 100%;
+    background: var(--color-danger);
+  }
+
+  button:hover:not(.disabled) {
+    color: white;
+  }
+
+  button:active:not(.disabled) span::before {
+    background: #dc2626; /* Darker red */
+  }
+`;

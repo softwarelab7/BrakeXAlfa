@@ -39,7 +39,7 @@ function ReloadPrompt() {
                     <p>
                         {offlineReady
                             ? 'La aplicación está lista para usarse sin conexión a internet.'
-                            : 'Una nueva versión de Brake X está disponible con mejoras de rendimiento.'}
+                            : 'Una nueva versión de Brake Hub X está disponible con mejoras de rendimiento.'}
                     </p>
                 </div>
 

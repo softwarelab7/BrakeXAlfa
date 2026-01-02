@@ -95,7 +95,7 @@ const ResultsBar = ({ totalResults, currentStart, currentEnd }: ResultsBarProps)
                 {/* Tools Group */}
                 <div className="tools-group">
                     <button
-                        className={`results-action-btn animate-hover-swap ${comparisonsCount > 0 ? 'active' : ''}`}
+                        className={`results-action-btn results-action-btn-compare animate-hover-swap ${comparisonsCount > 0 ? 'active' : ''}`}
                         onClick={openCompareModal}
                         title="Comparar productos"
                     >

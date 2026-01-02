@@ -50,23 +50,24 @@ const StyledWrapper = styled.div`
     width: 100%;
     border-radius: 9999px;
     padding: 0.65rem 2.5rem; /* Better balance for icons */
-    border: 2px solid transparent;
+    border: 1px solid var(--border-primary);
     outline: none;
-    background: #ffffff;
-    color: #1a1a1b; /* Dark text for contrast */
+    background: var(--bg-secondary);
+    color: var(--text-primary);
     transition: all 0.3s ease;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06); /* Deeper shadow */
+    box-shadow: var(--shadow-md);
     font-size: 0.9rem;
     font-weight: 500;
   }
 
   .input:focus {
-    border-color: #3b82f6; /* Blue border on focus as per user snippet */
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 4px var(--accent-primary-glow);
+    background: var(--bg-primary);
   }
 
   .input::placeholder {
-    color: #9ca3af;
+    color: var(--text-muted);
     font-weight: 400;
   }
 
@@ -81,14 +82,14 @@ const StyledWrapper = styled.div`
     border: none;
     padding: 6px;
     cursor: pointer;
-    color: #4b5563; /* Darker icons for white background */
+    color: var(--text-secondary);
     transition: all 0.2s;
     z-index: 10;
   }
 
   .icon-btn:hover {
-    color: #111827;
-    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+    background: rgba(128, 128, 128, 0.1);
     border-radius: 50%;
   }
 

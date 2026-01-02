@@ -36,7 +36,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             <div className="login-card">
                 <div className="login-header">
                     <Activity color="#3b82f6" size={32} />
-                    <h2>Brake X Admin</h2>
+                    <h2>Brake Hub X Admin</h2>
                     <p>Inicia sesión para gestionar el catálogo</p>
                 </div>
 
@@ -83,93 +83,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                 </form>
             </div>
 
-            <style>{`
-                .login-overlay {
-                    position: fixed;
-                    top: 0; left: 0; right: 0; bottom: 0;
-                    background: radial-gradient(circle at center, #1e293b, #0a0b10);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 9999;
-                }
-                .login-card {
-                    background: rgba(255, 255, 255, 0.03);
-                    backdrop-filter: blur(20px);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                    padding: 3rem;
-                    border-radius: 2rem;
-                    width: 100%;
-                    max-width: 400px;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-                    text-align: center;
-                }
-                .login-header h2 { font-size: 1.5rem; margin: 1rem 0 0.5rem; color: #fff; }
-                .login-header p { color: #9ca3af; font-size: 0.9rem; margin-bottom: 2rem; }
-                
-                .login-form { display: flex; flex-direction: column; gap: 1.25rem; }
-                .input-group { position: relative; }
-                .input-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; }
-                .input-group input {
-                    width: 100%;
-                    padding: 0.85rem 3.5rem 0.85rem 3rem;
-                    background: rgba(0,0,0,0.2);
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 1rem;
-                    color: #fff;
-                    font-size: 1rem;
-                    transition: all 0.3s;
-                }
-                .input-group input:focus {
-                    outline: none;
-                    border-color: #3b82f6;
-                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-                }
-                .toggle-password {
-                    position: absolute;
-                    right: 1rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    background: none;
-                    border: none;
-                    color: #64748b;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0.5rem;
-                    transition: color 0.2s;
-                }
-                .toggle-password:hover { color: #3b82f6; }
-                .login-submit {
-                    background: #3b82f6;
-                    color: #fff;
-                    border: none;
-                    padding: 1rem;
-                    border-radius: 1rem;
-                    font-weight: 700;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 0.75rem;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                    margin-top: 1rem;
-                }
-                .login-submit:hover:not(:disabled) { background: #2563eb; transform: translateY(-2px); }
-                .login-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-                .error-msg {
-                    color: #ef4444;
-                    background: rgba(239, 68, 68, 0.1);
-                    padding: 0.75rem;
-                    border-radius: 0.75rem;
-                    font-size: 0.85rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 0.5rem;
-                }
-            `}</style>
         </div>
     );
 };

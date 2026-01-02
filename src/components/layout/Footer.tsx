@@ -25,7 +25,7 @@ const Footer = () => {
     };
 
     const handleContactClick = () => {
-        window.location.href = 'mailto:contacto@brakex.com';
+        window.location.href = 'mailto:contacto@brakehubx.com';
     };
 
     return (
@@ -37,7 +37,7 @@ const Footer = () => {
                 {/* 1. Brand Section */}
                 <div className="footer-brand-section">
                     <div className="brand-header">
-                        <h2 className="footer-logo">Brake X</h2>
+                        <h2 className="footer-logo">Brake Hub X</h2>
                         <span className="version-badge">v1.2 Beta</span>
                     </div>
                     <p className="footer-description">
@@ -79,7 +79,7 @@ const Footer = () => {
             {/* Bottom Bar */}
             <div className="footer-bar">
                 <div className="bar-content">
-                    <p className="copyright">© {currentYear} Brake X Inc. Todos los derechos reservados.</p>
+                    <p className="copyright">© {currentYear} Brake Hub X Inc. Todos los derechos reservados.</p>
                     <div className="legal-links">
                         <a href="#">Privacidad</a>
                         <span className="dot">·</span>

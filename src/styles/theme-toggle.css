@@ -31,6 +31,7 @@
     background-color: #f4f4f5;
     transition: .4s;
     border-radius: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .slider-uiverse:before {

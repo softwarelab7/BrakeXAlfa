@@ -174,7 +174,7 @@ const AdminPanel: React.FC = () => {
         const dataStr = JSON.stringify(products, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
-        const exportFileDefaultName = `brakex_db_backup_${new Date().toISOString().split('T')[0]}.json`;
+        const exportFileDefaultName = `brakehubx_db_backup_${new Date().toISOString().split('T')[0]}.json`;
 
         const linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
@@ -198,12 +198,12 @@ const AdminPanel: React.FC = () => {
             )}
             <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="admin-brand">
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--admin-text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Activity color="#3b82f6" /> BRAKE X ADMIN
+                    <h2 className="admin-section-title-wrapper">
+                        <Activity color="#3b82f6" /> BRAKE HUB X ADMIN
                     </h2>
                 </div>
 
-                <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '2rem' }}>
+                <nav className="admin-nav-container">
                     <button
                         onClick={() => { setActiveTab('catalog'); setIsMobileMenuOpen(false); }}
                         className={`admin-nav-btn ${activeTab === 'catalog' ? 'active' : ''}`}
@@ -236,7 +236,7 @@ const AdminPanel: React.FC = () => {
                     </button>
                 </nav>
 
-                <div style={{ marginTop: 'auto' }}>
+                <div className="admin-logout-wrapper">
                     <button className="admin-logout-btn" onClick={handleLogout}>
                         <LogOut size={18} /> Cerrar Sesión
                     </button>
@@ -245,7 +245,7 @@ const AdminPanel: React.FC = () => {
 
             <main className="admin-main">
                 <header className="admin-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div className="admin-section-title-wrapper">
                         <button className="menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
                             <Menu size={24} />
                         </button>
@@ -270,9 +270,9 @@ const AdminPanel: React.FC = () => {
                 {activeTab === 'catalog' && (
                     <div className="admin-card">
                         <div className="admin-section-header">
-                            <h3 style={{ margin: 0, color: 'var(--admin-text)', fontSize: '1.1rem' }}>Listado de Productos</h3>
-                            <div style={{ position: 'relative', width: '300px' }}>
-                                <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} size={18} />
+                            <h3 className="admin-section-title-text">Listado de Productos</h3>
+                            <div className="admin-search-wrapper">
+                                <Search className="admin-search-icon" size={18} />
                                 <input
                                     className="admin-input"
                                     style={{ paddingLeft: '40px' }}
@@ -312,10 +312,10 @@ const AdminPanel: React.FC = () => {
 
                 {activeTab === 'audit' && (
                     <div className="admin-card">
-                        <h3 style={{ color: 'var(--admin-text)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+                        <h3 className="admin-section-title-with-icon">
                             <AlertTriangle color="var(--admin-danger)" /> Referencias con Datos Inconsistentes
                         </h3>
-                        <p style={{ color: 'var(--admin-text-muted)', marginBottom: '2rem' }}>
+                        <p className="admin-section-description">
                             Estas referencias tienen marcada una posición global que no coincide con sus aplicaciones.
                         </p>
 
@@ -362,7 +362,7 @@ const AdminPanel: React.FC = () => {
 
                 {activeTab === 'history' && (
                     <div className="admin-card">
-                        <h3 style={{ color: 'var(--admin-text)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+                        <h3 className="admin-section-title-with-icon">
                             <FileClock color="var(--admin-accent)" /> Historial de Cambios
                         </h3>
                         <div className="admin-table-container">
@@ -378,25 +378,25 @@ const AdminPanel: React.FC = () => {
                                 </thead>
                                 <tbody>
                                     {isLoadingHistory ? (
-                                        <tr><td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>Cargando historial...</td></tr>
+                                        <tr><td colSpan={5} className="text-center p-8">Cargando historial...</td></tr>
                                     ) : historyLogs.length === 0 ? (
-                                        <tr><td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#9ca3af' }}>No hay cambios registrados aún.</td></tr>
+                                        <tr><td colSpan={5} className="text-center p-8 text-muted">No hay cambios registrados aún.</td></tr>
                                     ) : historyLogs.map(log => (
                                         <tr key={log.id}>
-                                            <td data-label="Fecha" style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
+                                            <td data-label="Fecha" className="fs-small text-muted">
                                                 {new Date(log.timestamp).toLocaleString()}
                                             </td>
                                             <td data-label="Usuario">{log.user}</td>
                                             <td data-label="Acción">
-                                                <span className={`pos-badge ${log.action === 'CREATE' ? 'success' : 'delantera'}`}
+                                                <span className={`log-action-badge ${log.action === 'CREATE' ? 'success' : 'edit'}`}
                                                     style={{ background: log.action === 'CREATE' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.2)', color: log.action === 'CREATE' ? '#34d399' : '#60a5fa' }}>
                                                     {log.action === 'CREATE' ? 'CREACIÓN' : 'EDICIÓN'}
                                                 </span>
                                             </td>
                                             <td data-label="Producto"><strong>{log.productRef || 'Sin Ref'}</strong></td>
-                                            <td data-label="Detalles" style={{ fontSize: '0.85rem', maxWidth: '300px' }}>
+                                            <td data-label="Detalles" className="history-details">
                                                 {log.changes?.length ? (
-                                                    <ul style={{ margin: 0, paddingLeft: '1rem' }}>
+                                                    <ul className="history-changes-list">
                                                         {log.changes.map((c, i) => {
                                                             const vFormat = (v: any) => {
                                                                 if (typeof v === 'object' && v !== null) {
@@ -407,7 +407,7 @@ const AdminPanel: React.FC = () => {
                                                             };
                                                             return (
                                                                 <li key={i}>
-                                                                    <span style={{ color: 'var(--admin-text-muted)', fontWeight: 600 }}>{c.field}:</span> {vFormat(c.old).substring(0, 30)} ➝ <span style={{ color: 'var(--admin-text)' }}>{vFormat(c.new).substring(0, 30)}</span>
+                                                                    <span className="font-semibold text-muted">{c.field}:</span> {vFormat(c.old).substring(0, 30)} ➝ <span className="admin-text-highlight">{vFormat(c.new).substring(0, 30)}</span>
                                                                 </li>
                                                             );
                                                         }).slice(0, 3)}
@@ -425,9 +425,9 @@ const AdminPanel: React.FC = () => {
 
                 {activeTab === 'database' && (
                     <div className="admin-card">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
+                        <div className="admin-section-title-wrapper-large">
                             <div className="status-indicator success" />
-                            <h3 style={{ margin: 0, color: 'var(--admin-text)', fontSize: '1.2rem' }}>Estado del Sistema</h3>
+                            <h3 className="admin-section-title-text-large">Estado del Sistema</h3>
                         </div>
 
                         <div className="stats-grid">
@@ -462,13 +462,13 @@ const AdminPanel: React.FC = () => {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--admin-glass)', borderRadius: '1rem', border: '1px solid var(--admin-border)', textAlign: 'center' }}>
-                            <Database size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
-                            <h4 style={{ color: 'var(--admin-text)', marginBottom: '0.5rem' }}>Respaldar Información</h4>
-                            <p style={{ color: 'var(--admin-text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                        <div className="db-backup-card">
+                            <Database size={48} className="db-backup-icon" />
+                            <h4 className="db-backup-title">Respaldar Información</h4>
+                            <p className="db-backup-description">
                                 Descarga una copia de seguridad completa de todos los productos y aplicaciones en formato JSON.
                             </p>
-                            <button onClick={handleExportJSON} className="save-all-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.75rem', width: 'auto', padding: '1rem 2rem' }}>
+                            <button onClick={handleExportJSON} className="save-all-btn db-backup-btn">
                                 <Download size={20} /> Descargar JSON
                             </button>
                         </div>
@@ -501,92 +501,6 @@ const AdminPanel: React.FC = () => {
                 )}
             </main>
 
-            <style>{`
-                .admin-nav-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                    padding: 1rem;
-                    border: none;
-                    background: transparent;
-                    color: var(--admin-text-muted);
-                    border-radius: 1rem;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    text-align: left;
-                    font-weight: 500;
-                    width: 100%;
-                }
-                .admin-nav-btn:hover { background: var(--admin-glass-hover); color: var(--admin-text); }
-                .admin-nav-btn.active {
-                    background: var(--admin-accent);
-                    color: #fff;
-                    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
-                }
-                .admin-logout-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    color: var(--admin-danger);
-                    background: transparent;
-                    border: 1px solid var(--admin-border);
-                    padding: 0.75rem 1rem;
-                    border-radius: 0.75rem;
-                    cursor: pointer;
-                    width: 100%;
-                }
-                .admin-table-container { overflow-x: auto; }
-                .admin-table { width: 100%; border-collapse: collapse; }
-                .admin-table th { text-align: left; padding: 0.75rem; color: var(--admin-text-muted); border-bottom: 1px solid var(--admin-border); }
-                .admin-table td { padding: 0.75rem; border-bottom: 1px solid var(--admin-border); color: var(--admin-text); }
-                .edit-action-btn {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    background: var(--admin-glass);
-                    border: 1px solid var(--admin-border);
-                    color: var(--admin-text);
-                    padding: 0.5rem 1rem;
-                    border-radius: 0.5rem;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .edit-action-btn:hover { background: var(--admin-accent); border-color: transparent; }
-                .back-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    background: transparent;
-                    border: none;
-                    color: var(--admin-accent);
-                    cursor: pointer;
-                    padding: 0;
-                    font-weight: 500;
-                }
-                .toast-notification {
-                    position: fixed;
-                    top: 2rem;
-                    right: 2rem;
-                    padding: 1rem 1.5rem;
-                    border-radius: 1rem;
-                    background: var(--admin-card-bg);
-                    backdrop-filter: blur(20px);
-                    border: 1px solid var(--admin-border);
-                    color: var(--admin-text);
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    z-index: 10000;
-                    animation: slideIn 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-                    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
-                }
-                .toast-notification.success { border-left: 4px solid #10b981; }
-                .toast-notification.error { border-left: 4px solid #ef4444; }
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-            `}</style>
         </div>
     );
 };

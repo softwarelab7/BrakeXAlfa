@@ -1,6 +1,6 @@
 import React from 'react';
-import { ArrowRightLeft } from 'lucide-react';
 import Bookmark from '../common/Bookmark';
+import CompareCheckbox from '../common/CompareCheckbox';
 import { useAppStore } from '../../store/useAppStore';
 import type { Product } from '../../types';
 import '../../styles/product-card.css';
@@ -47,16 +47,13 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
                     {product.posicion}
                 </span>
                 <div className="action-icons">
-                    <button
-                        className={`action-icon action-icon-compare animate-hover-swap ${isInComparison ? 'active' : ''}`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleComparison(product.id);
-                        }}
-                        title="Comparar"
-                    >
-                        <ArrowRightLeft size={18} />
-                    </button>
+                    <div className="action-icon action-icon-compare">
+                        <CompareCheckbox
+                            id={product.id}
+                            checked={isInComparison}
+                            onChange={() => toggleComparison(product.id)}
+                        />
+                    </div>
                     <div className={`action-icon action-icon-favorite animate-hover-beat ${isFavorite ? 'active' : ''}`}>
                         <Bookmark
                             checked={isFavorite}

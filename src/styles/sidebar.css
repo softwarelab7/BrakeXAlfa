@@ -28,7 +28,7 @@
     gap: 0.4rem;
     margin-top: 0.4rem;
     padding-top: 0.4rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--border-primary);
     /* Lighter divider */
     /* Removed negative margins to stay within padding */
 }
@@ -109,7 +109,7 @@
 .filter-select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234070f4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.85rem center;
     background-size: 0.8rem;
@@ -128,16 +128,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
-    border: none;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 45px;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     /* Adjusted from 2.5px for sidebar width */
     font-weight: 600;
-    color: #000;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease 0s;
     cursor: pointer;
     outline: none;
@@ -180,81 +180,7 @@
     gap: 0.5rem;
 }
 
-/* Action Button: Limpiar Filtros (Premium Amber Design) */
-.action-buttons-container {
-    margin-top: 0.8rem;
-    display: flex;
-    justify-content: center;
-}
 
-.clear-filters-wrapper {
-    cursor: pointer;
-    width: 100%;
-}
-
-.borrar-filtros-btn {
-    position: relative;
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    overflow: hidden;
-    border-radius: 9999px;
-    border: 1px solid #ef4444;
-    background: transparent;
-    padding: 0.5rem 0.75rem;
-    font-weight: 800;
-    font-size: 0.75rem;
-    color: #ef4444;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-.btn-text-content {
-    z-index: 20;
-    /* Keep text above the expanding icon */
-    transition: all 0.5s ease;
-}
-
-.btn-icon-svg {
-    position: relative;
-    z-index: 10;
-    width: 1.25rem;
-    height: 1.25rem;
-    fill: none;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.borrar-filtros-btn:hover:not(.btn-disabled) {
-    color: #fff;
-}
-
-.borrar-filtros-btn:hover:not(.btn-disabled) .btn-text-content {
-    transform: translateX(0.8rem);
-}
-
-.borrar-filtros-btn:hover:not(.btn-disabled) .btn-icon-svg {
-    transform: scale(20) translateX(-1.2rem);
-    fill: #ef4444;
-    color: #ef4444;
-}
-
-.borrar-filtros-btn:active:not(.btn-disabled) {
-    transform: scale(0.92);
-}
-
-.borrar-filtros-btn.btn-disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    border-color: var(--border-primary);
-    color: var(--text-muted);
-}
-
-.borrar-filtros-btn.btn-disabled .btn-icon-svg {
-    display: none;
-}
 
 /* Responsive Scaling */
 @media (max-width: 768px) {
@@ -272,8 +198,7 @@
     .filter-select,
     .ref-input,
     .measure-input,
-    .position-pill,
-    .borrar-filtros-btn {
+    .position-pill {
         height: 50px;
         font-size: 1rem;
     }
