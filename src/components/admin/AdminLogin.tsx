@@ -36,7 +36,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             <div className="login-card">
                 <div className="login-header">
                     <Activity color="#3b82f6" size={32} />
-                    <h2>Brake Hub X Admin</h2>
+                    <h2>Brake X Hub Admin</h2>
                     <p>Inicia sesión para gestionar el catálogo</p>
                 </div>
 

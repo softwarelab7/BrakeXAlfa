@@ -1,15 +1,15 @@
-# 🚗 BRAKE X - React Application
+# 🚗 BRAKE X HUB - React Application
 
 Una aplicación web moderna para consulta de pastillas de freno, construida con React, TypeScript, y Vite.
 
-![BRAKE X](https://img.shields.io/badge/BRAKE-X-blue?style=for-the-badge)
+![BRAKE X HUB](https://img.shields.io/badge/BRAKE-X_HUB-blue?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite)
 
 ## 📋 Descripción
 
-**BRAKE X** es una aplicación web profesional diseñada para facilitar la búsqueda y consulta de pastillas de freno. Ofrece un catálogo completo con más de 700 productos, filtros avanzados, y una experiencia de usuario excepcional.
+**BRAKE X HUB** es una aplicación web profesional diseñada para facilitar la búsqueda y consulta de pastillas de freno. Ofrece un catálogo completo con más de 700 productos, filtros avanzados, y una experiencia de usuario excepcional.
 
 ### ✨ Características Principales
 

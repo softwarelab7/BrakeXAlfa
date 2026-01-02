@@ -22,8 +22,8 @@ export default defineConfig(({ command }) => ({
       },
       includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Brake X - Catálogo',
-        short_name: 'Brake X',
+        name: 'Brake X Hub - Catálogo',
+        short_name: 'Brake X Hub',
         description: 'Consulta Rápida de Pastillas de Freno',
         theme_color: '#3b82f6',
         background_color: '#09090b',
