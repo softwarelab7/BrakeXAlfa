@@ -37,7 +37,7 @@ const Footer = () => {
                 {/* 1. Brand Section */}
                 <div className="footer-brand-section">
                     <div className="brand-header">
-                        <h2 className="footer-logo">Brake X Hub</h2>
+                        <h2 className="footer-logo">Frenos Xpert</h2>
                         <span className="version-badge">v1.2 Beta</span>
                     </div>
                     <p className="footer-description">
@@ -74,29 +74,12 @@ const Footer = () => {
                         </a>
                     </div>
                 </div>
-
-                <div className="footer-section">
-                    <h3>Legal</h3>
-                    <ul className="footer-links">
-                        <li><a href="#">Términos y Condiciones</a></li>
-                        <li><a href="#">Política de Privacidad</a></li>
-                        <li><a href="#">Cookies</a></li>
-                    </ul>
-                </div>
-
-                <div className="footer-section">
-                    <h3>Contacto</h3>
-                    <ul className="footer-links">
-                        <li><a href="#">Soporte</a></li>
-                        <li><a href="#">Ventas</a></li>
-                    </ul>
-                </div>
             </div>
 
             {/* Bottom Bar */}
-            <div className="footer-bottom">
-                <div className="footer-container">
-                    <p className="copyright">© {currentYear} Brake X Hub Inc. Todos los derechos reservados.</p>
+            <div className="footer-bar">
+                <div className="bar-content">
+                    <p className="copyright">© {currentYear} Frenos Xpert Inc. Todos los derechos reservados.</p>
                     <div className="legal-links">
                         <a href="#">Privacidad</a>
                         <span className="dot">·</span>

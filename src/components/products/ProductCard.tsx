@@ -39,11 +39,21 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
         return text;
     };
 
+    const getBadgeClass = (ref: string) => {
+        if (!ref) return '';
+        const r = ref.toUpperCase();
+        if (r.endsWith('BP')) return 'ref-badge-gray';
+        if (r.startsWith('K')) return 'ref-badge-red';
+        if (r.endsWith('BEX')) return 'ref-badge-lightblue';
+        if (r.endsWith('SP')) return 'ref-badge-mint';
+        return ''; // Default Blue
+    };
+
     return (
         <div className="product-card" onClick={() => openProductDetailModal(product.id)}>
             {/* Header: Position and Actions */}
             <div className="card-header">
-                <span className="position-badge">
+                <span className={`position-badge ${product.posicion?.toUpperCase() === 'TRASERA' ? 'badge-trasera' : ''}`}>
                     {product.posicion}
                 </span>
                 <div className="action-icons">
@@ -78,14 +88,17 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
 
             {/* References */}
             <div className="ref-section">
-                {(product.ref || []).map((reference, index) => (
-                    <span
-                        key={reference}
-                        className={`ref-badge ${index === 0 ? '' : index === 1 ? 'ref-badge-alt' : 'ref-badge-danger'}`}
-                    >
-                        {reference}
-                    </span>
-                ))}
+                {(product.ref || [])
+                    .flatMap(r => r.split(' ')) // Split space-separated strings
+                    .filter(Boolean) // Remove empty strings
+                    .map((reference) => (
+                        <span
+                            key={reference}
+                            className={`ref-badge ${getBadgeClass(reference)}`}
+                        >
+                            {reference}
+                        </span>
+                    ))}
             </div>
 
             {/* Application Detail */}

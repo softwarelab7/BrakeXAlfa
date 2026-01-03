@@ -4,6 +4,11 @@
     --card-padding: 1rem 2rem;
     --card-image-height: 160px;
     --grid-min-width: 240px;
+    --badge-font-size: 0.65rem;
+    --badge-padding: 0.25rem 0.6rem;
+    --ref-badge-font-size: 0.7rem;
+    /* Fine-tuned */
+    --ref-badge-padding: 0.25rem 0.7rem;
 
     grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-width), 1fr));
     gap: 0.8rem;
@@ -16,6 +21,11 @@
     --card-padding: 0.5rem 1rem;
     --card-image-height: 100px;
     --grid-min-width: 180px;
+    /* Increased for legibility */
+    --badge-padding: 0.15rem 0.4rem;
+    --ref-badge-font-size: 0.6rem;
+    /* Fine-tuned */
+    --ref-badge-padding: 0.2rem 0.5rem;
     gap: 0.5rem;
 }
 
@@ -24,6 +34,10 @@
     --card-padding: 1.5rem 2rem;
     --card-image-height: 220px;
     --grid-min-width: 300px;
+    --badge-font-size: 0.75rem;
+    --badge-padding: 0.4rem 0.9rem;
+    --ref-badge-font-size: 0.75rem;
+    --ref-badge-padding: 0.35rem 0.9rem;
     gap: 1.5rem;
 }
 
