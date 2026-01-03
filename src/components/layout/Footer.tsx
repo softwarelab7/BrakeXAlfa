@@ -1,4 +1,4 @@
-import { Zap, Mail, ArrowUpRight, Shield } from 'lucide-react';
+import { Mail, Shield } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import '../../styles/footer.css';
 
@@ -37,7 +37,7 @@ const Footer = () => {
                 {/* 1. Brand Section */}
                 <div className="footer-brand-section">
                     <div className="brand-header">
-                        <h2 className="footer-logo">Frenos Xpert</h2>
+                        <h2 className="footer-logo">Brake Xpert</h2>
                         <span className="version-badge">v1.2 Beta</span>
                     </div>
                     <p className="footer-description">
@@ -60,26 +60,35 @@ const Footer = () => {
                     </nav>
                 </div>
 
-                {/* 3. Powered By */}
+                {/* 3. Contact Info */}
                 <div className="footer-social-column">
-                    <h4 className="column-title">Powered By</h4>
+                    <h4 className="column-title">Contacto</h4>
                     <div className="social-cards">
-                        <a href="https://antigravity.google/" target="_blank" rel="noopener noreferrer" className="social-card">
-                            <div className="icon-box"><Zap size={18} /></div>
-                            <div className="social-info">
-                                <span className="social-name">Antigravity</span>
-                                <span className="social-sub">Next-Gen AI Agent</span>
+                        <div className="social-card">
+                            <div className="icon-box">
+                                <Mail size={14} />
                             </div>
-                            <ArrowUpRight size={14} className="arrow-icon" />
-                        </a>
+                            <div className="social-info">
+                                <span className="social-name">Soporte</span>
+                                <span className="social-sub">ventas@brakexpert.com</span>
+                            </div>
+                        </div>
+                        <div className="social-card">
+                            <div className="icon-box">
+                                <Shield size={14} />
+                            </div>
+                            <div className="social-info">
+                                <span className="social-name">Oficina</span>
+                                <span className="social-sub">CDMX, México</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Bottom Bar */}
             <div className="footer-bar">
                 <div className="bar-content">
-                    <p className="copyright">© {currentYear} Frenos Xpert Inc. Todos los derechos reservados.</p>
+                    <p className="copyright">© {currentYear} Brake Xpert Inc. Todos los derechos reservados.</p>
                     <div className="legal-links">
                         <a href="#">Privacidad</a>
                         <span className="dot">·</span>

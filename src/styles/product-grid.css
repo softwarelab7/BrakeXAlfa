@@ -1,14 +1,22 @@
 .results-wrapper {
     display: grid;
     /* Default Density Variables (Normal) */
-    --card-padding: 1rem 2rem;
+    --card-padding: 0.75rem 2rem;
     --card-image-height: 160px;
     --grid-min-width: 240px;
-    --badge-font-size: 0.65rem;
-    --badge-padding: 0.25rem 0.6rem;
-    --ref-badge-font-size: 0.7rem;
-    /* Fine-tuned */
-    --ref-badge-padding: 0.25rem 0.7rem;
+    --badge-font-size: 0.78rem;
+    --badge-padding: 0.1rem 0.48rem;
+    --ref-badge-font-size: 0.75rem;
+    --ref-badge-padding: 0.1rem 0.45rem;
+    --header-padding: 0.35rem 0.75rem;
+    --ref-padding: 0.4rem 1rem;
+    --footer-padding: 0.6rem 1rem 0.8rem;
+    --app-font-size: 0.725rem;
+    --icon-size: 1.425rem;
+    --icon-gap: 0.4rem;
+    --ref-section-height: 4.25rem;
+    /* Slightly reduced */
+    /* Default/Normal Height */
 
     grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-width), 1fr));
     gap: 0.8rem;
@@ -18,26 +26,42 @@
 
 /* Compact Mode */
 .results-wrapper[data-density="compact"] {
-    --card-padding: 0.5rem 1rem;
+    --card-padding: 0.35rem 1rem;
     --card-image-height: 100px;
     --grid-min-width: 180px;
-    /* Increased for legibility */
-    --badge-padding: 0.15rem 0.4rem;
-    --ref-badge-font-size: 0.6rem;
-    /* Fine-tuned */
-    --ref-badge-padding: 0.2rem 0.5rem;
+    --badge-font-size: 0.67rem;
+    --badge-padding: 0.05rem 0.25rem;
+    --ref-badge-font-size: 0.58rem;
+    --ref-badge-padding: 0.04rem 0.22rem;
+    --header-padding: 0.25rem 0.5rem;
+    --ref-padding: 0.2rem 0.75rem;
+    --footer-padding: 0.35rem 0.75rem 0.5rem;
+    --app-font-size: 0.625rem;
+    --icon-size: 1.1875rem;
+    --icon-gap: 0.25rem;
+    --ref-section-height: 3.25rem;
+    /* Slightly reduced */
+    /* Compact Height */
     gap: 0.5rem;
 }
 
 /* Comfortable Mode */
 .results-wrapper[data-density="comfortable"] {
-    --card-padding: 1.5rem 2rem;
+    --card-padding: 1.25rem 2rem;
     --card-image-height: 220px;
     --grid-min-width: 300px;
-    --badge-font-size: 0.75rem;
-    --badge-padding: 0.4rem 0.9rem;
-    --ref-badge-font-size: 0.75rem;
-    --ref-badge-padding: 0.35rem 0.9rem;
+    --badge-font-size: 0.95rem;
+    --badge-padding: 0.42rem 0.95rem;
+    --ref-badge-font-size: 0.9rem;
+    --ref-badge-padding: 0.4rem 0.9rem;
+    --header-padding: 0.6rem 1.5rem;
+    --ref-padding: 0.75rem 1.5rem;
+    --footer-padding: 1.25rem 2rem 1.75rem;
+    --app-font-size: 0.85rem;
+    --icon-size: 1.6625rem;
+    --icon-gap: 0.75rem;
+    --ref-section-height: 5.5rem;
+    /* Slightly reduced */
     gap: 1.5rem;
 }
 

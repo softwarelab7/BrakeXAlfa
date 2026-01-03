@@ -83,6 +83,10 @@
     color: var(--text-primary);
 }
 
+.modal-body-p0 {
+    padding: 0 !important;
+}
+
 /* Modal Footer */
 .modal-footer {
     padding: 1rem 1.5rem;
@@ -171,4 +175,468 @@
     .detail-grid {
         grid-template-columns: 1fr 1fr;
     }
+}
+
+/* ==========================================================================
+   New Product Detail Layout (Matching Reference)
+   ========================================================================== */
+
+.detail-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    /* Reduced top padding from 1.5rem */
+    gap: 1.5rem;
+    /* Reduced gap from 2rem */
+    background: #fff;
+    min-height: 500px;
+}
+
+@media (min-width: 900px) {
+    .detail-layout {
+        display: grid;
+        grid-template-columns: 1.1fr 1.4fr;
+        /* Info | Image */
+        gap: 2rem;
+        padding: 1.5rem 2.5rem;
+        /* Reduced top padding from 2.5rem */
+    }
+}
+
+/* --- Left Column: Info --- */
+.detail-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* Reduced gap from 1rem */
+}
+
+.badges-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    /* Ensure alignment */
+}
+
+.badge-pill {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-pill-blue {
+    background-color: #2563eb;
+}
+
+.badge-pill-blue-solid {
+    background-color: #3b82f6;
+}
+
+.badge-pill-dark {
+    background-color: #1e293b;
+}
+
+.badge-pill-red {
+    background-color: #ef4444;
+}
+
+.badge-pill-gradient {
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ef4444 100%);
+}
+
+.badge-pill-blue-sm {
+    background-color: #2563eb;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.7rem;
+}
+
+.badge-pill-dark-sm {
+    background-color: #1e293b;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.7rem;
+}
+
+.position-row {
+    margin-top: 0;
+    margin-bottom: -0.5rem;
+    /* Pull badges closer if desired, or just 0 */
+}
+
+.brand-section {
+    margin-top: 0.5rem;
+}
+
+.brand-header {
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+/* Applications Table */
+/* Applications Table */
+.applications-table-container {
+    max-height: 280px;
+    overflow-y: auto;
+    /* border-top: 1px solid #e2e8f0; Removed for cleaner box look */
+    /* border-bottom: 1px solid #e2e8f0; */
+    padding: 2px;
+    /* Avoid scrollbar clip */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Custom Scrollbar for applications */
+.applications-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.applications-table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.applications-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.brand-group {
+    display: flex;
+    flex-direction: column;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.brand-header-in-list {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    background: transparent;
+    padding: 0 0 0.25rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    margin: 0 0 0.25rem 0;
+    display: block;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.brand-group:first-child .brand-header-in-list {
+    margin-top: 0;
+}
+
+.app-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem;
+}
+
+.app-table tr {
+    /* border-bottom: 1px solid #f1f5f9; Remove internal borders for tighter look? Or keep faint */
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.app-table tr:last-child {
+    border-bottom: none;
+}
+
+.app-table td {
+    padding: 0.15rem 0;
+    /* Much tighter */
+    color: #475569;
+}
+
+.app-model {
+    font-weight: 500;
+    color: #334155;
+    width: 65%;
+}
+
+.app-year {
+    text-align: right;
+    width: 15%;
+    font-family: inherit;
+}
+
+.app-pos {
+    text-align: right;
+    width: 20%;
+    font-weight: 700;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+}
+
+/* Specificity fix: override table cell color */
+.app-pos.text-red {
+    color: #ef4444;
+}
+
+.app-pos.text-blue {
+    color: #3b82f6;
+}
+
+.app-pos.text-purple {
+    color: #9333ea;
+}
+
+/* Specs Section */
+.specs-section {
+    margin-top: 1rem;
+}
+
+.specs-header {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.specs-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.spec-row {
+    display: flex;
+    align-items: flex-start;
+    /* items top aligned */
+    gap: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.4rem;
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-key {
+    width: 100px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #0f172a;
+    flex-shrink: 0;
+}
+
+.spec-val {
+    font-size: 0.7rem;
+    color: #475569;
+}
+
+.spec-val-badges {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+/* --- Right Column: Image --- */
+.detail-image-col {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid #e2e8f0; Removed per user request */
+    border-radius: 0.5rem;
+    padding: 0;
+    /* Full bleed image logic inside wrapper */
+    overflow: hidden;
+    height: fit-content;
+}
+
+/* Cleaned up old action styles */
+
+.action-btn:hover {
+    color: #3b82f6;
+    transform: scale(1.1);
+}
+
+.action-btn.active {
+    color: #ef4444;
+    /* Favorite */
+}
+
+.action-btn:first-child.active {
+    color: #3b82f6;
+    /* Compare */
+}
+
+.image-wrapper {
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #fff;
+    padding: 2rem;
+}
+
+.main-product-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.image-ref-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #1e3a8a;
+    /* Dark Blue */
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 0.5rem 1.5rem;
+    z-index: 10;
+}
+
+.measurements-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    pointer-events: none;
+}
+
+.measure-box {
+    background: #cbd5e1;
+    color: #334155;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+
+.measure-val {
+    margin-left: 0.5rem;
+    font-weight: 400;
+}
+
+/* Reference Badges (Matching ProductCard) */
+.ref-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.3rem;
+    color: #2563eb;
+    background: transparent;
+    border: 1px solid #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: normal;
+    letter-spacing: 0.025em;
+}
+
+.ref-badge-gray {
+    color: #334155;
+    border: 1px solid #334155;
+    background: transparent;
+}
+
+.ref-badge-red {
+    color: #b91c1c;
+    border: 1px solid #b91c1c;
+    background: transparent;
+}
+
+.ref-badge-lightblue {
+    color: #0284c7;
+    border: 1px solid #0284c7;
+    background: transparent;
+}
+
+.modal-actions-toolbar {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 50;
+    background: white;
+    padding: 0.25rem;
+    border-radius: 999px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+}
+
+.action-btn-toolbar {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn-toolbar:hover {
+    background-color: #f1f5f9;
+    color: #3b82f6;
+}
+
+.action-btn-toolbar.active {
+    color: #ef4444;
+    /* or blue for compare */
+    background-color: #fee2e2;
+}
+
+.action-btn-toolbar:first-child.active {
+    color: #3b82f6;
+    background-color: #dbeafe;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 1.25rem;
+    background-color: #e2e8f0;
+    margin: 0 0.25rem;
+}
+
+.close-btn-toolbar {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn-toolbar:hover {
+    background-color: #f1f5f9;
+    color: #ef4444;
+}
+
+/* Remove scroll from modal body when noPadding is used, if desired */
+/* We rely on .modal-body-p0 padding: 0 !important; which is already there. 
+   But .modal-body has overflow-y: auto. */
+.modal-body-p0 {
+    padding: 0 !important;
+    overflow-y: hidden !important;
+    /* Disable scroll as requested */
 }

@@ -9,9 +9,11 @@ interface ModalProps {
     title: string;
     children: ReactNode;
     size?: 'small' | 'default' | 'large' | 'xl';
+    hideHeader?: boolean;
+    noPadding?: boolean;
 }
 
-const Modal = ({ isOpen, onClose, title, children, size = 'default' }: ModalProps) => {
+const Modal = ({ isOpen, onClose, title, children, size = 'default', hideHeader = false, noPadding = false }: ModalProps) => {
     // Lock body scroll when modal is open
     useEffect(() => {
         if (isOpen) {
@@ -45,6 +47,8 @@ const Modal = ({ isOpen, onClose, title, children, size = 'default' }: ModalProp
                 size === 'xl' ? 'modal-xl' :
                     '';
 
+    const bodyClass = `modal-body ${noPadding ? 'modal-body-p0' : ''}`;
+
     return createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div
@@ -54,18 +58,20 @@ const Modal = ({ isOpen, onClose, title, children, size = 'default' }: ModalProp
                 aria-modal="true"
                 aria-labelledby="modal-title"
             >
-                <div className="modal-header">
-                    <h2 id="modal-title" className="modal-title">{title}</h2>
-                    <button
-                        className="modal-close-btn"
-                        onClick={onClose}
-                        aria-label="Cerrar modal"
-                    >
-                        <X size={24} />
-                    </button>
-                </div>
+                {!hideHeader && (
+                    <div className="modal-header">
+                        <h2 id="modal-title" className="modal-title">{title}</h2>
+                        <button
+                            className="modal-close-btn"
+                            onClick={onClose}
+                            aria-label="Cerrar modal"
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
+                )}
 
-                <div className="modal-body">
+                <div className={bodyClass}>
                     {children}
                 </div>
             </div>

@@ -165,8 +165,13 @@
 }
 
 /* Mixed Colors: Purple when both are active */
+/* Mixed Colors: Purple when both are active */
 .position-pill.both-active {
-    background-color: #9333ea !important;
+    background: linear-gradient(90deg,
+            #3b82f6 0%,
+            #8b5cf6 50%,
+            #ef4444 100%) !important;
+    border: none !important;
     /* Purple (Blend of Blue and Red) */
     box-shadow: 0px 15px 20px rgba(147, 51, 234, 0.4) !important;
     color: #fff !important;

@@ -39,6 +39,65 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
         return text;
     };
 
+    // Determine actual position - check applications for both positions
+    const getActualPosition = () => {
+        // Priority 1: Check root position explicit value
+        if (product.posicion) {
+            const rootPos = product.posicion.toUpperCase();
+            if (rootPos === 'AMBAS') {
+                return { display: 'DL-TR', className: 'badge-ambas' };
+            }
+            if (rootPos === 'TRASERA') {
+                return { display: 'TRASERA', className: 'badge-trasera' };
+            }
+            if (rootPos === 'DELANTERA') {
+                return { display: 'DELANTERA', className: '' };
+            }
+        }
+
+        // Priority 2: Derive from applications (fallback)
+        const positions = new Set<string>();
+
+        // Check root position for non-standard values or if we want to include it in the set for fallback logic
+        if (product.posicion) {
+            positions.add(product.posicion.toUpperCase());
+        }
+
+        // Check all applications
+        if (Array.isArray(product.aplicaciones)) {
+            product.aplicaciones.forEach(app => {
+                if (app && app.posicion) {
+                    const appPos = app.posicion.toUpperCase();
+                    if (appPos === 'AMBAS') {
+                        positions.add('DELANTERA');
+                        positions.add('TRASERA');
+                    } else {
+                        positions.add(appPos);
+                    }
+                }
+            });
+        }
+
+        // If has both positions, show DL-TR
+        if (positions.has('DELANTERA') && positions.has('TRASERA')) {
+            return { display: 'DL-TR', className: 'badge-ambas' };
+        }
+
+        // Otherwise show the single position
+        if (positions.has('TRASERA')) {
+            return { display: 'TRASERA', className: 'badge-trasera' };
+        }
+
+        if (positions.has('DELANTERA')) {
+            return { display: 'DELANTERA', className: '' };
+        }
+
+        // Fallback
+        return { display: product.posicion || 'N/A', className: '' };
+    };
+
+    const positionInfo = getActualPosition();
+
     const getBadgeClass = (ref: string) => {
         if (!ref) return '';
         const r = ref.toUpperCase();
@@ -53,8 +112,8 @@ const ProductCard = React.memo(({ product }: ProductCardProps) => {
         <div className="product-card" onClick={() => openProductDetailModal(product.id)}>
             {/* Header: Position and Actions */}
             <div className="card-header">
-                <span className={`position-badge ${product.posicion?.toUpperCase() === 'TRASERA' ? 'badge-trasera' : ''}`}>
-                    {product.posicion}
+                <span className={`position-badge ${positionInfo.className}`}>
+                    {positionInfo.display}
                 </span>
                 <div className="action-icons">
                     <div

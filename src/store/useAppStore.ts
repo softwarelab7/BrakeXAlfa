@@ -205,6 +205,12 @@ export const useAppStore = create<AppState>()(
                         ? currentPositions.filter(p => p !== position)
                         : [...currentPositions, position];
 
+                    console.log('🔄 Toggle Position:', {
+                        clicked: position,
+                        before: currentPositions,
+                        after: newPositions
+                    });
+
                     const newFilters = { ...state.filters, selectedPositions: newPositions };
                     return {
                         filters: newFilters,

@@ -221,7 +221,6 @@ const Sidebar = () => {
                             }`}
                         onClick={() => {
                             store.togglePosition('delantera');
-                            setLocalQuery('');
                         }}
                     >
                         <span>Delantera</span>
@@ -232,7 +231,6 @@ const Sidebar = () => {
                             }`}
                         onClick={() => {
                             store.togglePosition('trasera');
-                            setLocalQuery('');
                         }}
                     >
                         <span>Trasera</span>

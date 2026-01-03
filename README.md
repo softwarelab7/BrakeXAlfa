@@ -1,4 +1,4 @@
-# 🚗 BRAKE X HUB - React Application
+# 🚗 BRAKE XPERT - React Application
 
 Una aplicación web moderna para consulta de pastillas de freno, construida con React, TypeScript, y Vite.
 

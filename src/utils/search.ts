@@ -125,14 +125,18 @@ export const FILTER_STRATEGIES: Record<string, (item: Product, value: any, conte
     },
 
     // Position
-    // Position
     selectedPositions: (item, value) => {
+        // Debug what value is being passed to the filter
+        if (value && Array.isArray(value) && value.length > 0) {
+            console.log('📍 Position filter called with:', value);
+        }
+
         if (!value || !Array.isArray(value) || value.length === 0) return true;
 
         // Collect all positions this product applies to
         const productPositions = new Set<string>();
 
-        // 1. Check root position (fallback for older data)
+        // 1. Check root position (Priority Source)
         if (item.posicion) {
             const rootPos = normalizeText(item.posicion);
             if (rootPos === 'ambas') {
@@ -142,9 +146,8 @@ export const FILTER_STRATEGIES: Record<string, (item: Product, value: any, conte
                 productPositions.add(rootPos);
             }
         }
-
-        // 2. Check applications (New strict logic)
-        if (Array.isArray(item.aplicaciones)) {
+        // 2. Fallback: Check applications ONLY if root position is missing
+        else if (Array.isArray(item.aplicaciones)) {
             item.aplicaciones.forEach(app => {
                 if (!app || !app.posicion) return;
                 const appPos = normalizeText(app.posicion);
@@ -158,14 +161,27 @@ export const FILTER_STRATEGIES: Record<string, (item: Product, value: any, conte
         }
 
         // Logic: AND (Intersection)
-        // usage: "mostrar las pastillas que tienen las dos aplicaciones"
-        // The product must support ALL selected positions.
-        // We check if required positions (normalized) are effectively in the product's position set.
-
-        // Normalize filter requirements
+        // Show products that apply to ALL of the selected positions
+        // When both Delantera and Trasera are selected, only show products
+        // that have BOTH positions (either explicitly or via "AMBAS")
         const required = value.map(v => normalizeText(v));
 
-        return required.every(req => productPositions.has(req));
+        const passes = required.every(req => productPositions.has(req));
+
+        // Debug specific product
+        if (item.referencia && item.referencia.includes('7291')) {
+            console.log('🔍 Pastilla 7291 Debug:', {
+                referencia: item.referencia,
+                rootPosition: item.posicion,
+                required,
+                productPositions: Array.from(productPositions),
+                passes,
+                aplicacionesCount: item.aplicaciones?.length || 0
+            });
+        }
+
+        // Use AND logic: product passes only if it has ALL selected positions
+        return passes;
     },
 
     // Favorites
